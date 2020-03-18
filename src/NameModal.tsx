@@ -37,7 +37,7 @@ function NameModal({
   }
 
   return (
-    <Modal show>
+    <Modal show backdrop={"static"}>
       <Modal.Header>
         <Modal.Title>Welcome to the Virtual Cafeteria</Modal.Title>
       </Modal.Header>

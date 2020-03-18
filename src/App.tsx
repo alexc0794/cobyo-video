@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { Component } from 'react';
 import AgoraRTC, {
    IAgoraRTCClient,
    IMicrophoneAudioTrack,
    ICameraVideoTrack,
  } from "agora-rtc-sdk-ng"
-import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 import NameModal from './NameModal';
+import SeatPicker from './SeatPicker';
+import GroupChat, { User } from './GroupChat';
 import { fetchToken } from './services';
 import { random } from './helpers';
+
+const AGORA_APP_ID = '0e12dacab1874ad5939be54efd01d4c3'
 
 type RTC = {
   client: IAgoraRTCClient,
@@ -34,58 +38,72 @@ const rtc: RTC = {
   params: {}
 };
 
-const AGORA_APP_ID = '0e12dacab1874ad5939be54efd01d4c3'
-function App() {
+type PropTypes = {};
 
-  const [userId, setUserId] = useState(1);
-  const [userName, setUserName] = useState("");
+type StateTypes = {
+  userId: number,
+  userName: string,
+  users: Array<User>,
+  hasJoined: boolean,
+  showModal: boolean,
+}
 
-  useEffect(() => {
-    rtc.client.on("connection-state-change", (curState, revState, reason) => {
-    });
+class App extends Component<PropTypes, StateTypes> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      userId: 0,
+      userName: "",
+      users: [],
+      hasJoined: false,
+      showModal: true,
+    };
+  }
 
-    rtc.client.on("user-published", async (user, mediaType) => {
-      // Subscribe to a remote user
-      await rtc.client.subscribe(user);
+  componentDidMount() {
+    rtc.client.on("connection-state-change", (curState, revState, reason) => {});
+    rtc.client.on("user-published", this.onUserPublish);
+    rtc.client.on("user-unpublished", this.onUserUnpublish);
+  }
 
-      // Get `RemoteAudioTrack` and `RemoteVideoTrack` in the `user` object.
-      const remoteAudioTrack = user.audioTrack;
-      const remoteVideoTrack = user.videoTrack;
+  onUserPublish = async (user: any, mediaType: string) => {
+    // Subscribe to a remote user
+    await rtc.client.subscribe(user);
 
-      if (!remoteAudioTrack || !remoteVideoTrack) {
-        return;
-      }
+    // Get `RemoteAudioTrack` and `RemoteVideoTrack` in the `user` object.
+    const remoteAudioTrack = user.audioTrack;
+    const remoteVideoTrack = user.videoTrack;
 
-      // Dynamically create a container in the form of a DIV element for playing the remote video track.
-      const userContainer = document.createElement("div");
-      // Specify the ID of the DIV container. You can use the `uid` of the remote user.
-      userContainer.id = user.uid.toString();
-      userContainer.style.width = "640px";
-      userContainer.style.height = "480px";
+    if (!remoteAudioTrack || !remoteVideoTrack) {
+      return;
+    }
 
-      const appContainer = document.getElementById("App");
-      if (appContainer) {
-        appContainer.appendChild(userContainer);
-      }
+    const newUser: User = { userId: user.uid.toString() };
+    const { users } = this.state;
+    this.setState({ users: [...users, newUser] });
 
+    // This a hack
+    setTimeout(() => {
       // Play the remote audio and video tracks
       // Pass the ID of the DIV container and the SDK dynamically creates a user in the container for playing the remote video track
-      remoteVideoTrack.play(user.uid.toString());
+      remoteVideoTrack.play(`video-${user.uid.toString()}`);
       // Play the audio track. Do not need to pass any DOM element
       remoteAudioTrack.play();
-    });
+    }, 3000);
+  }
 
-    rtc.client.on("user-unpublished", user => {
-      const playerContainer = document.getElementById(user.uid.toString());
-      if (playerContainer) {
-        playerContainer.remove();
-      }
-    });
-  });
+  onUserUnpublish = (unpublishedUser: any) => {
+    const { users } = this.state;
+    this.setState((prevState) => ({
+      users: users.filter(
+        (user: User) => user.userId !== unpublishedUser.uid.toString()
+      )
+    }));
+  }
 
-  const [hasJoined, setHasJoined] = useState(false);
-
-  async function handleClickJoin() {
+  handleClickJoin = async (seatNumber: number) => {
+    console.log('JOINING ' + seatNumber);
+    const { userId } = this.state;
     let token = ""
     try {
       token = await fetchToken(userId);
@@ -100,35 +118,66 @@ function App() {
       userId,
     );
 
+    console.log(rtc.client.remoteUsers);
+
     rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
     rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
 
-    await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
+    const newUser: User = { userId: userId.toString() };
+    const { users } = this.state;
+    this.setState({
+      users: [...users, newUser],
+    });
 
-    setHasJoined(true);
+    // TODO: Move this to GroupChat component
+    rtc.localVideoTrack.play(`video-${userId.toString()}`);
+
+    await rtc.client.publish([
+      rtc.localAudioTrack,
+      rtc.localVideoTrack
+    ]);
+
+    this.setState({ hasJoined: true });
   }
 
-  const [showModal, setShowModal] = useState(true);
-
-  function handleEnterName(name: string) {
-    setUserId(random(10000))
-    setUserName(name);
-    setShowModal(false);
+  handleEnterName = (name: string) => {
+    this.setState({
+      userId: random(10000),
+      userName: name,
+      showModal: false
+    });
   }
 
-  return (
-    <div id="App" className="App">
-      {showModal && (
-        <NameModal onEnterName={handleEnterName} />
-      )}
-      <header className="App-header">
-        <p>{userName}</p>
-        {!hasJoined && (
-            <Button onClick={handleClickJoin}>Join</Button>
+  render() {
+    const {
+      showModal,
+      userName,
+      hasJoined,
+      users,
+    } = this.state;
+
+    return (
+      <div id="App" className="App">
+        {showModal && (
+          <NameModal onEnterName={this.handleEnterName} />
         )}
-      </header>
-    </div>
-  );
+        <header className="App-header">
+          {!!userName && (
+            <Alert variant="primary">Logged in as "{userName}"</Alert>
+          )}
+          {hasJoined && (rtc.client.remoteUsers.length === 0 ? (
+            <p>You are the only user in this channel</p>
+          ) : (
+            <p>There are {rtc.client.remoteUsers.length + 1} users in this channel</p>
+          ))}
+        </header>
+        {!!users.length && (
+          <GroupChat users={users} />
+        )}
+        <SeatPicker numSeats={12} onClick={this.handleClickJoin} />
+      </div>
+    );
+  }
 }
 
 export default App;
