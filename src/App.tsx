@@ -40,10 +40,6 @@ function App() {
   const [userId, setUserId] = useState(1);
   const [userName, setUserName] = useState("");
 
-  function handleClickUser() {
-    setUserId(userId === 1 ? 2 : 1);
-  }
-
   useEffect(() => {
     rtc.client.on("connection-state-change", (curState, revState, reason) => {
     });
@@ -103,14 +99,13 @@ function App() {
       token,
       userId,
     );
-    setHasJoined(true);
-  }
 
-  async function handleClickAudioVideo() {
     rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
     rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
 
     await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
+
+    setHasJoined(true);
   }
 
   const [showModal, setShowModal] = useState(true);
@@ -128,13 +123,8 @@ function App() {
       )}
       <header className="App-header">
         <p>{userName}</p>
-        {!hasJoined ? (
-          <>
-            <Button variant="primary" onClick={handleClickUser}>Switch to Other User</Button>
+        {!hasJoined && (
             <Button onClick={handleClickJoin}>Join</Button>
-          </>
-        ) : (
-          <Button onClick={handleClickAudioVideo}>Audio & Video</Button>
         )}
       </header>
     </div>
