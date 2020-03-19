@@ -1,62 +1,37 @@
 import React, { Component } from 'react';
-import AgoraRTC, {
-   IAgoraRTCClient,
-   IMicrophoneAudioTrack,
-   ICameraVideoTrack,
- } from "agora-rtc-sdk-ng"
+import AgoraRTC from "agora-rtc-sdk-ng";
+import { getRTC, AGORA_APP_ID } from './AgoraRTC';
 import Alert from 'react-bootstrap/Alert';
 import NameModal from './NameModal';
 import SeatPicker from './SeatPicker';
-import GroupChat, { User } from './GroupChat';
-import { fetchToken } from './services';
+import GroupVideo, { User } from './GroupVideo';
+import { fetchToken, fetchTable } from './services';
 import { random } from './helpers';
-
-const AGORA_APP_ID = '0e12dacab1874ad5939be54efd01d4c3'
-
-type RTC = {
-  client: IAgoraRTCClient,
-  joined: boolean,
-  published: boolean,
-  localStream: null,
-  remoteStreams: Array<null>,
-  localAudioTrack: IMicrophoneAudioTrack | null,
-  localVideoTrack: ICameraVideoTrack | null,
-  params: object
-};
-
-const rtc: RTC = {
-  client: AgoraRTC.createClient({
-    mode: "rtc",
-    codec: "h264",
-  }),
-  joined: false,
-  published: false,
-  localStream: null,
-  remoteStreams: [],
-  localAudioTrack: null,
-  localVideoTrack: null,
-  params: {}
-};
+import { Table } from './types';
 
 type PropTypes = {};
 
 type StateTypes = {
-  userId: number,
+  userId: string,
   userName: string,
   users: Array<User>,
   hasJoined: boolean,
   showModal: boolean,
+  table: Table | null,
 }
+
+const rtc = getRTC();
 
 class App extends Component<PropTypes, StateTypes> {
   constructor(props: any) {
     super(props);
     this.state = {
-      userId: 0,
+      userId: "",
       userName: "",
       users: [],
       hasJoined: false,
       showModal: true,
+      table: null,
     };
   }
 
@@ -102,7 +77,6 @@ class App extends Component<PropTypes, StateTypes> {
   }
 
   handleClickJoin = async (seatNumber: number) => {
-    console.log('JOINING ' + seatNumber);
     const { userId } = this.state;
     let token = ""
     try {
@@ -117,8 +91,6 @@ class App extends Component<PropTypes, StateTypes> {
       token,
       userId,
     );
-
-    console.log(rtc.client.remoteUsers);
 
     rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
     rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
@@ -140,12 +112,20 @@ class App extends Component<PropTypes, StateTypes> {
     this.setState({ hasJoined: true });
   }
 
-  handleEnterName = (name: string) => {
-    this.setState({
-      userId: random(10000),
-      userName: name,
-      showModal: false
-    });
+  handleEnterName = async (name: string) => {
+    // TODO: Dont hardcode table id
+    const tableId = "1";
+    try {
+      const table: Table = await fetchTable(tableId);
+      this.setState({
+        userId: random(10000).toString(),
+        userName: name,
+        showModal: false,
+        table,
+      });
+    } catch {
+      console.error("Can't find table");
+    }
   }
 
   render() {
@@ -154,6 +134,7 @@ class App extends Component<PropTypes, StateTypes> {
       userName,
       hasJoined,
       users,
+      table,
     } = this.state;
 
     return (
@@ -172,9 +153,11 @@ class App extends Component<PropTypes, StateTypes> {
           ))}
         </header>
         {!!users.length && (
-          <GroupChat users={users} />
+          <GroupVideo users={users} />
         )}
-        <SeatPicker numSeats={12} onClick={this.handleClickJoin} />
+        {table && (
+          <SeatPicker table={table} onClick={this.handleClickJoin} />
+        )}
       </div>
     );
   }

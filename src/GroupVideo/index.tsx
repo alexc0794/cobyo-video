@@ -2,7 +2,7 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import './GroupChat.css';
+import './index.css';
 
 export type User = {
   userId: string,
@@ -12,7 +12,7 @@ type PropTypes = {
     users: Array<User>
 }
 
-function GroupChat({
+function GroupVideo({
   users
 }: PropTypes) {
 
@@ -37,4 +37,4 @@ function GroupChat({
   );
 }
 
-export default GroupChat;
+export default GroupVideo;
