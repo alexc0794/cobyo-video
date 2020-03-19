@@ -33,7 +33,6 @@ export function fetchTable(tableId: string): Promise<Table> {
       const response = await axios.get(
         `${BASE_API_URL}/table/${tableId}`
       );
-      console.log(response);
       const seats: Array<UserInSeat> = response.data.seats.map((seat: UserInSeatResponse) => {
         if (seat) {
           return {
@@ -50,8 +49,23 @@ export function fetchTable(tableId: string): Promise<Table> {
       };
       return resolve(table);
     } catch (e) {
-      console.log(e)
+      console.error(e)
       return reject("Something went wrong");
     }
   })
+}
+
+export function joinTable(tableId: string, seatNumber: number, userId: string): Promise<boolean> {
+  return new Promise(async (resolve, _) => {
+    try {
+      const response = await axios.post(`${BASE_API_URL}/table/${tableId}/${seatNumber}`, {
+        user_id: userId,
+      });
+      const success = !!response.data;
+      return resolve(success);
+    } catch (e) {
+      console.error(e);
+      return resolve(false);
+    }
+  });
 }

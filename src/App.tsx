@@ -5,8 +5,8 @@ import Alert from 'react-bootstrap/Alert';
 import NameModal from './NameModal';
 import SeatPicker from './SeatPicker';
 import GroupVideo, { User } from './GroupVideo';
-import { fetchToken, fetchTable } from './services';
-import { random } from './helpers';
+import { fetchToken, fetchTable, joinTable } from './services';
+import { hashCode } from './helpers';
 import { Table } from './types';
 
 type PropTypes = {};
@@ -22,8 +22,10 @@ type StateTypes = {
 
 const rtc = getRTC();
 
+const tableId = "1"; // TODO: Dont hardcode
+
 class App extends Component<PropTypes, StateTypes> {
-  constructor(props: any) {
+  constructor(props: PropTypes) {
     super(props);
     this.state = {
       userId: "",
@@ -76,8 +78,26 @@ class App extends Component<PropTypes, StateTypes> {
     }));
   }
 
+  syncTable = async () => {
+    try {
+      const table: Table = await fetchTable(tableId);
+      this.setState({ table });
+    } catch {
+      console.error("Can't find table");
+    }
+  };
+
   handleClickJoin = async (seatNumber: number) => {
     const { userId } = this.state;
+
+    const joined = await joinTable(tableId, seatNumber, userId);
+    if (!joined) {
+      // TODO: Handle error
+      return;
+    }
+
+    this.syncTable();
+
     let token = ""
     try {
       token = await fetchToken(userId);
@@ -89,7 +109,7 @@ class App extends Component<PropTypes, StateTypes> {
       AGORA_APP_ID,
       "channelName",
       token,
-      userId,
+      parseInt(userId, 10), // Must be an int, otherwise token invalidates :(
     );
 
     rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
@@ -113,24 +133,18 @@ class App extends Component<PropTypes, StateTypes> {
   }
 
   handleEnterName = async (name: string) => {
-    // TODO: Dont hardcode table id
-    const tableId = "1";
-    try {
-      const table: Table = await fetchTable(tableId);
-      this.setState({
-        userId: random(10000).toString(),
-        userName: name,
-        showModal: false,
-        table,
-      });
-    } catch {
-      console.error("Can't find table");
-    }
+    // TODO: THIS IS A BIG HACK!!!! USER IDS WILL EVENTUALLY COLLIDE!!!
+    // userId must be between 1-10000 :(
+    const hash = hashCode(name).toString();
+    let userId = hash.slice(hash.length - 4);
+    this.setState({ userId, userName: name, showModal: false });
+    this.syncTable();
   }
 
   render() {
     const {
       showModal,
+      userId,
       userName,
       hasJoined,
       users,
@@ -156,7 +170,11 @@ class App extends Component<PropTypes, StateTypes> {
           <GroupVideo users={users} />
         )}
         {table && (
-          <SeatPicker table={table} onClick={this.handleClickJoin} />
+          <SeatPicker
+            userId={userId}
+            table={table}
+            onClick={this.handleClickJoin}
+          />
         )}
       </div>
     );

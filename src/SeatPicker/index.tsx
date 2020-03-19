@@ -7,11 +7,13 @@ import { Table, UserInSeat } from '../types';
 import './index.css';
 
 type PropTypes = {
+  userId: string,
   table: Table,
   onClick: (seatNumber: number) => void
 };
 
 function SeatPicker({
+  userId,
   table,
   onClick,
 }: PropTypes) {
@@ -20,6 +22,7 @@ function SeatPicker({
     <div className="SeatPicker">
       <Container fluid>
         <SeatPickerRow
+          userId={userId}
           seats={seats}
           startIndex={0}
           endIndex={Math.ceil(seats.length / 2)}
@@ -27,6 +30,7 @@ function SeatPicker({
         />
         <Row bsPrefix="table-row" />
         <SeatPickerRow
+          userId={userId}
           seats={seats}
           startIndex={Math.ceil(seats.length / 2)}
           endIndex={seats.length}
@@ -38,6 +42,7 @@ function SeatPicker({
 }
 
 type SeatPickerRowPropTypes = {
+  userId: string,
   seats: Array<UserInSeat>,
   startIndex: number,
   endIndex: number,
@@ -45,6 +50,7 @@ type SeatPickerRowPropTypes = {
 };
 
 function SeatPickerRow({
+  userId,
   seats,
   startIndex,
   endIndex,
@@ -60,11 +66,21 @@ function SeatPickerRow({
           ) : (
             `seat${seatNumber}`
           )}>
-            {!!seat ? (
-              <Button variant="danger" disabled>Occupied</Button>
-            ) : (
-              <Button onClick={() => onClick(seatNumber)}>Sit here!</Button>
-            )}
+            {(() => {
+              if (!seat) {
+                return (
+                  <Button onClick={() => onClick(seatNumber)}>Sit here!</Button>
+                );
+              }
+              if (!!seat && seat.userId == userId) {
+                return (
+                  <Button variant="warning" disabled>You</Button>
+                );
+              }
+              return (
+                <Button variant="danger" disabled>Occupied</Button>
+              );
+            })()}
           </Col>
         );
       })}
