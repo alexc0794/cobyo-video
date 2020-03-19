@@ -56,6 +56,7 @@ class App extends Component<PropTypes, StateTypes> {
 
     try {
       const table: Table = await fetchTable(tableId);
+      // console.log("OTHER USER PUBLISH", newUserId);
       this.setTableWithRemoteUsers(table);
     } catch (e) {
       console.warn(e);
@@ -74,6 +75,7 @@ class App extends Component<PropTypes, StateTypes> {
   onUserUnpublish = (unpublishedUser: any) => {
     const { table } = this.state;
     if (table) {
+      // console.log("OTHER USER UNPUBLISH", unpublishedUser.uid.toString());
       this.setTableWithRemoteUsers(table);
     }
   }
@@ -90,15 +92,15 @@ class App extends Component<PropTypes, StateTypes> {
   setTableWithRemoteUsers = (table: Table) => {
     const remoteUserIds = rtc.client.remoteUsers.map(remoteUser => remoteUser.uid.toString());
     remoteUserIds.push(this.state.userId);
-    console.log(remoteUserIds);
-    console.log('before publish', table.seats);
+    // console.log(remoteUserIds);
+    // console.log('before publish', table.seats);
     table.seats = table.seats.map(seat => {
       if (seat && remoteUserIds.includes(seat.userId)) {
         return seat;
       }
       return null;
     });
-    console.log('after publish', table.seats);
+    // console.log('after publish', table.seats);
     updateTable(table.tableId, table.seats, table.name);
     this.setState({ table });
   };
@@ -144,9 +146,6 @@ class App extends Component<PropTypes, StateTypes> {
     rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
     rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
 
-    // When I join a table, update the backend with the users actually on the stream.
-    this.setTableWithRemoteUsers(table);
-
     // TODO: Move this to GroupChat component
     setTimeout(() => {
       if (rtc && rtc.localVideoTrack) {
@@ -159,6 +158,10 @@ class App extends Component<PropTypes, StateTypes> {
       rtc.localAudioTrack,
       rtc.localVideoTrack
     ]);
+
+    // When I join a table, update the backend with the users actually on the stream.
+    // console.log("JOIN TABLE");
+    this.setTableWithRemoteUsers(table);
 
     this.setState({ hasJoined: true });
   }
