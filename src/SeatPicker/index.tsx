@@ -3,6 +3,8 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 import { Table, UserInSeat } from '../types';
 import './index.css';
 
@@ -72,13 +74,26 @@ function SeatPickerRow({
                   <Button onClick={() => onClick(seatNumber)}>Sit here!</Button>
                 );
               }
-              if (!!seat && seat.userId == userId) {
+
+              const tooltip = <Tooltip id={`tooltip-${userId}`}>{`Joined at ${seat.satDownAt}`}</Tooltip>;
+
+              if (!!seat && seat.userId === userId) {
                 return (
-                  <Button variant="warning" disabled>You</Button>
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={tooltip}
+                  >
+                    <span><Button variant="warning" disabled style={{ pointerEvents: 'none' }}>You</Button></span>
+                  </OverlayTrigger>
                 );
               }
               return (
-                <Button variant="danger" disabled>Occupied</Button>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={tooltip}
+                >
+                  <span><Button variant="danger" disabled style={{ pointerEvents: 'none' }}>Occupied</Button></span>
+                </OverlayTrigger>
               );
             })()}
           </Col>

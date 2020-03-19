@@ -22,31 +22,13 @@ export function fetchToken(uid: string): Promise<string> {
   });
 }
 
-type UserInSeatResponse = {
-  user_id: string,
-  sat_down_at: string,
-} | null;
-
 export function fetchTable(tableId: string): Promise<Table> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.get(
         `${BASE_API_URL}/table/${tableId}`
       );
-      const seats: Array<UserInSeat> = response.data.seats.map((seat: UserInSeatResponse) => {
-        if (seat) {
-          return {
-            userId: seat.user_id,
-            satDownAt: seat.sat_down_at,
-          };
-        }
-        return null;
-      });
-      const table: Table = {
-        tableId: response.data.table_id,
-        seats,
-        lastUpdatedAt: response.data.last_updated_at,
-      };
+      const table = _parseTableData(response.data);
       return resolve(table);
     } catch (e) {
       console.error(e)
@@ -55,17 +37,76 @@ export function fetchTable(tableId: string): Promise<Table> {
   })
 }
 
-export function joinTable(tableId: string, seatNumber: number, userId: string): Promise<boolean> {
-  return new Promise(async (resolve, _) => {
+export function joinTable(tableId: string, seatNumber: number, userId: string): Promise<Table> {
+  return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(`${BASE_API_URL}/table/${tableId}/${seatNumber}`, {
         user_id: userId,
       });
-      const success = !!response.data;
-      return resolve(success);
+      const table: Table = _parseTableData(response.data);
+      return resolve(table);
     } catch (e) {
       console.error(e);
-      return resolve(false);
+      return reject("Something went wrong");
     }
   });
+}
+
+export function updateTable(tableId: string, seats: Array<UserInSeat>, name: string): Promise<void> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.post(`${BASE_API_URL}/table/${tableId}`, {
+        seats: seats.map(seat => {
+          if (seat) {
+            return {
+              user_id: seat.userId,
+              sat_down_at: seat.satDownAt,
+            };
+          }
+          return null;
+        }),
+        name
+      });
+
+      if (response && !!response.data) {
+        return resolve();
+      } else {
+        return reject("Something went wrong");
+      }
+    } catch (e) {
+      console.error(e);
+      return reject("Something went wrong");
+    }
+  });
+}
+
+type UserInSeatResponseData = {
+  user_id: string,
+  sat_down_at: string,
+} | null;
+
+type TableResponseData = {
+  table_id: string,
+  seats: Array<UserInSeatResponseData>,
+  name: string,
+  last_updated_at: string,
+};
+
+function _parseTableData(data: TableResponseData): Table {
+  const seats: Array<UserInSeat> = data.seats.map((seatResponseData: UserInSeatResponseData) => {
+    let seat: UserInSeat = null;
+    if (seatResponseData) {
+      seat = {
+        userId: seatResponseData.user_id,
+        satDownAt: seatResponseData.sat_down_at,
+      };
+    }
+    return seat;
+  });
+  return {
+    tableId: data.table_id,
+    seats,
+    lastUpdatedAt: data.last_updated_at,
+    name: data.name
+  };
 }
