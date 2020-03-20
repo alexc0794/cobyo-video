@@ -13,7 +13,7 @@ function HeaderAlert({
 
   const [visible, setVisible] = useState(true);
 
-  let text = `Logged in as "${userName}". `;
+  let text = `Hello "${userName}". `;
   if (numActiveUsers === 0) {
     text += "No one is at the table.";
   } else if (numActiveUsers === 1) {

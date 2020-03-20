@@ -41,7 +41,7 @@ function Table({
     if (!!finalTranscript && await sendAudioTranscript(finalTranscript, tableId)) {
         finalTranscript = '';
     }
-  }, 1000);
+  }, 15000);
 
   return (
     <div className="group-video-table">

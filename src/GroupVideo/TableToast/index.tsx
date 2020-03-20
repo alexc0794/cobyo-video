@@ -17,7 +17,7 @@ function TableToast({
   useInterval(refreshToast, userClosed ? 60000 : 30000);
 
   async function refreshToast() {
-    const keywords = await fetchTableKeywords(tableId, 2);
+    const keywords = await fetchTableKeywords(tableId, 5);
     setMessage(keywords.join(", "));
     setUserClosed(false);
   }
