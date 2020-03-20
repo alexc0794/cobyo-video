@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { Table, UserInSeat } from '../types';
+import { timeSince } from '../helpers';
 import './index.css';
 
 type PropTypes = {
@@ -75,12 +76,12 @@ function SeatPickerRow({
                 );
               }
 
-              const tooltip = <Tooltip id={`tooltip-${userId}`}>{`Joined at ${seat.satDownAt}`}</Tooltip>;
+              const tooltip = <Tooltip id={`tooltip-${userId}`}>{`Joined ${timeSince(new Date(seat.satDownAt))} ago`}</Tooltip>;
 
               if (!!seat && seat.userId === userId) {
                 return (
                   <OverlayTrigger
-                    placement="top"
+                    placement="bottom"
                     overlay={tooltip}
                   >
                     <span><Button variant="warning" disabled style={{ pointerEvents: 'none' }}>You</Button></span>
@@ -89,7 +90,7 @@ function SeatPickerRow({
               }
               return (
                 <OverlayTrigger
-                  placement="top"
+                  placement="bottom"
                   overlay={tooltip}
                 >
                   <span><Button variant="danger" disabled style={{ pointerEvents: 'none' }}>Occupied</Button></span>

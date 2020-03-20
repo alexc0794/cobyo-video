@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Table, UserInSeat } from './types';
 
-const IS_DEV = true;
+const IS_DEV = false;
 
 const BASE_API_URL = IS_DEV ? (
   'http://localhost:8080'
@@ -98,7 +98,7 @@ export function sendAudioTranscript(
   });
 }
 
-export function getTableKeywords(tableId: string, minFrequency = 5): Promise<Array<string>> {
+export function fetchTableKeywords(tableId: string, minFrequency = 5): Promise<Array<string>> {
   return new Promise(async (resolve, _) => {
     try {
       const response = await axios.get(`${BASE_API_URL}/table/${tableId}/keywords?min_frequency=${minFrequency}`);

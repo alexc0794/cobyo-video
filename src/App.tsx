@@ -82,10 +82,10 @@ class App extends Component<PropTypes, StateTypes> {
 
   refreshTable = async () => {
     try {
-      const table: Table = await fetchTable(tableId);
-      this.setState({ table });
+      return await fetchTable(tableId);
     } catch {
       console.error("Can't find table");
+      return null;
     }
   };
 
@@ -172,8 +172,17 @@ class App extends Component<PropTypes, StateTypes> {
     // userId must be between 1-10000 :(
     const hash = hashCode(name).toString();
     let userId = hash.slice(hash.length - 4);
-    this.setState({ userId, userName: name, showModal: false });
-    this.refreshTable();
+    const table = await this.refreshTable();
+    this.setState({ userId, userName: name, showModal: false, table});
+
+    // If we load the table and the user is already sitting at the table, auto-join
+    if (table) {
+      const index = table.seats.findIndex(seat => seat && seat.userId === userId);
+      if (index >= 0) {
+        console.log("Already sitting at table");
+        this.handleClickJoin(index);
+      }
+    }
   }
 
   getUserSeatNumber(): number {

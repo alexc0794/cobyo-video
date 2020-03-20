@@ -32,7 +32,7 @@ function GroupVideo({
   tableId,
 }: GroupVideoPropTypes) {
   return (
-    <Container fluid>
+    <Container fluid className="group-video">
       <Row>
         <Col><Video placement="frontLeftUser" user={frontLeftUser} /></Col>
         <Col><Video placement="frontUser" user={frontUser} /></Col>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import TableToast from '../TableToast';
 import { getSpeechRecognition } from '../../SpeechRecognition';
 import { sendAudioTranscript } from '../../services';
 import { useInterval } from '../../hooks';
@@ -45,6 +46,7 @@ function Table({
   return (
     <div className="group-video-table">
       {interimTranscript}
+      <TableToast tableId={tableId} />
     </div>
   )
 }
