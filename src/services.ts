@@ -80,6 +80,39 @@ export function updateTable(tableId: string, seats: Array<UserInSeat>, name: str
   });
 }
 
+export function sendAudioTranscript(
+  body: string,
+  tableId: string,
+): Promise<boolean> {
+  return new Promise(async (resolve, _) => {
+    try {
+      const response = await axios.post(`${BASE_API_URL}/transcript`, {
+        body,
+        table_id: tableId,
+      });
+      return resolve(response && !!response.data);
+    } catch (e) {
+      console.error(e);
+      return resolve(false);
+    }
+  });
+}
+
+export function getTableKeywords(tableId: string, minFrequency = 5): Promise<Array<string>> {
+  return new Promise(async (resolve, _) => {
+    try {
+      const response = await axios.get(`${BASE_API_URL}/table/${tableId}/keywords?min_frequency=${minFrequency}`);
+      if (response && response.data) {
+        return resolve(Object.keys(response.data));
+      }
+      return resolve([]);
+    } catch (e) {
+      console.error(e);
+      return resolve([]);
+    }
+  })
+}
+
 type UserInSeatResponseData = {
   user_id: string,
   sat_down_at: string,

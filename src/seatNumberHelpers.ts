@@ -2,180 +2,91 @@
 // HARD DEPENDENCY ON TABLE BEING 8 SEATS!!!!!!
 export function getSeatNumber(
   direction: "frontLeft" | "front" | "frontRight" | "left" | "right",
-  fromSeatNumber: number
+  fromSeatNumber: number,
+  numSeats: number,
 ): number {
   switch (direction) {
     case "frontLeft": {
-      return getFrontLeft(fromSeatNumber);
+      return getFrontLeft(fromSeatNumber, numSeats);
     }
     case "front": {
-      return getFront(fromSeatNumber);
+      return getFront(fromSeatNumber, numSeats);
     }
     case "frontRight": {
-      return getFrontRight(fromSeatNumber);
+      return getFrontRight(fromSeatNumber, numSeats);
     }
     case "left": {
-      return getLeft(fromSeatNumber);
+      return getLeft(fromSeatNumber, numSeats);
     }
     case "right": {
-      return getRight(fromSeatNumber);
+      return getRight(fromSeatNumber, numSeats);
     }
     default:
       return -1;
   }
 }
 
-function getFrontLeft(fromSeatNumber: number): number {
-  switch (fromSeatNumber) {
-    case 0: {
-      return 5;
-    }
-    case 1: {
-      return 6;
-    }
-    case 2: {
-      return 7;
-    }
-    case 3: {
-      return -1;
-    }
-    case 4: {
-      return -1;
-    }
-    case 5: {
-      return 0;
-    }
-    case 6: {
-      return 1;
-    }
-    case 7: {
-      return 2;
-    }
-    default:
-      return -1;
+function getFrontLeft(fromSeat: number, numSeats: number): number {
+  const halfNumSeats = numSeats / 2;
+  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
+  const delta = (halfNumSeats + 1) * (inTopRow ? 1 : -1) // Add or subtract half + 1
+  const toSeat = fromSeat + delta;
+  const minIndex = inTopRow ? halfNumSeats : 0;
+  const maxIndex = inTopRow ? numSeats - 1 : halfNumSeats - 1;
+  if (toSeat < minIndex || toSeat > maxIndex) {
+    return -1;
   }
+  return toSeat;
 }
 
-function getFront(fromSeatNumber: number): number {
-  switch (fromSeatNumber) {
-    case 0: {
-      return 4;
-    }
-    case 1: {
-      return 5;
-    }
-    case 2: {
-      return 6;
-    }
-    case 3: {
-      return 7;
-    }
-    case 4: {
-      return 0;
-    }
-    case 5: {
-      return 1;
-    }
-    case 6: {
-      return 2;
-    }
-    case 7: {
-      return 3;
-    }
-    default:
-      return -1;
+function getFront(fromSeat: number, numSeats: number): number {
+  const halfNumSeats = numSeats / 2;
+  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
+  const delta = halfNumSeats * (inTopRow ? 1 : -1) // Add or subtract half + 1
+  const toSeat = fromSeat + delta;
+  const minIndex = inTopRow ? halfNumSeats : 0;
+  const maxIndex = inTopRow ? numSeats - 1 : halfNumSeats - 1;
+  if (toSeat < minIndex || toSeat > maxIndex) {
+    return -1;
   }
+  return toSeat;
 }
 
-function getFrontRight(fromSeatNumber: number): number {
-  switch (fromSeatNumber) {
-    case 0: {
-      return -1;
-    }
-    case 1: {
-      return 4;
-    }
-    case 2: {
-      return 5;
-    }
-    case 3: {
-      return 6;
-    }
-    case 4: {
-      return 1;
-    }
-    case 5: {
-      return 2;
-    }
-    case 6: {
-      return 3;
-    }
-    case 7: {
-      return -1;
-    }
-    default:
-      return -1;
+function getFrontRight(fromSeat: number, numSeats: number): number {
+  const halfNumSeats = numSeats / 2;
+  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
+  const delta = (halfNumSeats - 1) * (inTopRow ? 1 : -1) // Add or subtract half + 1
+  const toSeat = fromSeat + delta;
+  const minIndex = inTopRow ? halfNumSeats : 0;
+  const maxIndex = inTopRow ? numSeats - 1 : halfNumSeats - 1;
+  if (toSeat < minIndex || toSeat > maxIndex) {
+    return -1;
   }
+  return toSeat;
 }
 
-function getLeft(fromSeatNumber: number): number {
-  switch (fromSeatNumber) {
-    case 0: {
-      return 1;
-    }
-    case 1: {
-      return 2;
-    }
-    case 2: {
-      return 3;
-    }
-    case 3: {
-      return -1;
-    }
-    case 4: {
-      return -1;
-    }
-    case 5: {
-      return 4;
-    }
-    case 6: {
-      return 5;
-    }
-    case 7: {
-      return 6;
-    }
-    default:
-      return -1;
+function getLeft(fromSeat: number, numSeats: number): number {
+  const halfNumSeats = numSeats / 2;
+  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
+  const delta = 1 * (inTopRow ? 1 : -1) // Add or subtract half + 1
+  const toSeat = fromSeat + delta;
+  const minIndex = inTopRow ? 0 : halfNumSeats;
+  const maxIndex = inTopRow ? halfNumSeats - 1 : numSeats - 1;
+  if (toSeat < minIndex || toSeat > maxIndex) {
+    return -1;
   }
+  return toSeat;
 }
 
-function getRight(fromSeatNumber: number): number {
-  switch (fromSeatNumber) {
-    case 0: {
-      return -1;
-    }
-    case 1: {
-      return 0;
-    }
-    case 2: {
-      return 1;
-    }
-    case 3: {
-      return 2;
-    }
-    case 4: {
-      return 5;
-    }
-    case 5: {
-      return 6;
-    }
-    case 6: {
-      return 7;
-    }
-    case 7: {
-      return -1;
-    }
-    default:
-      return -1;
+function getRight(fromSeat: number, numSeats: number): number {
+  const halfNumSeats = numSeats / 2;
+  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
+  const delta = -1 * (inTopRow ? 1 : -1) // Add or subtract half + 1
+  const toSeat = fromSeat + delta;
+  const minIndex = inTopRow ? 0 : halfNumSeats;
+  const maxIndex = inTopRow ? halfNumSeats - 1 : numSeats - 1;
+  if (toSeat < minIndex || toSeat > maxIndex) {
+    return -1;
   }
+  return toSeat;
 }

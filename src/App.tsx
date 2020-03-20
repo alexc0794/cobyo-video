@@ -4,7 +4,7 @@ import { getRTC, AGORA_APP_ID } from './AgoraRTC';
 import HeaderAlert from './HeaderAlert';
 import NameModal from './NameModal';
 import SeatPicker from './SeatPicker';
-import SeatViewGroupVideo, { User, SeatViewGroupVideoPropTypes } from './SeatViewGroupVideo';
+import GroupVideo, { User, GroupVideoUsers } from './GroupVideo';
 import { fetchToken, fetchTable, joinTable, updateTable } from './services';
 import { hashCode } from './helpers';
 import { getSeatNumber } from './seatNumberHelpers';
@@ -119,6 +119,7 @@ class App extends Component<PropTypes, StateTypes> {
       table = await joinTable(tableId, seatNumber, userId);
     } catch {
       // TODO: Error handling
+      console.error('Could not join table');
       return;
     }
 
@@ -183,7 +184,7 @@ class App extends Component<PropTypes, StateTypes> {
     return -1;
   }
 
-  getGroupVideoUsers(): SeatViewGroupVideoPropTypes {
+  getGroupVideoUsers(): GroupVideoUsers {
     // Find my seat and get the ppl sitting around me.
     // 1. Get myself
     const { userId, table } = this.state;
@@ -191,7 +192,7 @@ class App extends Component<PropTypes, StateTypes> {
       userId
     };
 
-    let groupVideoUsers: SeatViewGroupVideoPropTypes = {
+    let groupVideoUsers: GroupVideoUsers = {
       user,
       frontLeftUser: null,
       frontUser: null,
@@ -205,11 +206,12 @@ class App extends Component<PropTypes, StateTypes> {
     }
     // Get user seat seatNumber
     const seatNumber = this.getUserSeatNumber();
-    groupVideoUsers.frontLeftUser = table.seats[getSeatNumber("frontLeft", seatNumber)];
-    groupVideoUsers.frontUser = table.seats[getSeatNumber("front", seatNumber)];
-    groupVideoUsers.frontRightUser = table.seats[getSeatNumber("frontRight", seatNumber)];
-    groupVideoUsers.leftUser = table.seats[getSeatNumber("left", seatNumber)];
-    groupVideoUsers.rightUser = table.seats[getSeatNumber("right", seatNumber)];
+    const numSeats = table.seats.length;
+    groupVideoUsers.frontLeftUser = table.seats[getSeatNumber("frontLeft", seatNumber, numSeats)];
+    groupVideoUsers.frontUser = table.seats[getSeatNumber("front", seatNumber, numSeats)];
+    groupVideoUsers.frontRightUser = table.seats[getSeatNumber("frontRight", seatNumber, numSeats)];
+    groupVideoUsers.leftUser = table.seats[getSeatNumber("left", seatNumber, numSeats)];
+    groupVideoUsers.rightUser = table.seats[getSeatNumber("right", seatNumber, numSeats)];
     return groupVideoUsers;
   };
 
@@ -232,7 +234,10 @@ class App extends Component<PropTypes, StateTypes> {
           <HeaderAlert userName={userName} numActiveUsers={numActiveUsers} />
         )}
         {hasJoined && (
-          <SeatViewGroupVideo {...this.getGroupVideoUsers()} />
+          <GroupVideo
+            {...this.getGroupVideoUsers()}
+            tableId={tableId}
+          />
         )}
         {table && (
           <SeatPicker
