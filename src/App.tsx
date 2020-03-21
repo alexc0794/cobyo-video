@@ -4,18 +4,24 @@ import NameModal from './NameModal';
 import Cafeteria from './Cafeteria';
 import GroupVideo from './GroupVideo';
 import { getRTC, RTCType, AGORA_APP_ID } from './AgoraRTC';
-import { fetchToken, fetchTable, updateTableWithUserIdsFromRtc } from './services';
 import { hashCode } from './helpers';
 import { TableType } from './types';
+import { fetchToken } from './services';
+import { connect } from 'react-redux';
+import { fetchAndUpdateTable, updateTableWithRTC } from './redux/tablesActions';
+import { selectJoinedTable } from './redux/tablesSelectors';
 
 let rtc: RTCType = getRTC();
 
-type PropTypes = {};
+type PropTypes = {
+  joinedTable: TableType|null,
+  fetchAndUpdateTable: (tableId: string) => Promise<void>,
+  updateTableWithRTC: (tableId: string, rtc: RTCType, userId: string|null) => Promise<void>
+};
 
 type StateTypes = {
   userId: string|null,
   showModal: boolean,
-  joinedTable: TableType|null,
 }
 
 class App extends Component<PropTypes, StateTypes> {
@@ -25,13 +31,22 @@ class App extends Component<PropTypes, StateTypes> {
     this.state = {
       userId: null,
       showModal: true,
-      joinedTable: null,
     };
   }
 
   componentDidMount() {
     rtc.client.on("user-published", this.handleUserPublish);
     rtc.client.on("user-unpublished", this.handleUserUnpublish);
+  }
+
+  async componentDidUpdate(prevProps: PropTypes) {
+    const prevJoinedTableId = prevProps.joinedTable ? prevProps.joinedTable.tableId : null;
+    const currJoinedTableId = this.props.joinedTable ? this.props.joinedTable.tableId : null
+    const didJoinNewTable = prevJoinedTableId !== currJoinedTableId;
+    const { userId } = this.state;
+    if (didJoinNewTable && userId && !!this.props.joinedTable) {
+      await this.handleJoinTable(this.props.joinedTable, userId);
+    }
   }
 
   handleUserPublish = async (user: any, media: string) => {
@@ -51,28 +66,21 @@ class App extends Component<PropTypes, StateTypes> {
     }, 2000);
 
     // When someone joins, our local state of the table is now out-of-date, so re-fetch the table and update local state.
-    const { joinedTable } = this.state;
-    if (!joinedTable) { return; }
-    try {
-      const table: TableType = await fetchTable(joinedTable.tableId);
-      this.setState({ joinedTable: table });
-    } catch (e) {
-      console.warn(e);
+    const { fetchAndUpdateTable, joinedTable } = this.props;
+    if (joinedTable) {
+      await fetchAndUpdateTable(joinedTable.tableId);
     }
   };
 
   handleUserUnpublish = async (user: any) => {
     // When someone leaves, both our local state and our server state are out-of-date, so take the users on the stream and
     // first update the table on the server, then when successful update table in local state.
-    const { userId, joinedTable } = this.state;
-    if (!userId || !joinedTable) { return; }
-    try {
-      const userIds = [...rtc.client.remoteUsers.map(user => user.uid.toString()), userId];
-      const table: TableType = await updateTableWithUserIdsFromRtc(joinedTable.tableId, userIds);
-      this.setState({ joinedTable: table });
-    } catch (e) {
-      console.error(e);
+    const { joinedTable, updateTableWithRTC } = this.props;
+    const { userId } = this.state;
+    if (joinedTable) {
+      updateTableWithRTC(joinedTable.tableId, rtc, userId);
     }
+
   }
 
   handleJoinTable = async (table: TableType, userId: string) => {
@@ -100,9 +108,7 @@ class App extends Component<PropTypes, StateTypes> {
     // When I join the chat, I want to check the remote users of the stream and update
     // 1. Table in the server --> database is up-to-date
     // 2. Table in my client's local state --> correct div's render on my screen
-    const userIds = [...rtc.client.remoteUsers.map(user => user.uid.toString()), userId];
-    const updatedTable: TableType = await updateTableWithUserIdsFromRtc(table.tableId, userIds);
-    this.setState({ joinedTable: updatedTable });
+    this.props.updateTableWithRTC(table.tableId, rtc, userId);
 
     // This is a hack
     setTimeout(() => {
@@ -120,8 +126,9 @@ class App extends Component<PropTypes, StateTypes> {
   };
 
   render() {
-    const { showModal, joinedTable, userId } = this.state;
-    const { handleEnterName, handleJoinTable } = this;
+    const { joinedTable } = this.props;
+    const { showModal, userId } = this.state;
+    const { handleEnterName } = this;
 
     return (
       <div id="App" className="App">
@@ -131,14 +138,22 @@ class App extends Component<PropTypes, StateTypes> {
         {!!joinedTable && !!userId && (
           <GroupVideo userId={userId} table={joinedTable} />
         )}
-        <Cafeteria
-          userId={userId}
-          onJoin={handleJoinTable}
-          rtc={rtc}
-        />
+        <Cafeteria userId={userId} />
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state: any) => ({
+  joinedTable: selectJoinedTable(state)
+});
+
+const mapDispatchToProps = {
+  fetchAndUpdateTable,
+  updateTableWithRTC
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);

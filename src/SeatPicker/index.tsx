@@ -58,17 +58,13 @@ function SeatPickerRow({
   startIndex,
   endIndex,
   onClick
-}: SeatPickerRowPropTypes) {
+}: SeatPickerRowPropTypes) {  
   return (
     <Row noGutters>
       {seats.slice(startIndex, endIndex).map((seat: UserInSeatType, i: number) => {
         const seatNumber = startIndex + i;
         return (
-          <Col key={seat ? (
-            `seat${seatNumber}-user${seat.userId}`
-          ) : (
-            `seat${seatNumber}`
-          )}>
+          <Col key={seat ? `seat${seatNumber}-user${seat.userId}` : `seat${seatNumber}`}>
             {(() => {
               if (!seat) {
                 return (
@@ -84,7 +80,7 @@ function SeatPickerRow({
                     placement="bottom"
                     overlay={tooltip}
                   >
-                    <span><Button variant="warning" disabled style={{ pointerEvents: 'none' }}>You</Button></span>
+                    <span><Button variant="warning" onClick={() => onClick(seatNumber)}>You</Button></span>
                   </OverlayTrigger>
                 );
               }

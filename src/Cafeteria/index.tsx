@@ -1,38 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Table from '../Table';
-import { RTCType } from '../AgoraRTC';
-import { TableType } from '../types';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 type PropTypes = {
   userId: string|null,
-  onJoin: (table: TableType, userId: string) => void,
-  rtc: RTCType,
 }
 
-function Cafeteria({
-  userId,
-  onJoin,
-  rtc,
-}: PropTypes) {
-  const [tableIds, setTableIds] = useState<Array<string>>([]);
-
-  useEffect(() => {
-    const HARDCODED_TABLE_IDS = ["1", "2"];
-    setTableIds(HARDCODED_TABLE_IDS);
-  }, []);
-
+function Cafeteria({ userId }: PropTypes) {
   return (
-    <div>
-      {tableIds.map(tableId => (
-        <Table
-          key={tableId}
-          tableId={tableId}
-          userId={userId}
-          onJoin={onJoin}
-          rtc={rtc}
-        />
-      ))}
-    </div>
+    <Container fluid>
+      <Row>
+        <Col>
+          <Table
+            key="1"
+            tableId="1"
+            userId={userId}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Table
+            key="2"
+            tableId="2"
+            userId={userId}
+          />
+        </Col>
+        <Col>
+          <Table
+            key="3"
+            tableId="3"
+            userId={userId}
+          />
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

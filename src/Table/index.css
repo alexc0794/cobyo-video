@@ -1,19 +1,19 @@
-.SeatPicker {
+.Table {
   padding: 25px 10px;
 }
 
-.SeatPicker .row {
+.Table .row {
   min-height: 50px;
 }
 
-.SeatPicker .table-row {
+.Table .table-row {
   display: flex;
   background-color: lightslategrey;
   min-height: 150px;
   border-radius: 10px;
 }
 
-.SeatPicker .col {
+.Table .col {
   display: flex;
   justify-content: center;
   padding: 10px 0;
