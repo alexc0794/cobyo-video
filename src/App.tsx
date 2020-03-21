@@ -1,260 +1,141 @@
 import React, { Component } from 'react';
 import AgoraRTC from "agora-rtc-sdk-ng";
-import { getRTC, AGORA_APP_ID } from './AgoraRTC';
-import HeaderAlert from './HeaderAlert';
 import NameModal from './NameModal';
-import SeatPicker from './SeatPicker';
-import GroupVideo, { User, GroupVideoUsers } from './GroupVideo';
-import { fetchToken, fetchTable, joinTable, updateTable } from './services';
+import Cafeteria from './Cafeteria';
+import GroupVideo from './GroupVideo';
+import { getRTC, RTCType, AGORA_APP_ID } from './AgoraRTC';
+import { fetchToken, fetchTable, updateTableWithUserIdsFromRtc } from './services';
 import { hashCode } from './helpers';
-import { getSeatNumber } from './seatNumberHelpers';
-import { Table } from './types';
+import { TableType } from './types';
+
+let rtc: RTCType = getRTC();
 
 type PropTypes = {};
 
 type StateTypes = {
-  userId: string,
-  userName: string,
-  hasJoined: boolean,
+  userId: string|null,
   showModal: boolean,
-  table: Table | null,
+  joinedTable: TableType|null,
 }
 
-const rtc = getRTC();
-
-const tableId = "1"; // TODO: Dont hardcode
-
 class App extends Component<PropTypes, StateTypes> {
+
   constructor(props: PropTypes) {
     super(props);
     this.state = {
-      userId: "",
-      userName: "",
-      hasJoined: false,
+      userId: null,
       showModal: true,
-      table: null,
+      joinedTable: null,
     };
   }
 
   componentDidMount() {
-    rtc.client.on("connection-state-change", (curState, revState, reason) => {});
-    rtc.client.on("user-published", this.onUserPublish);
-    rtc.client.on("user-unpublished", this.onUserUnpublish);
+    rtc.client.on("user-published", this.handleUserPublish);
+    rtc.client.on("user-unpublished", this.handleUserUnpublish);
   }
 
-  onUserPublish = async (user: any, mediaType: string) => {
-    // Subscribe to a remote user
+  handleUserPublish = async (user: any, media: string) => {
     await rtc.client.subscribe(user);
     const newUserId = user.uid.toString();
-    // Get `RemoteAudioTrack` and `RemoteVideoTrack` in the `user` object.
     const remoteAudioTrack = user.audioTrack;
     const remoteVideoTrack = user.videoTrack;
 
-    if (!remoteAudioTrack || !remoteVideoTrack) {
-      return;
-    }
+    // Hack for now
+    setTimeout(() => {
+      if (remoteVideoTrack) {
+        remoteVideoTrack.play(`video-${newUserId}`);
+      }
+      if (remoteAudioTrack) {
+        remoteAudioTrack.play();
+      }
+    }, 2000);
 
+    // When someone joins, our local state of the table is now out-of-date, so re-fetch the table and update local state.
+    const { joinedTable } = this.state;
+    if (!joinedTable) { return; }
     try {
-      const table: Table = await fetchTable(tableId);
-      // console.log("OTHER USER PUBLISH", newUserId);
-      this.setTableWithRemoteUsers(table);
+      const table: TableType = await fetchTable(joinedTable.tableId);
+      this.setState({ joinedTable: table });
     } catch (e) {
       console.warn(e);
     }
+  };
 
-    // This a hack
-    setTimeout(() => {
-      // Play the remote audio and video tracks
-      // Pass the ID of the DIV container and the SDK dynamically creates a user in the container for playing the remote video track
-      remoteVideoTrack.play(`video-${newUserId}`);
-      // Play the audio track. Do not need to pass any DOM element
-      remoteAudioTrack.play();
-    }, 2000);
-  }
-
-  onUserUnpublish = (unpublishedUser: any) => {
-    const { table } = this.state;
-    if (table) {
-      // console.log("OTHER USER UNPUBLISH", unpublishedUser.uid.toString());
-      this.setTableWithRemoteUsers(table);
+  handleUserUnpublish = async (user: any) => {
+    // When someone leaves, both our local state and our server state are out-of-date, so take the users on the stream and
+    // first update the table on the server, then when successful update table in local state.
+    const { userId, joinedTable } = this.state;
+    if (!userId || !joinedTable) { return; }
+    try {
+      const userIds = [...rtc.client.remoteUsers.map(user => user.uid.toString()), userId];
+      const table: TableType = await updateTableWithUserIdsFromRtc(joinedTable.tableId, userIds);
+      this.setState({ joinedTable: table });
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  refreshTable = async () => {
-    try {
-      return await fetchTable(tableId);
-    } catch {
-      console.error("Can't find table");
-      return null;
-    }
-  };
-
-  setTableWithRemoteUsers = (table: Table) => {
-    const remoteUserIds = rtc.client.remoteUsers.map(remoteUser => remoteUser.uid.toString());
-    remoteUserIds.push(this.state.userId);
-    // console.log(remoteUserIds);
-    // console.log('before publish', table.seats);
-    table.seats = table.seats.map(seat => {
-      if (seat && remoteUserIds.includes(seat.userId)) {
-        return seat;
-      }
-      return null;
-    });
-    // console.log('after publish', table.seats);
-    updateTable(table.tableId, table.seats, table.name);
-    this.setState({ table });
-  };
-
-  handleClickJoin = async (seatNumber: number) => {
-    const isAlreadyConnected = rtc.client.connectionState === 'CONNECTED';
-    if (isAlreadyConnected) {
-      // TODO: Switch channels
-      alert("Not yet implemented");
-      return;
-    }
-
-    const { userId } = this.state;
-    let table: Table;
-    try {
-      table = await joinTable(tableId, seatNumber, userId);
-    } catch {
-      // TODO: Error handling
-      console.error('Could not join table');
-      return;
-    }
-
-    let token;
-    try {
-      token = await fetchToken(userId);
-    } catch {
-      // TODO: Error handling
-      alert("No token found. Alex probably fucked up.");
-      return;
-    }
-
+  handleJoinTable = async (table: TableType, userId: string) => {
+    const token = await fetchToken(userId);
     try {
       await rtc.client.join(
         AGORA_APP_ID,
-        "channelName", // TODO
+        "channelName", // TODO, channel should be based on tableId
         token,
         parseInt(userId, 10), // Must be an int, otherwise token invalidates :(
       );
     } catch (e) {
-      // TODO: Error handling
+      console.error(e); // TODO: Error handling
       return;
     }
 
     rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
     rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
 
-    // TODO: Move this to GroupChat component
+    await rtc.client.publish([
+      rtc.localAudioTrack,
+      rtc.localVideoTrack
+    ]);
+
+    // When I join the chat, I want to check the remote users of the stream and update
+    // 1. Table in the server --> database is up-to-date
+    // 2. Table in my client's local state --> correct div's render on my screen
+    const userIds = [...rtc.client.remoteUsers.map(user => user.uid.toString()), userId];
+    const updatedTable: TableType = await updateTableWithUserIdsFromRtc(table.tableId, userIds);
+    this.setState({ joinedTable: updatedTable });
+
+    // This is a hack
     setTimeout(() => {
       if (rtc && rtc.localVideoTrack) {
         // Make sure client isn't joining a second time otherwise there will be duplicate camera windows.
         rtc.localVideoTrack.play(`video-${userId}`);
       }
     }, 2000);
+  };
 
-    await rtc.client.publish([
-      rtc.localAudioTrack,
-      rtc.localVideoTrack
-    ]);
-
-    // When I join a table, update the backend with the users actually on the stream.
-    // console.log("JOIN TABLE");
-    this.setTableWithRemoteUsers(table);
-
-    this.setState({ hasJoined: true });
-  }
-
-  handleEnterName = async (name: string) => {
-    // TODO: THIS IS A BIG HACK!!!! USER IDS WILL EVENTUALLY COLLIDE!!!
-    // userId must be between 1-10000 :(
+  handleEnterName = (name: string) => {
     const hash = hashCode(name).toString();
-    let userId = hash.slice(hash.length - 4);
-    const table = await this.refreshTable();
-    this.setState({ userId, userName: name, showModal: false, table});
-
-    // If we load the table and the user is already sitting at the table, auto-join
-    if (table) {
-      const index = table.seats.findIndex(seat => seat && seat.userId === userId);
-      if (index >= 0) {
-        console.log("Already sitting at table");
-        this.handleClickJoin(index);
-      }
-    }
-  }
-
-  getUserSeatNumber(): number {
-    const { userId, table } = this.state;
-    if (table) {
-      return table.seats.findIndex(seat => seat && seat.userId === userId);
-    }
-    return -1;
-  }
-
-  getGroupVideoUsers(): GroupVideoUsers {
-    // Find my seat and get the ppl sitting around me.
-    // 1. Get myself
-    const { userId, table } = this.state;
-    const user: User = {
-      userId
-    };
-
-    let groupVideoUsers: GroupVideoUsers = {
-      user,
-      frontLeftUser: null,
-      frontUser: null,
-      frontRightUser: null,
-      leftUser: null,
-      rightUser: null,
-    }
-
-    if (!table) {
-      return groupVideoUsers;
-    }
-    // Get user seat seatNumber
-    const seatNumber = this.getUserSeatNumber();
-    const numSeats = table.seats.length;
-    groupVideoUsers.frontLeftUser = table.seats[getSeatNumber("frontLeft", seatNumber, numSeats)];
-    groupVideoUsers.frontUser = table.seats[getSeatNumber("front", seatNumber, numSeats)];
-    groupVideoUsers.frontRightUser = table.seats[getSeatNumber("frontRight", seatNumber, numSeats)];
-    groupVideoUsers.leftUser = table.seats[getSeatNumber("left", seatNumber, numSeats)];
-    groupVideoUsers.rightUser = table.seats[getSeatNumber("right", seatNumber, numSeats)];
-    return groupVideoUsers;
+    const userId = hash.slice(hash.length - 4); // userId must be between 1-10000 :(
+    this.setState({ userId, showModal: false });
   };
 
   render() {
-    const {
-      showModal,
-      hasJoined,
-      userId,
-      userName,
-      table,
-    } = this.state;
-    const numActiveUsers = table ? table.seats.filter(seat => !!seat).length : 0;
+    const { showModal, joinedTable, userId } = this.state;
+    const { handleEnterName, handleJoinTable } = this;
 
     return (
       <div id="App" className="App">
         {showModal && (
-          <NameModal onEnterName={this.handleEnterName} />
+          <NameModal onEnterName={handleEnterName} />
         )}
-        {!!userName && (
-          <HeaderAlert userName={userName} numActiveUsers={numActiveUsers} />
+        {!!joinedTable && !!userId && (
+          <GroupVideo userId={userId} table={joinedTable} />
         )}
-        {hasJoined && (
-          <GroupVideo
-            {...this.getGroupVideoUsers()}
-            tableId={tableId}
-          />
-        )}
-        {table && (
-          <SeatPicker
-            userId={userId}
-            table={table}
-            onClick={this.handleClickJoin}
-          />
-        )}
+        <Cafeteria
+          userId={userId}
+          onJoin={handleJoinTable}
+          rtc={rtc}
+        />
       </div>
     );
   }

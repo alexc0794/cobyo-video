@@ -6,7 +6,7 @@ import AgoraRTC, {
 
 export const AGORA_APP_ID = '0e12dacab1874ad5939be54efd01d4c3'
 
-type RTC = {
+export type RTCType = {
  client: IAgoraRTCClient,
  joined: boolean,
  published: boolean,
@@ -16,7 +16,7 @@ type RTC = {
  localVideoTrack: ICameraVideoTrack | null,
 };
 
-export function getRTC(): RTC {
+export function getRTC(): RTCType {
   return {
     client: AgoraRTC.createClient({
       mode: "rtc",

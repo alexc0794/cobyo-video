@@ -13,13 +13,12 @@ type PropTypes = {
 function NameModal({
   onEnterName
 }: PropTypes) {
-
-  const [name, setName] = useState("");
+  const initialName = window.localStorage.getItem('name');
+  const [name, setName] = useState(initialName || '');
 
   function handleChangeName(e: any) {
     const alphaExp = /^[a-zA-Z]+$/;
     const value = e.target.value;
-
     if (!value || value.match(alphaExp)) {
       setName(e.target.value);
     }
@@ -35,13 +34,14 @@ function NameModal({
     if (!name) {
       return;
     }
-    onEnterName(name)
+    window.localStorage.setItem('name', name);
+    onEnterName(name);
   }
 
   return (
     <Modal show backdrop={"static"}>
       <Modal.Header>
-        <Modal.Title>Welcome to the Virtual Cafeteria!</Modal.Title>
+        <Modal.Title>Welcome {initialName ? "back" : ""} to the Virtual Cafeteria!</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         This is a video hangout space attempting to simulate a real-life cafeteria.

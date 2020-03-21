@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Table, UserInSeat } from './types';
+import { TableType, UserInSeatType } from './types';
 
-const IS_DEV = false;
+const IS_DEV = true;
 
 const BASE_API_URL = IS_DEV ? (
   'http://localhost:8080'
@@ -10,19 +10,18 @@ const BASE_API_URL = IS_DEV ? (
 );
 
 export function fetchToken(uid: string): Promise<string> {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve, _) => {
     try {
-      const response = await axios.get(
-        `${BASE_API_URL}/token/${uid}`
-      );
+      const response = await axios.get(`${BASE_API_URL}/token/${uid}`);
       return resolve(response.data.toString());
     } catch (e) {
-      return reject("Something went wrong");
+      console.error(e);
+      return resolve("");
     }
   });
 }
 
-export function fetchTable(tableId: string): Promise<Table> {
+export function fetchTable(tableId: string): Promise<TableType> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.get(
@@ -37,13 +36,13 @@ export function fetchTable(tableId: string): Promise<Table> {
   })
 }
 
-export function joinTable(tableId: string, seatNumber: number, userId: string): Promise<Table> {
+export function joinTable(tableId: string, seatNumber: number, userId: string): Promise<TableType> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(`${BASE_API_URL}/table/${tableId}/${seatNumber}`, {
         user_id: userId,
       });
-      const table: Table = _parseTableData(response.data);
+      const table: TableType = _parseTableData(response.data);
       return resolve(table);
     } catch (e) {
       console.error(e);
@@ -52,7 +51,25 @@ export function joinTable(tableId: string, seatNumber: number, userId: string): 
   });
 }
 
-export function updateTable(tableId: string, seats: Array<UserInSeat>, name: string): Promise<void> {
+export async function updateTableWithUserIdsFromRtc(
+  tableId: string,
+  userIds: Array<string>,
+): Promise<TableType> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.post(`${BASE_API_URL}/table/${tableId}/user_ids`, {
+        user_ids: userIds
+      });
+      const table: TableType = _parseTableData(response.data);
+      return resolve(table);
+    } catch (e) {
+      console.error(e);
+      return reject("Something went wrong");
+    }
+  });
+}
+
+export function updateTable(tableId: string, seats: Array<UserInSeatType>, name: string): Promise<void> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(`${BASE_API_URL}/table/${tableId}`, {
@@ -125,9 +142,9 @@ type TableResponseData = {
   last_updated_at: string,
 };
 
-function _parseTableData(data: TableResponseData): Table {
-  const seats: Array<UserInSeat> = data.seats.map((seatResponseData: UserInSeatResponseData) => {
-    let seat: UserInSeat = null;
+function _parseTableData(data: TableResponseData): TableType {
+  const seats: Array<UserInSeatType> = data.seats.map((seatResponseData: UserInSeatResponseData) => {
+    let seat: UserInSeatType = null;
     if (seatResponseData) {
       seat = {
         userId: seatResponseData.user_id,

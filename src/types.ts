@@ -1,11 +1,11 @@
-export type UserInSeat = {
+export type UserInSeatType = {
   userId: string,
   satDownAt: string,
 } | null;
 
-export type Table = {
+export type TableType = {
   tableId: string,
-  seats: Array<UserInSeat>,
+  seats: Array<UserInSeatType>,
   name: string,
   lastUpdatedAt: string,
 };

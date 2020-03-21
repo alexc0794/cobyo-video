@@ -3,34 +3,42 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from './Table';
+import { UserInSeatType, TableType } from '../types';
+import { getSeatNumber } from '../seatNumberHelpers';
 import './index.css';
 
-export type User = {
+function getGroupVideoUsers(userId: string, table: TableType): GroupVideoUsersType {
+  const seat: number = table.seats.findIndex(seat => seat && seat.userId === userId);
+  const numSeats = table.seats.length;
+  return {
+    user: table.seats[seat],
+    frontLeftUser: table.seats[getSeatNumber("frontLeft", seat, numSeats)],
+    frontUser: table.seats[getSeatNumber("front", seat, numSeats)],
+    frontRightUser: table.seats[getSeatNumber("frontRight", seat, numSeats)],
+    leftUser: table.seats[getSeatNumber("left", seat, numSeats)],
+    rightUser: table.seats[getSeatNumber("right", seat, numSeats)]
+  };
+}
+
+export type GroupVideoUsersType = {
+  user: UserInSeatType | null,
+  frontUser: UserInSeatType | null,
+  frontLeftUser: UserInSeatType | null,
+  frontRightUser: UserInSeatType | null,
+  leftUser: UserInSeatType | null,
+  rightUser: UserInSeatType | null,
+}
+
+export type GroupVideoPropTypes = {
   userId: string,
-}
-
-export type GroupVideoUsers = {
-  user: User,
-  frontUser: User | null,
-  frontLeftUser: User | null,
-  frontRightUser: User | null,
-  leftUser: User | null,
-  rightUser: User | null,
-}
-
-export type GroupVideoPropTypes = GroupVideoUsers & {
-  tableId: string,
+  table: TableType,
 };
 
 function GroupVideo({
-  user,
-  frontUser,
-  frontLeftUser,
-  frontRightUser,
-  leftUser,
-  rightUser,
-  tableId,
+  userId,
+  table,
 }: GroupVideoPropTypes) {
+  const { user, frontLeftUser, frontUser, frontRightUser, leftUser, rightUser } = getGroupVideoUsers(userId, table);
   return (
     <Container fluid className="group-video">
       <Row>
@@ -39,7 +47,7 @@ function GroupVideo({
         <Col><Video placement="frontRightUser" user={frontRightUser} /></Col>
       </Row>
       <Row>
-        <Table tableId={tableId} />
+        <Table tableId={table.tableId} />
       </Row>
       <Row>
         <Col><Video placement="leftUser" user={leftUser} /></Col>
@@ -52,7 +60,7 @@ function GroupVideo({
 
 type VideoPropTypes = {
   placement: string,
-  user: User | null
+  user: UserInSeatType | null
 }
 
 function Video({ placement, user }: VideoPropTypes) {

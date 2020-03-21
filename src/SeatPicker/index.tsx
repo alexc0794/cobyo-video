@@ -5,13 +5,13 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import { Table, UserInSeat } from '../types';
+import { TableType, UserInSeatType } from '../types';
 import { timeSince } from '../helpers';
 import './index.css';
 
 type PropTypes = {
-  userId: string,
-  table: Table,
+  userId: string|null,
+  table: TableType,
   onClick: (seatNumber: number) => void
 };
 
@@ -45,8 +45,8 @@ function SeatPicker({
 }
 
 type SeatPickerRowPropTypes = {
-  userId: string,
-  seats: Array<UserInSeat>,
+  userId: string|null,
+  seats: Array<UserInSeatType>,
   startIndex: number,
   endIndex: number,
   onClick: (seatNumber: number) => void
@@ -61,7 +61,7 @@ function SeatPickerRow({
 }: SeatPickerRowPropTypes) {
   return (
     <Row noGutters>
-      {seats.slice(startIndex, endIndex).map((seat: UserInSeat, i: number) => {
+      {seats.slice(startIndex, endIndex).map((seat: UserInSeatType, i: number) => {
         const seatNumber = startIndex + i;
         return (
           <Col key={seat ? (
