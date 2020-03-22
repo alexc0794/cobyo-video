@@ -9,10 +9,10 @@ const BASE_API_URL = IS_DEV ? (
   'https://y6f6x4ptsa.execute-api.us-east-1.amazonaws.com/dev'
 );
 
-export function fetchToken(uid: string): Promise<string> {
+export function fetchToken(uid: string, tableId: string): Promise<string> {
   return new Promise(async (resolve, _) => {
     try {
-      const response = await axios.get(`${BASE_API_URL}/token/${uid}`);
+      const response = await axios.get(`${BASE_API_URL}/token/${uid}?channel_name=${tableId}`);
       return resolve(response.data.toString());
     } catch (e) {
       console.error(e);

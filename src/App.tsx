@@ -87,11 +87,11 @@ class App extends Component<PropTypes, StateTypes> {
   }
 
   handleJoinTable = async (table: TableType, userId: string) => {
-    const token = await fetchToken(userId);
+    const token = await fetchToken(userId, table.tableId);
     try {
       await rtc.client.join(
         AGORA_APP_ID,
-        "channelName", // TODO, channel should be based on tableId
+        table.tableId, // TODO, channel should be based on tableId
         token,
         parseInt(userId, 10), // Must be an int, otherwise token invalidates :(
       );
