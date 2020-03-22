@@ -8,7 +8,7 @@ import { hashCode } from './helpers';
 import { TableType } from './types';
 import { fetchToken } from './services';
 import { connect } from 'react-redux';
-import { fetchAndUpdateTable, updateTableWithRTC } from './redux/tablesActions';
+import { fetchAndUpdateTable, joinAndUpdateTable, updateTableWithRTC } from './redux/tablesActions';
 import { selectJoinedTable } from './redux/tablesSelectors';
 
 let rtc: RTCType = getRTC();
@@ -16,6 +16,7 @@ let rtc: RTCType = getRTC();
 type PropTypes = {
   joinedTable: TableType|null,
   fetchAndUpdateTable: (tableId: string) => Promise<void>,
+  joinAndUpdateTable: (tableId: string, seat: number, userId: string) => Promise<void>,
   updateTableWithRTC: (tableId: string, rtc: RTCType, userId: string|null) => Promise<void>
 };
 
@@ -42,10 +43,13 @@ class App extends Component<PropTypes, StateTypes> {
   async componentDidUpdate(prevProps: PropTypes) {
     const prevJoinedTableId = prevProps.joinedTable ? prevProps.joinedTable.tableId : null;
     const currJoinedTableId = this.props.joinedTable ? this.props.joinedTable.tableId : null
-    const didJoinNewTable = prevJoinedTableId !== currJoinedTableId;
+    const didTableChange = prevJoinedTableId !== currJoinedTableId;
     const { userId } = this.state;
-    if (didJoinNewTable && userId && !!this.props.joinedTable) {
-      await this.handleJoinTable(this.props.joinedTable, userId);
+    const { joinedTable } = this.props;
+    if (didTableChange && !!joinedTable && userId) {
+      await this.handleJoinTable(joinedTable, userId);
+    } else if (didTableChange && !joinedTable && userId) {
+      this.handleLeaveTable();
     }
   }
 
@@ -80,7 +84,6 @@ class App extends Component<PropTypes, StateTypes> {
     if (joinedTable) {
       updateTableWithRTC(joinedTable.tableId, rtc, userId);
     }
-
   }
 
   handleJoinTable = async (table: TableType, userId: string) => {
@@ -119,6 +122,17 @@ class App extends Component<PropTypes, StateTypes> {
     }, 2000);
   };
 
+  handleLeaveTable = async () => {
+    if (rtc.localAudioTrack) {
+      rtc.localAudioTrack.close();
+    }
+    if (rtc.localVideoTrack) {
+      rtc.localVideoTrack.close();
+    }
+    await rtc.client.leave();
+
+  };
+
   handleEnterName = (name: string) => {
     const hash = hashCode(name).toString();
     const userId = hash.slice(hash.length - 4); // userId must be between 1-10000 :(
@@ -150,6 +164,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   fetchAndUpdateTable,
+  joinAndUpdateTable,
   updateTableWithRTC
 };
 

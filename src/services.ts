@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { TableType, UserInSeatType } from './types';
 
-const IS_DEV = true;
+const IS_DEV = false;
 
 const BASE_API_URL = IS_DEV ? (
   'http://localhost:8080'
@@ -40,6 +40,21 @@ export function joinTable(tableId: string, seatNumber: number, userId: string): 
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(`${BASE_API_URL}/table/${tableId}/${seatNumber}`, {
+        user_id: userId,
+      });
+      const table: TableType = _parseTableData(response.data);
+      return resolve(table);
+    } catch (e) {
+      console.error(e);
+      return reject("Something went wrong");
+    }
+  });
+}
+
+export function leaveTable(tableId: string, userId: string): Promise<TableType> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.post(`${BASE_API_URL}/table/${tableId}/leave`, {
         user_id: userId,
       });
       const table: TableType = _parseTableData(response.data);

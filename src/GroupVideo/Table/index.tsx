@@ -28,8 +28,7 @@ function Table({
           setInterimTranscript(transcript);
         }
       });
-    };    
-    speechRecognition.onend = () => speechRecognition.start();
+    };
     speechRecognition.start();
 
     return () => {

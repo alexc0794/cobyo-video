@@ -1,15 +1,20 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAndUpdateTable, joinAndUpdateTable } from '../redux/tablesActions';
-import { selectTableById } from '../redux/tablesSelectors';
+import { fetchAndUpdateTable, joinAndUpdateTable, leaveAndUpdateTable } from '../redux/tablesActions';
+import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from '../redux/tablesSelectors';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChair, faUser } from '@fortawesome/free-solid-svg-icons'
+
 import { UserInSeatType } from '../types';
 import { timeSince } from '../helpers';
+import { useInterval } from '../hooks';
+import cx from 'classnames';
 import './index.css';
 
 type PropTypes = {
@@ -23,14 +28,37 @@ function Table({
 }: PropTypes) {
   const dispatch = useDispatch();
   const table = useSelector(selectTableById(tableId));
+  const joinedTableId = useSelector(selectJoinedTableId);
+  const isUserJoined = joinedTableId === tableId;
+  const isUserJoinedAnother = joinedTableId !== null && !isUserJoined;
+  const seat = useSelector(selectJoinedTableSeat(userId || ""));
 
   useEffect(() => {
     dispatch(fetchAndUpdateTable(tableId))
   }, [tableId, dispatch]);
 
-  async function handlePickSeat(seat: number) {
-    if (!userId) { return; }
+  useInterval(() => {
+    if (!userId || seat < 0 || !isUserJoined) { return; }
     dispatch(joinAndUpdateTable(tableId, seat, userId));
+  }, 60000);
+
+  async function handlePickSeat(pickedSeat: number) {
+    if (!userId) { return; }
+
+    const isSwitchingSeat = isUserJoined && pickedSeat !== seat;
+    if (isSwitchingSeat) {
+      // TODO:
+      // await dispatch(leaveAndUpdateTable(tableId, userId));
+      alert('Not yet implemented. Leave table first, then join.');
+      return;
+    }
+
+    dispatch(joinAndUpdateTable(tableId, pickedSeat, userId));
+  }
+
+  async function handleLeaveTable() {
+    if (!userId) { return; }
+    dispatch(leaveAndUpdateTable(tableId, userId));
   }
 
   if (!table) {
@@ -38,9 +66,11 @@ function Table({
   }
 
   const { seats } = table;
-
   return (
-    <div className="Table">
+    <div className={cx("table", {
+      "table-joined": isUserJoined,
+      "table-joined-another": isUserJoinedAnother,
+    })}>
       <Container fluid>
         <TableRow
           userId={userId}
@@ -49,7 +79,11 @@ function Table({
           endIndex={Math.ceil(seats.length / 2)}
           onClick={handlePickSeat}
         />
-        <Row bsPrefix="table-row" />
+        <Row bsPrefix="table-row">
+          {(true || isUserJoined) && (
+            <Button variant="primary" onClick={handleLeaveTable}>Leave</Button>
+          )}
+        </Row>
         <TableRow
           userId={userId}
           seats={seats}
@@ -83,34 +117,48 @@ function TableRow({
         const seatNumber = startIndex + i;
         return (
           <Col key={seat ? `seat${seatNumber}-user${seat.userId}` : `seat${seatNumber}`}>
-            {(() => {
-              if (!seat) {
-                return (
-                  <Button onClick={() => onClick(seatNumber)}>Sit here!</Button>
-                );
-              }
+            <div className="table-chair">
+              {(() => {
+                if (!seat) {
+                  return (
+                    <div className="table-chair-open" onClick={() => onClick(seatNumber)}>
+                      <FontAwesomeIcon icon={faChair} />
+                    </div>
+                  );
+                }
 
-              const tooltip = <Tooltip id={`tooltip-${userId}`}>{`Joined ${timeSince(new Date(seat.satDownAt))} ago`}</Tooltip>;
-
-              if (!!seat && seat.userId === userId) {
+                if (!!seat && seat.userId === userId) {
+                  return (
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip id={`tooltip-${userId}`}>
+                          {`You joined ${timeSince(new Date(seat.satDownAt))} ago`}
+                        </Tooltip>
+                      }
+                    >
+                      <div className="table-chair-you" onClick={() => onClick(seatNumber)}>
+                        <FontAwesomeIcon icon={faUser} />
+                      </div>
+                    </OverlayTrigger>
+                  );
+                }
                 return (
                   <OverlayTrigger
                     placement="bottom"
-                    overlay={tooltip}
+                    overlay={
+                      <Tooltip id={`tooltip-${userId}`}>
+                        {`Joined ${timeSince(new Date(seat.satDownAt))} ago`}
+                      </Tooltip>
+                    }
                   >
-                    <span><Button variant="warning" onClick={() => onClick(seatNumber)}>You</Button></span>
+                    <div className="table-chair-occupied">
+                      <FontAwesomeIcon icon={faUser} />
+                    </div>
                   </OverlayTrigger>
                 );
-              }
-              return (
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={tooltip}
-                >
-                  <span><Button variant="danger" disabled style={{ pointerEvents: 'none' }}>Occupied</Button></span>
-                </OverlayTrigger>
-              );
-            })()}
+              })()}
+            </div>
           </Col>
         );
       })}

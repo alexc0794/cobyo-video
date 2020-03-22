@@ -1,6 +1,6 @@
 import { TableType } from '../types';
 import { RTCType } from '../AgoraRTC';
-import { fetchTable, joinTable, updateTableWithUserIdsFromRtc } from '../services';
+import { fetchTable, joinTable, leaveTable, updateTableWithUserIdsFromRtc } from '../services';
 
 export const updateTable = (table: TableType) => ({
   type: "UPDATE_TABLE",
@@ -16,6 +16,11 @@ export const joinedTable = (table: TableType) => ({
   }
 });
 
+export const leftTable = (table: TableType) => ({
+  type: "LEFT_TABLE",
+  payload: { table }
+})
+
 export function fetchAndUpdateTable(tableId: string) {
   return function(dispatch: any, getState: () => any) {
     return fetchTable(tableId).then(table => {
@@ -28,6 +33,14 @@ export function joinAndUpdateTable(tableId: string, seat: number, userId: string
   return function (dispatch: any) {
     return joinTable(tableId, seat, userId).then(table => {
       dispatch(joinedTable(table));
+    });
+  }
+}
+
+export function leaveAndUpdateTable(tableId: string, userId: string) {
+  return function (dispatch: any) {
+    return leaveTable(tableId, userId).then(table => {
+      dispatch(leftTable(table));
     });
   }
 }

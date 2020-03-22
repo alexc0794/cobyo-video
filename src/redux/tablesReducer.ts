@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 function byId(state = {}, action: any) {
   switch (action.type) {
     case 'UPDATE_TABLE':
+    case 'LEFT_TABLE':
     case 'JOINED_TABLE': {
       const { table } = action.payload;
       return {
@@ -22,6 +23,9 @@ function activeTableId(state = null, action: any) {
     case 'JOINED_TABLE': {
       const { table: { tableId } } = action.payload;
       return tableId;
+    }
+    case 'LEFT_TABLE': {
+      return null;
     }
     default:
       return state;
