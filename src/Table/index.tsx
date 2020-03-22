@@ -80,7 +80,7 @@ function Table({
           onClick={handlePickSeat}
         />
         <Row bsPrefix="table-row">
-          {(true || isUserJoined) && (
+          {isUserJoined && (
             <Button variant="primary" onClick={handleLeaveTable}>Leave</Button>
           )}
         </Row>
