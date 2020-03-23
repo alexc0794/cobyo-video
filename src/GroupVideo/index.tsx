@@ -58,7 +58,7 @@ function GroupVideo({
 
     function removeNullsOnEnd(seats: Array<number|null>): Array<number|null> {
       const firstNonNullSeat = seats.findIndex(seat => seat !== null);
-      const lastNonNullSeat = seats.length - 1 - seats.reverse().findIndex(seat => seat !== null);
+      const lastNonNullSeat = seats.length - 1 - seats.slice().reverse().findIndex(seat => seat !== null);
       return seats.slice(firstNonNullSeat, lastNonNullSeat + 1);
     }
 
