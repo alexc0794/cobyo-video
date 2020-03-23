@@ -1,92 +1,38 @@
-// TODO: Some hardcoded shit
-// HARD DEPENDENCY ON TABLE BEING 8 SEATS!!!!!!
-export function getSeatNumber(
-  direction: "frontLeft" | "front" | "frontRight" | "left" | "right",
-  fromSeatNumber: number,
-  numSeats: number,
-): number {
-  switch (direction) {
-    case "frontLeft": {
-      return getFrontLeft(fromSeatNumber, numSeats);
-    }
-    case "front": {
-      return getFront(fromSeatNumber, numSeats);
-    }
-    case "frontRight": {
-      return getFrontRight(fromSeatNumber, numSeats);
-    }
-    case "left": {
-      return getLeft(fromSeatNumber, numSeats);
-    }
-    case "right": {
-      return getRight(fromSeatNumber, numSeats);
-    }
-    default:
-      return -1;
-  }
-}
 
-function getFrontLeft(fromSeat: number, numSeats: number): number {
+export function getOpposingRowSeats(fromSeat: number, numSeats: number, rowSize: number): Array<number|null> {
+  const seats = [];
   const halfNumSeats = numSeats / 2;
   const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
-  const delta = (halfNumSeats + 1) * (inTopRow ? 1 : -1) // Add or subtract half + 1
-  const toSeat = fromSeat + delta;
   const minIndex = inTopRow ? halfNumSeats : 0;
   const maxIndex = inTopRow ? numSeats - 1 : halfNumSeats - 1;
-  if (toSeat < minIndex || toSeat > maxIndex) {
-    return -1;
+
+  const startIndex = fromSeat + ((halfNumSeats + ((rowSize - 1) / 2)) * (inTopRow ? 1 : -1))
+  const endIndex = fromSeat + ((halfNumSeats - (rowSize / 2)) * (inTopRow ? 1 : -1));
+  for (let i = startIndex; (inTopRow ? i > endIndex :  i < endIndex); inTopRow ? i-- : i++) {
+    if (i < minIndex || i > maxIndex) {
+      seats.push(null);
+    } else {
+      seats.push(i);
+    }
   }
-  return toSeat;
+  return seats;
 }
 
-function getFront(fromSeat: number, numSeats: number): number {
+export function getSameRowSeats(fromSeat: number, numSeats: number, rowSize: number): Array<number|null> {
+  const seats = [];
   const halfNumSeats = numSeats / 2;
   const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
-  const delta = halfNumSeats * (inTopRow ? 1 : -1) // Add or subtract half + 1
-  const toSeat = fromSeat + delta;
-  const minIndex = inTopRow ? halfNumSeats : 0;
-  const maxIndex = inTopRow ? numSeats - 1 : halfNumSeats - 1;
-  if (toSeat < minIndex || toSeat > maxIndex) {
-    return -1;
-  }
-  return toSeat;
-}
-
-function getFrontRight(fromSeat: number, numSeats: number): number {
-  const halfNumSeats = numSeats / 2;
-  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
-  const delta = (halfNumSeats - 1) * (inTopRow ? 1 : -1) // Add or subtract half + 1
-  const toSeat = fromSeat + delta;
-  const minIndex = inTopRow ? halfNumSeats : 0;
-  const maxIndex = inTopRow ? numSeats - 1 : halfNumSeats - 1;
-  if (toSeat < minIndex || toSeat > maxIndex) {
-    return -1;
-  }
-  return toSeat;
-}
-
-function getLeft(fromSeat: number, numSeats: number): number {
-  const halfNumSeats = numSeats / 2;
-  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
-  const delta = 1 * (inTopRow ? 1 : -1) // Add or subtract half + 1
-  const toSeat = fromSeat + delta;
   const minIndex = inTopRow ? 0 : halfNumSeats;
   const maxIndex = inTopRow ? halfNumSeats - 1 : numSeats - 1;
-  if (toSeat < minIndex || toSeat > maxIndex) {
-    return -1;
-  }
-  return toSeat;
-}
 
-function getRight(fromSeat: number, numSeats: number): number {
-  const halfNumSeats = numSeats / 2;
-  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
-  const delta = -1 * (inTopRow ? 1 : -1) // Add or subtract half + 1
-  const toSeat = fromSeat + delta;
-  const minIndex = inTopRow ? 0 : halfNumSeats;
-  const maxIndex = inTopRow ? halfNumSeats - 1 : numSeats - 1;
-  if (toSeat < minIndex || toSeat > maxIndex) {
-    return -1;
+  const startIndex = fromSeat + ((rowSize - 1) / 2) * (inTopRow ? 1 : -1);
+  const endIndex = fromSeat + (-1 * (rowSize - 1) / 2) * (inTopRow ? 1 : -1);
+  for (let i = startIndex; (inTopRow ? i >= endIndex : i <= endIndex); (inTopRow ? i-- : i++)) {
+    if (i < minIndex || i > maxIndex) {
+      seats.push(null);
+    } else {
+      seats.push(i);
+    }
   }
-  return toSeat;
+  return seats;
 }

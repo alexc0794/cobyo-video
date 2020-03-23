@@ -150,7 +150,7 @@ class App extends Component<PropTypes, StateTypes> {
           <NameModal onEnterName={handleEnterName} />
         )}
         {!!joinedTable && !!userId && (
-          <GroupVideo userId={userId} table={joinedTable} />
+          <GroupVideo userId={userId} table={joinedTable} rtc={rtc} />
         )}
         <Cafeteria userId={userId} />
       </div>

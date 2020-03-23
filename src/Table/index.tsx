@@ -56,7 +56,7 @@ function Table({
     dispatch(joinAndUpdateTable(tableId, pickedSeat, userId));
   }
 
-  async function handleLeaveTable() {
+  function handleLeaveTable() {
     if (!userId) { return; }
     dispatch(leaveAndUpdateTable(tableId, userId));
   }
