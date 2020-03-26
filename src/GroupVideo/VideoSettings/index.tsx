@@ -6,7 +6,6 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash, faSignOutAlt, faUserFriends, faQuoteRight } from '@fortawesome/free-solid-svg-icons';
 import { RTCType } from '../../AgoraRTC';

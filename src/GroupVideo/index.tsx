@@ -34,9 +34,13 @@ function GroupVideo({
     userId: string
   };
   const VIDEO_SETTINGS_HEIGHT_PX = 120;
+  const TABLE_HEIGHT_PX = 0;
+  function calculateVideoHeight(windowHeight: number): number {
+    return windowHeight - VIDEO_SETTINGS_HEIGHT_PX - TABLE_HEIGHT_PX;
+  }
 
   const [groupVideoDimensions, setGroupVideoDimensions] = useState<Array<number>>([
-    window.innerWidth, window.innerHeight - VIDEO_SETTINGS_HEIGHT_PX
+    window.innerWidth, calculateVideoHeight(window.innerHeight)
   ]);
 
   useEffect(() => {
@@ -44,7 +48,7 @@ function GroupVideo({
       const videoElements = document.getElementsByClassName("video");
       Array.prototype.forEach.call(videoElements, function(videoElement) {
         setGroupVideoDimensions([
-          window.innerWidth, window.innerHeight - VIDEO_SETTINGS_HEIGHT_PX
+          window.innerWidth, calculateVideoHeight(window.innerHeight)
         ]);
       });
     }
@@ -71,7 +75,8 @@ function GroupVideo({
 
   const [rows, setRows] = useState<Array<Array<UserInSeatType|null>>>([]);
   useEffect(() => {
-    const rowSize = table.seats.length / 2 > 3 ? 5 : 3;
+    // const rowSize = table.seats.length / 2 > 3 ? 5 : 3;
+    const rowSize = table.seats.length - 1;
     const seat = table.seats.findIndex(seat => seat && seat.userId === userId);
     let opposingRowSeats = getOpposingRowSeats(seat, table.seats.length, rowSize);
     let sameRowSeats = getSameRowSeats(seat, table.seats.length, rowSize);

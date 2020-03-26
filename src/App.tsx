@@ -149,16 +149,18 @@ class App extends Component<PropTypes, StateTypes> {
 
     return (
       <div id="App" className="App">
-        {!joinedTable && (
-          <HomeNavbar userName={userName} />
-        )}
         {showModal && (
           <NameModal onEnterName={handleEnterName} />
         )}
         {!!joinedTable && !!userId && (
           <GroupVideo userId={userId} table={joinedTable} rtc={rtc} />
         )}
-        <Cafeteria userId={userId} />
+        {!joinedTable && (
+          <>
+            <HomeNavbar userName={userName} />
+            <Cafeteria userId={userId} />
+          </>
+        )}
       </div>
     );
   }

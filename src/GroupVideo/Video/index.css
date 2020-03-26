@@ -1,5 +1,5 @@
 .video {
-  border: 1px solid rgba(0,0,0,0.33);
+  /* border: 1px solid rgba(0,0,0,0.33); */
   height: 100%;
   /* background-color: rgba(0,0,0,0.2); */
   box-shadow: 1px 2px .5rem rgba(0,0,0,0.2);
@@ -24,4 +24,24 @@
 
 .video-placeholder {
   background-color: whitesmoke;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-placeholder-icon {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 1px 2px .5rem rgba(0,0,0,0.2);
+
+}
+
+.video-placeholder svg {
+  font-size: 24pt;
+  color: rgb(201, 45, 131);
 }

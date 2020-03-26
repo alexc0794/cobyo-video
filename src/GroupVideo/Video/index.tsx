@@ -1,5 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChair } from '@fortawesome/free-solid-svg-icons';
 import { UserInSeatType } from '../../types';
 import './index.css';
 
@@ -43,6 +45,10 @@ function Placeholder({ placement, size }: PlaceholderPropTypes) {
       <div className={cx("video video-placeholder", {
         "video-md": size === "md",
         "video-sm": size === "sm",
-      })} />
+      })}>
+        <div className="video-placeholder-icon">
+          <FontAwesomeIcon icon={faChair} />
+        </div>
+      </div>
   );
 }
