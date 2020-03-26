@@ -1,0 +1,27 @@
+.video {
+  border: 1px solid rgba(0,0,0,0.33);
+  height: 100%;
+  /* background-color: rgba(0,0,0,0.2); */
+  box-shadow: 1px 2px .5rem rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+.video-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0,0,0,0.2);
+}
+
+.video-speaker {
+  box-shadow: 0px 0px 15px 5px #FFBD1A;
+}
+
+.video-placeholder {
+  background-color: whitesmoke;
+}

@@ -1,46 +1,9 @@
 .group-video {
   margin: 0;
-}
-
-.group-video .col {
-  padding: 2px;
-}
-
-.video {
-  border: 1px solid gray;
-  height: 350px;
-  box-shadow: 2px 3px 0.1rem rgba(0,0,0,0.2);
-}
-
-.video-md {
-  height: 310px;
-}
-
-.video-sm {
-  height: 250px;
-}
-
-.video-speaker {
-  box-shadow: 0px 0px 15px 5px #FFBD1A;
-}
-
-.video-placeholder {
   background-color: whitesmoke;
 }
 
-@media screen and (max-width: 1020px) {
-  .video {
-    height: 200px;
-  }
+.group-video .col {
+  padding: 0;
+  height: 100%;
 }
-@media screen and (max-width: 780px) {
-  .video {
-    height: 150px;
-  }
-}
-@media screen and (max-width: 480px) {
-  .video {
-    height: 100px;
-  }
-}
-d (max-width: 480px) { /* mobile */ }

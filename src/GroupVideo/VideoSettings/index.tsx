@@ -4,10 +4,13 @@ import { leaveAndUpdateTable } from '../../redux/tablesActions';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMicrophone, faMicrophoneSlash, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faMicrophone, faMicrophoneSlash, faSignOutAlt, faUserFriends, faQuoteRight } from '@fortawesome/free-solid-svg-icons';
 import { RTCType } from '../../AgoraRTC';
-import TableToast from '../TableToast';
+// import TopicsPopover from '../TopicsPopover';
 import { getSpeechRecognition } from '../../SpeechRecognition';
 import { sendAudioTranscript } from '../../services';
 import { useInterval } from '../../hooks';
@@ -27,8 +30,27 @@ function GroupVideoSettings({
   userId,
   rtc,
 }: PropTypes) {
-  const [, setInterimTranscript] = useState("");
+  const [numUsers, setNumUsers] = useState<number>(rtc.client.remoteUsers.length + 1);
+  const [recentlyJoinedUser, setRecentlyJoinedUser] = useState<any>(null);
+  const [recentlyLeftUser, setRecentlyLeftUser] = useState<any>(null);
 
+  useEffect(() => {
+    rtc.client.on('user-published', (user: any) => {
+      setRecentlyJoinedUser(user);
+      setNumUsers(rtc.client.remoteUsers.length + 1);
+    });
+    rtc.client.on('user-unpublished', (user: any) => {
+      setRecentlyLeftUser(user);
+      setNumUsers(rtc.client.remoteUsers.length + 1);
+    });
+    return () => {
+      rtc.client.removeAllListeners('user-published');
+      rtc.client.removeAllListeners('user-unpublished');
+    };
+  }, [rtc.client]);
+
+
+  const [, setInterimTranscript] = useState("");
   useEffect(() => {
     let shouldRecognize = true;
     speechRecognition = getSpeechRecognition();
@@ -62,13 +84,11 @@ function GroupVideoSettings({
   }, 15000);
 
   const [unmuted, setUnmuted] = useState<boolean>(true);
-
   function handleMute() {
-      if (!rtc.localAudioTrack) { return; }
+    if (!rtc.localAudioTrack) { return; }
     rtc.localAudioTrack.setMute(true);
     setUnmuted(false);
   }
-
   function handleUnmute() {
     if (!rtc.localAudioTrack) { return; }
     rtc.localAudioTrack.setMute(false);
@@ -85,6 +105,10 @@ function GroupVideoSettings({
     <div className="video-settings">
       <ButtonToolbar className="video-settings-toolbar">
         <ButtonGroup>
+          <Button variant="primary" disabled>
+            <FontAwesomeIcon icon={faUserFriends} />
+            <span>{numUsers === 1 ? `1 user` : `${numUsers} users`}</span>
+          </Button>
           <Button variant="danger" onClick={handleLeave}>
             <FontAwesomeIcon icon={faSignOutAlt} />
             <span>Leave</span>
@@ -101,8 +125,30 @@ function GroupVideoSettings({
             </Button>
           )}
         </ButtonGroup>
+        {false && (
+          <ButtonGroup>
+            <OverlayTrigger
+              trigger="click"
+              placement="top"
+              overlay={
+                <Popover
+                  id="placement"
+                >
+                  <Popover.Title><strong>Discussed Topics</strong></Popover.Title>
+                  <Popover.Content>WIP</Popover.Content>
+                </Popover>
+              }
+            >
+              <Button variant="info" onClick={() => {}}>
+                <FontAwesomeIcon icon={faQuoteRight} />
+                <span>Topics</span>
+              </Button>
+            </OverlayTrigger>
+          </ButtonGroup>
+        )}
       </ButtonToolbar>
-      <TableToast tableId={tableId} />
+      {recentlyJoinedUser && <span>{recentlyJoinedUser.uid.toString()} joined</span>}
+      {recentlyLeftUser && <span>{recentlyLeftUser.uid.toString()} left</span>}
     </div>
   )
 }

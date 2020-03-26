@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import AgoraRTC from "agora-rtc-sdk-ng";
+import HomeNavbar from './HomeNavbar';
 import NameModal from './NameModal';
 import Cafeteria from './Cafeteria';
 import GroupVideo from './GroupVideo';
@@ -22,6 +23,7 @@ type PropTypes = {
 
 type StateTypes = {
   userId: string|null,
+  userName: string|null,
   showModal: boolean,
 }
 
@@ -31,6 +33,7 @@ class App extends Component<PropTypes, StateTypes> {
     super(props);
     this.state = {
       userId: null,
+      userName: null,
       showModal: true,
     };
   }
@@ -136,16 +139,19 @@ class App extends Component<PropTypes, StateTypes> {
   handleEnterName = (name: string) => {
     const hash = hashCode(name).toString();
     const userId = hash.slice(hash.length - 4); // userId must be between 1-10000 :(
-    this.setState({ userId, showModal: false });
+    this.setState({ userId, userName: name, showModal: false });
   };
 
   render() {
     const { joinedTable } = this.props;
-    const { showModal, userId } = this.state;
+    const { showModal, userId, userName } = this.state;
     const { handleEnterName } = this;
 
     return (
       <div id="App" className="App">
+        {!joinedTable && (
+          <HomeNavbar userName={userName} />
+        )}
         {showModal && (
           <NameModal onEnterName={handleEnterName} />
         )}

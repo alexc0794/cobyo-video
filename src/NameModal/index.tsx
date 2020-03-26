@@ -41,7 +41,7 @@ function NameModal({
   return (
     <Modal show backdrop={"static"}>
       <Modal.Header>
-        <Modal.Title>Welcome {initialName ? "back" : ""} to the Virtual Cafeteria!</Modal.Title>
+        <Modal.Title>Welcome {initialName ? "back" : ""} to Virtual Cafeteria!</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         This is a video hangout space attempting to simulate a real-life cafeteria.

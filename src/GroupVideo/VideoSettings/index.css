@@ -13,11 +13,16 @@
   padding: 15px;
 }
 
+.video-settings-toolbar .btn-group {
+  margin: 0 10px;
+}
+
 .video-settings-toolbar .btn {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 60px;
 }
 
 .video-settings-toolbar svg {
