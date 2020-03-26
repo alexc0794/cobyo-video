@@ -9,7 +9,7 @@ import { hashCode } from './helpers';
 import { TableType } from './types';
 import { fetchToken } from './services';
 import { connect } from 'react-redux';
-import { fetchAndUpdateTable, joinAndUpdateTable, updateTableWithRTC } from './redux/tablesActions';
+import { fetchAndUpdateTable, joinAndUpdateTable, updateTableWithRTC, leaveAndUpdateTable } from './redux/tablesActions';
 import { selectJoinedTable } from './redux/tablesSelectors';
 
 let rtc: RTCType = getRTC();
@@ -18,7 +18,8 @@ type PropTypes = {
   joinedTable: TableType|null,
   fetchAndUpdateTable: (tableId: string) => Promise<void>,
   joinAndUpdateTable: (tableId: string, seat: number, userId: string) => Promise<void>,
-  updateTableWithRTC: (tableId: string, rtc: RTCType, userId: string|null) => Promise<void>
+  updateTableWithRTC: (tableId: string, rtc: RTCType, userId: string|null) => Promise<void>,
+  leaveAndUpdateTable: (tableId: string, userId: string) => Promise<void>,
 };
 
 type StateTypes = {
@@ -103,8 +104,22 @@ class App extends Component<PropTypes, StateTypes> {
       return;
     }
 
-    rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+    try {
+      rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+    } catch (e) {
+      this.props.leaveAndUpdateTable(table.tableId, userId);
+      console.error(e);
+      alert('Access to your microphone must be granted for this to work!');
+      return;
+    }
+    try {
+      rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+    } catch (e) {
+      this.props.leaveAndUpdateTable(table.tableId, userId);
+      console.error(e);
+      alert('Access to your camera must be granted for this to work!');
+      return;
+    }
 
     await rtc.client.publish([
       rtc.localAudioTrack,
@@ -133,7 +148,6 @@ class App extends Component<PropTypes, StateTypes> {
       rtc.localVideoTrack.close();
     }
     await rtc.client.leave();
-
   };
 
   handleEnterName = (name: string) => {
@@ -173,7 +187,8 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   fetchAndUpdateTable,
   joinAndUpdateTable,
-  updateTableWithRTC
+  updateTableWithRTC,
+  leaveAndUpdateTable,
 };
 
 export default connect(
