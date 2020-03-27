@@ -1,9 +1,9 @@
-.group-video {
+.video-table {
   margin: 0;
   background-color: whitesmoke;
 }
 
-.group-video .col {
+.video-table .col {
   padding: 0;
   height: 100%;
 }

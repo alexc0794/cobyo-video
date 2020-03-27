@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { leaveAndUpdateTable } from '../../redux/tablesActions';
+import { leaveAndUpdateTable } from '../redux/tablesActions';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
@@ -8,11 +8,10 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash, faSignOutAlt, faUserFriends, faQuoteRight } from '@fortawesome/free-solid-svg-icons';
-import { RTCType } from '../../AgoraRTC';
-// import TopicsPopover from '../TopicsPopover';
-import { getSpeechRecognition } from '../../SpeechRecognition';
-import { sendAudioTranscript } from '../../services';
-import { useInterval } from '../../hooks';
+import { RTCType } from '../AgoraRTC';
+import { getSpeechRecognition } from '../SpeechRecognition';
+import { sendAudioTranscript } from '../services';
+import { useInterval } from '../hooks';
 import './index.css';
 
 type PropTypes = {
@@ -24,7 +23,7 @@ type PropTypes = {
 let speechRecognition: SpeechRecognition;
 let finalTranscript = "";
 
-function GroupVideoSettings({
+function VideoSettings({
   tableId,
   userId,
   rtc,
@@ -126,18 +125,12 @@ function GroupVideoSettings({
         </ButtonGroup>
         {false && (
           <ButtonGroup>
-            <OverlayTrigger
-              trigger="click"
-              placement="top"
-              overlay={
-                <Popover
-                  id="placement"
-                >
+            <OverlayTrigger trigger="click" placement="top" overlay={
+                <Popover id="placement">
                   <Popover.Title><strong>Discussed Topics</strong></Popover.Title>
                   <Popover.Content>WIP</Popover.Content>
                 </Popover>
-              }
-            >
+            }>
               <Button variant="info" onClick={() => {}}>
                 <FontAwesomeIcon icon={faQuoteRight} />
                 <span>Topics</span>
@@ -146,10 +139,10 @@ function GroupVideoSettings({
           </ButtonGroup>
         )}
       </ButtonToolbar>
-      {recentlyJoinedUser && <span>{recentlyJoinedUser.uid.toString()} joined</span>}
-      {recentlyLeftUser && <span>{recentlyLeftUser.uid.toString()} left</span>}
+      {recentlyJoinedUser && <span style={{display: 'none'}}>{recentlyJoinedUser.uid.toString()} joined</span>}
+      {recentlyLeftUser && <span style={{display: 'none'}}>{recentlyLeftUser.uid.toString()} left</span>}
     </div>
   )
 }
 
-export default GroupVideoSettings;
+export default VideoSettings;

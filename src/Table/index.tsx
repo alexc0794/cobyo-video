@@ -10,7 +10,6 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChair, faUser } from '@fortawesome/free-solid-svg-icons'
-
 import { UserInSeatType } from '../types';
 import { timeSince } from '../helpers';
 import { useInterval } from '../hooks';
@@ -38,21 +37,18 @@ function Table({
   }, [tableId, dispatch]);
 
   useInterval(() => {
-    if (!userId || seat < 0 || !isUserJoined) { return; }
-    dispatch(joinAndUpdateTable(tableId, seat, userId));
-  }, 60000);
+    dispatch(fetchAndUpdateTable(tableId));
+  }, 10000);
 
   async function handlePickSeat(pickedSeat: number) {
     if (!userId) { return; }
 
     const isSwitchingSeat = isUserJoined && pickedSeat !== seat;
     if (isSwitchingSeat) {
-      // TODO:
-      // await dispatch(leaveAndUpdateTable(tableId, userId));
+      // TODO: await dispatch(leaveAndUpdateTable(tableId, userId));
       alert('Not yet implemented. Leave table first, then join.');
       return;
     }
-
     dispatch(joinAndUpdateTable(tableId, pickedSeat, userId));
   }
 

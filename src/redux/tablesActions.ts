@@ -19,7 +19,7 @@ export const joinedTable = (table: TableType) => ({
 export const leftTable = (table: TableType) => ({
   type: "LEFT_TABLE",
   payload: { table }
-})
+});
 
 export function fetchAndUpdateTable(tableId: string) {
   return function(dispatch: any, getState: () => any) {

@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
-import AgoraRTC from "agora-rtc-sdk-ng";
 import HomeNavbar from './HomeNavbar';
 import NameModal from './NameModal';
 import Cafeteria from './Cafeteria';
-import GroupVideo from './GroupVideo';
-import { getRTC, RTCType, AGORA_APP_ID } from './AgoraRTC';
+import VideoHangout from './VideoHangout';
+import { getRTC, RTCType } from './AgoraRTC';
 import { hashCode } from './helpers';
 import { TableType } from './types';
-import { fetchToken } from './services';
 import { connect } from 'react-redux';
-import { fetchAndUpdateTable, joinAndUpdateTable, updateTableWithRTC, leaveAndUpdateTable } from './redux/tablesActions';
 import { selectJoinedTable } from './redux/tablesSelectors';
 
 let rtc: RTCType = getRTC();
 
 type PropTypes = {
   joinedTable: TableType|null,
-  fetchAndUpdateTable: (tableId: string) => Promise<void>,
-  joinAndUpdateTable: (tableId: string, seat: number, userId: string) => Promise<void>,
-  updateTableWithRTC: (tableId: string, rtc: RTCType, userId: string|null) => Promise<void>,
-  leaveAndUpdateTable: (tableId: string, userId: string) => Promise<void>,
 };
 
 type StateTypes = {
@@ -39,117 +32,6 @@ class App extends Component<PropTypes, StateTypes> {
     };
   }
 
-  componentDidMount() {
-    rtc.client.on("user-published", this.handleUserPublish);
-    rtc.client.on("user-unpublished", this.handleUserUnpublish);
-  }
-
-  async componentDidUpdate(prevProps: PropTypes) {
-    const prevJoinedTableId = prevProps.joinedTable ? prevProps.joinedTable.tableId : null;
-    const currJoinedTableId = this.props.joinedTable ? this.props.joinedTable.tableId : null
-    const didTableChange = prevJoinedTableId !== currJoinedTableId;
-    const { userId } = this.state;
-    const { joinedTable } = this.props;
-    if (didTableChange && !!joinedTable && userId) {
-      await this.handleJoinTable(joinedTable, userId);
-    } else if (didTableChange && !joinedTable && userId) {
-      this.handleLeaveTable();
-    }
-  }
-
-  handleUserPublish = async (user: any, media: string) => {
-    await rtc.client.subscribe(user);
-    const newUserId = user.uid.toString();
-    const remoteAudioTrack = user.audioTrack;
-    const remoteVideoTrack = user.videoTrack;
-
-    // Hack for now
-    setTimeout(() => {
-      if (remoteVideoTrack) {
-        remoteVideoTrack.play(`video-${newUserId}`);
-      }
-      if (remoteAudioTrack) {
-        remoteAudioTrack.play();
-      }
-    }, 2000);
-
-    // When someone joins, our local state of the table is now out-of-date, so re-fetch the table and update local state.
-    const { fetchAndUpdateTable, joinedTable } = this.props;
-    if (joinedTable) {
-      await fetchAndUpdateTable(joinedTable.tableId);
-    }
-  };
-
-  handleUserUnpublish = async (user: any) => {
-    // When someone leaves, both our local state and our server state are out-of-date, so take the users on the stream and
-    // first update the table on the server, then when successful update table in local state.
-    const { joinedTable, updateTableWithRTC } = this.props;
-    const { userId } = this.state;
-    if (joinedTable) {
-      updateTableWithRTC(joinedTable.tableId, rtc, userId);
-    }
-  }
-
-  handleJoinTable = async (table: TableType, userId: string) => {
-    const token = await fetchToken(userId, table.tableId);
-    try {
-      await rtc.client.join(
-        AGORA_APP_ID,
-        table.tableId, // TODO, channel should be based on tableId
-        token,
-        parseInt(userId, 10), // Must be an int, otherwise token invalidates :(
-      );
-    } catch (e) {
-      console.error(e); // TODO: Error handling
-      return;
-    }
-
-    try {
-      rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    } catch (e) {
-      this.props.leaveAndUpdateTable(table.tableId, userId);
-      console.error(e);
-      alert('Access to your microphone must be granted for this to work!');
-      return;
-    }
-    try {
-      rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
-    } catch (e) {
-      this.props.leaveAndUpdateTable(table.tableId, userId);
-      console.error(e);
-      alert('Access to your camera must be granted for this to work!');
-      return;
-    }
-
-    await rtc.client.publish([
-      rtc.localAudioTrack,
-      rtc.localVideoTrack
-    ]);
-
-    // When I join the chat, I want to check the remote users of the stream and update
-    // 1. Table in the server --> database is up-to-date
-    // 2. Table in my client's local state --> correct div's render on my screen
-    this.props.updateTableWithRTC(table.tableId, rtc, userId);
-
-    // This is a hack
-    setTimeout(() => {
-      if (rtc && rtc.localVideoTrack) {
-        // Make sure client isn't joining a second time otherwise there will be duplicate camera windows.
-        rtc.localVideoTrack.play(`video-${userId}`);
-      }
-    }, 2000);
-  };
-
-  handleLeaveTable = async () => {
-    if (rtc.localAudioTrack) {
-      rtc.localAudioTrack.close();
-    }
-    if (rtc.localVideoTrack) {
-      rtc.localVideoTrack.close();
-    }
-    await rtc.client.leave();
-  };
-
   handleEnterName = (name: string) => {
     const hash = hashCode(name).toString();
     const userId = hash.slice(hash.length - 4); // userId must be between 1-10000 :(
@@ -163,11 +45,9 @@ class App extends Component<PropTypes, StateTypes> {
 
     return (
       <div id="App" className="App">
-        {showModal && (
-          <NameModal onEnterName={handleEnterName} />
-        )}
+        {showModal && <NameModal onEnterName={handleEnterName} />}
         {!!joinedTable && !!userId && (
-          <GroupVideo userId={userId} table={joinedTable} rtc={rtc} />
+          <VideoHangout userId={userId} tableId={joinedTable.tableId} rtc={rtc} />
         )}
         {!joinedTable && (
           <>
@@ -184,14 +64,6 @@ const mapStateToProps = (state: any) => ({
   joinedTable: selectJoinedTable(state)
 });
 
-const mapDispatchToProps = {
-  fetchAndUpdateTable,
-  joinAndUpdateTable,
-  updateTableWithRTC,
-  leaveAndUpdateTable,
-};
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
 )(App);
