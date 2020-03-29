@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
@@ -38,6 +38,43 @@ function NameModal({
     onEnterName(name);
   }
 
+  type FacebookLoginType = {
+    facebookLoginDetected: boolean,
+    facebookUserId: string,
+    facebookAccessToken: string,
+  };
+  const [facebookLogin, setFacebookLogin] = useState<FacebookLoginType|null>(null);
+
+  function handleFacebookLoginSuccess(response: any) {
+    const { status, authResponse } = response;
+    if (!authResponse) { return; }
+    const { accessToken, userID } = authResponse;
+    setFacebookLogin({
+      facebookLoginDetected: status === 'connected',
+      facebookUserId: userID,
+      facebookAccessToken: accessToken,
+    });
+  }
+
+  useEffect(() => {
+    FB.getLoginStatus(handleFacebookLoginSuccess);
+  }, []);
+
+  function handleFacebookLoginAttempt() {
+    FB.login(response => {
+      handleFacebookLoginSuccess(response);
+    }, {
+      // scope: 'email,user_friends,user_gender,user_age_range,user_birthday,user_location'
+    });
+  }
+
+  function handleFacebookContinue() {
+    FB.api('/me', {fields: 'name'}, (response: any) => {
+      const { name } = response;
+      onEnterName(name);
+    });
+  }
+
   return (
     <Modal show backdrop={"static"}>
       <Modal.Header>
@@ -70,6 +107,13 @@ function NameModal({
       </Modal.Body>
       <Modal.Footer>
         <InputGroup>
+          <Button
+            variant="primary"
+            onClick={facebookLogin ? handleFacebookContinue : handleFacebookLoginAttempt}
+            style={{marginRight: '10px'}}
+          >
+            {facebookLogin ? "Continue with Facebook" : "Login with Facebook"}
+          </Button>
           <FormControl
             placeholder="Enter name to continue"
             aria-label="Name"

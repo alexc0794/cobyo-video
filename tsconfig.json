@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "types": [
+      "facebook-js-sdk"
+    ],
     "lib": [
       "dom",
       "dom.iterable",
