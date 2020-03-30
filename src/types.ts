@@ -17,6 +17,7 @@ export type UserType = {
   firstName: string,
   lastName: string|null,
   profilePictureUrl: string|null,
+  lastActiveAt: string|null,
 };
 
 export type UserInSeatType = UserType & SeatType;

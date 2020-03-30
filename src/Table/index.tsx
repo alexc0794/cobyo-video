@@ -10,7 +10,7 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChair, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faChair, faUser } from '@fortawesome/free-solid-svg-icons';
 import { SeatType, UserInSeatType } from '../types';
 import { timeSince } from '../helpers';
 import { useInterval } from '../hooks';

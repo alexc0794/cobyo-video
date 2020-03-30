@@ -5,6 +5,7 @@ import HomeNavbar from './HomeNavbar';
 import NameModal from './NameModal';
 import Cafeteria from './Cafeteria';
 import VideoHangout from './VideoHangout';
+import ActiveUsers from './ActiveUsers';
 import { getRTC, RTCType } from './AgoraRTC';
 import { TableType, UserType } from './types';
 
@@ -25,11 +26,12 @@ function App() {
     <div id="App" className="App">
       {showModal && <NameModal onSubmit={handleSubmitUser} />}
       {!!joinedTable && !!user && <VideoHangout userId={user.userId} tableId={joinedTable.tableId} rtc={rtc} />}
+      {!joinedTable && <HomeNavbar user={user} />}
       {!joinedTable && (
-        <>
-          <HomeNavbar user={user} />
+        <div className="content">
           <Cafeteria userId={user ? user.userId : null} />
-        </>
+          {!!user && <ActiveUsers />}
+        </div>
       )}
     </div>
   );

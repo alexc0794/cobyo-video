@@ -5,3 +5,8 @@ body {
   background-size: 300px;
   background-position: center center;
 }
+
+.content {
+  display: flex;
+  align-content: stretch;
+}

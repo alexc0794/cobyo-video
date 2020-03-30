@@ -46,6 +46,7 @@ function NameModal({
       firstName: names[0],
       lastName: names.length > 1 ? names[1] : null,
       profilePictureUrl: null,
+      lastActiveAt: null,
     };
     onSubmit(user);
   }

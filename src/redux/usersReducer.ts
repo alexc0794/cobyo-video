@@ -3,7 +3,8 @@ import { UserType } from '../types';
 
 function byId(state = {}, action: any) {
   switch (action.type) {
-    case 'UPDATE_USERS': {
+    case 'UPDATE_USERS':
+    case 'UPDATE_ACTIVE_USERS': {
       const { users } = action.payload;
       return users.reduce((acc: any, user: UserType) => {
         return { ...acc, [user.userId]: user };
@@ -14,6 +15,19 @@ function byId(state = {}, action: any) {
   }
 }
 
+function activeUserIds(state = [], action: any) {
+  switch (action.type) {
+    case 'UPDATE_ACTIVE_USERS': {
+      const { users } = action.payload;
+      // TODO: think of some special ordering. For now, just display how server returns it
+      return users.map((user: UserType) => user.userId);
+    }
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   byId,
+  activeUserIds,
 });

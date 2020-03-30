@@ -38,6 +38,7 @@ type UserResponseType = {
   first_name: string,
   last_name: string|null,
   profile_picture_url: string|null,
+  last_active_at: string|null,
 };
 
 export function transformUser(userResponse: UserResponseType): UserType {
@@ -48,5 +49,6 @@ export function transformUser(userResponse: UserResponseType): UserType {
     firstName: userResponse.first_name,
     lastName: userResponse.last_name,
     profilePictureUrl: userResponse.profile_picture_url,
+    lastActiveAt: userResponse.last_active_at,
   };
 }

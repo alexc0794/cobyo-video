@@ -28,7 +28,7 @@ export function fetchAndUpdateTable(tableId: string) {
 }
 
 export function joinAndUpdateTable(tableId: string, seat: number, userId: string) {
-  return function (dispatch: any) {
+  return function(dispatch: any) {
     return joinTable(tableId, seat, userId).then(table => {
       dispatch(joinedTable(table));
     });
@@ -36,7 +36,7 @@ export function joinAndUpdateTable(tableId: string, seat: number, userId: string
 }
 
 export function leaveAndUpdateTable(tableId: string, userId: string) {
-  return function (dispatch: any) {
+  return function(dispatch: any) {
     return leaveTable(tableId, userId).then(table => {
       dispatch(leftTable(table));
     });
@@ -44,7 +44,7 @@ export function leaveAndUpdateTable(tableId: string, userId: string) {
 }
 
 export function updateTableWithRTC(tableId: string, rtc: RTCType, userId: string|null) {
-  return function (dispatch: any) {
+  return function(dispatch: any) {
     const userIds = rtc.client.remoteUsers.map(user => user.uid.toString());
     if (userId) {
       userIds.push(userId);

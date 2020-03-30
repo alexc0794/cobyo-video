@@ -27,3 +27,16 @@ export function createUser(
     }
   });
 }
+
+export function fetchActiveUsers(): Promise<Array<UserType>> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get(`${BASE_API_URL}/active-users`);
+      const users = response.data.map((user: any) => transformUser(user));
+      return resolve(users);
+    } catch (e) {
+      console.error(e);
+      return reject("Something went wrong");
+    }
+  });
+}
