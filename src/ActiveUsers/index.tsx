@@ -20,9 +20,6 @@ function ActiveUsersTab() {
   }, 60000);
 
   const activeUsers = useSelector(selectActiveUsers);
-  if (activeUsers.length > 0) {
-    activeUsers.push(activeUsers[0]);
-  }
 
   return (
     <div className="active-users">
