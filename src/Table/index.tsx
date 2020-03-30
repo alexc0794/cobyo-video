@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAndUpdateTable, joinAndUpdateTable, leaveAndUpdateTable } from '../redux/tablesActions';
 import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from '../redux/tablesSelectors';
+import { selectUsersByIds } from '../redux/usersSelectors';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -10,7 +11,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChair, faUser } from '@fortawesome/free-solid-svg-icons'
-import { UserInSeatType } from '../types';
+import { SeatType, UserInSeatType } from '../types';
 import { timeSince } from '../helpers';
 import { useInterval } from '../hooks';
 import cx from 'classnames';
@@ -21,10 +22,7 @@ type PropTypes = {
   userId: string|null,
 };
 
-function Table({
-  tableId,
-  userId,
-}: PropTypes) {
+function Table({ tableId, userId }: PropTypes) {
   const dispatch = useDispatch();
   const table = useSelector(selectTableById(tableId));
   const joinedTableId = useSelector(selectJoinedTableId);
@@ -38,14 +36,13 @@ function Table({
 
   useInterval(() => {
     dispatch(fetchAndUpdateTable(tableId));
-  }, 10000);
+  }, 20000);
 
   async function handlePickSeat(pickedSeat: number) {
     if (!userId) { return; }
 
     const isSwitchingSeat = isUserJoined && pickedSeat !== seat;
     if (isSwitchingSeat) {
-      // TODO: await dispatch(leaveAndUpdateTable(tableId, userId));
       alert('Not yet implemented. Leave table first, then join.');
       return;
     }
@@ -57,11 +54,14 @@ function Table({
     dispatch(leaveAndUpdateTable(tableId, userId));
   }
 
-  if (!table) {
-    return null;
-  }
+  const seats = table ? table.seats : [];
+  const tableUserIds: Array<string|null> = seats.map((seat: SeatType) => seat ? seat.userId : null);
+  const users = useSelector(selectUsersByIds(tableUserIds));
+  const userInSeats: Array<UserInSeatType> = seats.map((seat: SeatType, i: number) => seat ? ({
+    ...seat,
+    ...users[i]
+  }) : null);
 
-  const { seats } = table;
   return (
     <div className={cx("table", {
       "table-joined": isUserJoined,
@@ -70,9 +70,9 @@ function Table({
       <Container fluid>
         <TableRow
           userId={userId}
-          seats={seats}
+          userInSeats={userInSeats}
           startIndex={0}
-          endIndex={Math.ceil(seats.length / 2)}
+          endIndex={Math.ceil(userInSeats.length / 2)}
           onClick={handlePickSeat}
         />
         <Row bsPrefix="table-row">
@@ -82,9 +82,9 @@ function Table({
         </Row>
         <TableRow
           userId={userId}
-          seats={seats}
-          startIndex={Math.ceil(seats.length / 2)}
-          endIndex={seats.length}
+          userInSeats={userInSeats}
+          startIndex={Math.ceil(userInSeats.length / 2)}
+          endIndex={userInSeats.length}
           onClick={handlePickSeat}
         />
       </Container>
@@ -94,7 +94,7 @@ function Table({
 
 type TableRowPropTypes = {
   userId: string|null,
-  seats: Array<UserInSeatType>,
+  userInSeats: Array<UserInSeatType>,
   startIndex: number,
   endIndex: number,
   onClick: (seatNumber: number) => void
@@ -102,14 +102,14 @@ type TableRowPropTypes = {
 
 function TableRow({
   userId,
-  seats,
+  userInSeats,
   startIndex,
   endIndex,
   onClick
 }: TableRowPropTypes) {
   return (
     <Row noGutters>
-      {seats.slice(startIndex, endIndex).map((seat: UserInSeatType, i: number) => {
+      {userInSeats.slice(startIndex, endIndex).map((seat: UserInSeatType, i: number) => {
         const seatNumber = startIndex + i;
         return (
           <Col key={seat ? `seat${seatNumber}-user${seat.userId}` : `seat${seatNumber}`}>
@@ -123,6 +123,12 @@ function TableRow({
                   );
                 }
 
+                const iconElement = seat && seat.profilePictureUrl ? (
+                  <img src={seat.profilePictureUrl} alt={seat.firstName} />
+                ) : (
+                  <FontAwesomeIcon icon={faUser} />
+                );
+
                 if (!!seat && seat.userId === userId) {
                   return (
                     <OverlayTrigger
@@ -134,22 +140,23 @@ function TableRow({
                       }
                     >
                       <div className="table-chair-you" onClick={() => onClick(seatNumber)}>
-                        <FontAwesomeIcon icon={faUser} />
+                        {iconElement}
                       </div>
                     </OverlayTrigger>
                   );
                 }
+
                 return (
                   <OverlayTrigger
                     placement="bottom"
                     overlay={
-                      <Tooltip id={`tooltip-${userId}`}>
-                        {`Joined ${timeSince(new Date(seat.satDownAt))} ago`}
+                      <Tooltip id={`tooltip-${seat.userId}`}>
+                        {`${seat.firstName || `User ${seat.userId}`} joined ${timeSince(new Date(seat.satDownAt))} ago`}
                       </Tooltip>
                     }
                   >
                     <div className="table-chair-occupied">
-                      <FontAwesomeIcon icon={faUser} />
+                      {iconElement}
                     </div>
                   </OverlayTrigger>
                 );

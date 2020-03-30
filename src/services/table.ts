@@ -1,39 +1,23 @@
 import axios from 'axios';
-import { TableType, UserInSeatType } from './types';
+import { BASE_API_URL } from './config';
+import { TableType, SeatType } from '../types';
+import { transformTable, transformUser } from './transforms';
 
-const IS_DEV = false;
-
-const BASE_API_URL = IS_DEV ? (
-  'http://localhost:8080'
-) : (
-  'https://y6f6x4ptsa.execute-api.us-east-1.amazonaws.com/dev'
-);
-
-export function fetchToken(uid: string, tableId: string): Promise<string> {
-  return new Promise(async (resolve, _) => {
-    try {
-      const response = await axios.get(`${BASE_API_URL}/token/${uid}?channel_name=${tableId}`);
-      return resolve(response.data.toString());
-    } catch (e) {
-      console.error(e);
-      return resolve("");
-    }
-  });
-}
-
-export function fetchTable(tableId: string): Promise<TableType> {
+export function fetchTable(tableId: string): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.get(
         `${BASE_API_URL}/table/${tableId}`
       );
-      const table = _parseTableData(response.data);
-      return resolve(table);
+      return resolve({
+        table: transformTable(response.data.table),
+        users: response.data.users.map((user: any) => transformUser(user)),
+      });
     } catch (e) {
       console.error(e)
       return reject("Something went wrong");
     }
-  })
+  });
 }
 
 export function joinTable(tableId: string, seatNumber: number, userId: string): Promise<TableType> {
@@ -42,7 +26,7 @@ export function joinTable(tableId: string, seatNumber: number, userId: string): 
       const response = await axios.post(`${BASE_API_URL}/table/${tableId}/${seatNumber}`, {
         user_id: userId,
       });
-      const table: TableType = _parseTableData(response.data);
+      const table: TableType = transformTable(response.data);
       return resolve(table);
     } catch (e) {
       console.error(e);
@@ -57,7 +41,7 @@ export function leaveTable(tableId: string, userId: string): Promise<TableType> 
       const response = await axios.post(`${BASE_API_URL}/table/${tableId}/leave`, {
         user_id: userId,
       });
-      const table: TableType = _parseTableData(response.data);
+      const table: TableType = transformTable(response.data);
       return resolve(table);
     } catch (e) {
       console.error(e);
@@ -75,7 +59,7 @@ export async function updateTableWithUserIdsFromRtc(
       const response = await axios.post(`${BASE_API_URL}/table/${tableId}/user_ids`, {
         user_ids: userIds
       });
-      const table: TableType = _parseTableData(response.data);
+      const table: TableType = transformTable(response.data);
       return resolve(table);
     } catch (e) {
       console.error(e);
@@ -84,7 +68,7 @@ export async function updateTableWithUserIdsFromRtc(
   });
 }
 
-export function updateTable(tableId: string, seats: Array<UserInSeatType>, name: string): Promise<void> {
+export function updateTable(tableId: string, seats: Array<SeatType>, name: string): Promise<void> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(`${BASE_API_URL}/table/${tableId}`, {
@@ -143,35 +127,4 @@ export function fetchTableKeywords(tableId: string, minFrequency = 5): Promise<A
       return resolve([]);
     }
   })
-}
-
-type UserInSeatResponseData = {
-  user_id: string,
-  sat_down_at: string,
-} | null;
-
-type TableResponseData = {
-  table_id: string,
-  seats: Array<UserInSeatResponseData>,
-  name: string,
-  last_updated_at: string,
-};
-
-function _parseTableData(data: TableResponseData): TableType {
-  const seats: Array<UserInSeatType> = data.seats.map((seatResponseData: UserInSeatResponseData) => {
-    let seat: UserInSeatType = null;
-    if (seatResponseData) {
-      seat = {
-        userId: seatResponseData.user_id,
-        satDownAt: seatResponseData.sat_down_at,
-      };
-    }
-    return seat;
-  });
-  return {
-    tableId: data.table_id,
-    seats,
-    lastUpdatedAt: data.last_updated_at,
-    name: data.name
-  };
 }

@@ -6,34 +6,29 @@ import NameModal from './NameModal';
 import Cafeteria from './Cafeteria';
 import VideoHangout from './VideoHangout';
 import { getRTC, RTCType } from './AgoraRTC';
-import { hashCode } from './helpers';
-import { TableType } from './types';
+import { TableType, UserType } from './types';
 
 let rtc: RTCType = getRTC();
 
 function App() {
-  const [userId, setUserId] = useState<string|null>(null);
-  const [userName, setUserName] = useState<string|null>(null);
+  const [user, setUser] = useState<UserType|null>(null);
   const [showModal, setShowModal] = useState<boolean>(true);
 
-  function handleEnterName(name: string) {
-    const hash = hashCode(name).toString();
-    const id = hash.slice(hash.length - 4); // userId must be between 1-10000 :(
+  function handleSubmitUser(user: UserType) {
     setShowModal(false);
-    setUserId(id);
-    setUserName(name);
-  };
+    setUser(user);
+  }
 
-  const joinedTable: TableType|null = useSelector(selectJoinedTable)
+  const joinedTable: TableType|null = useSelector(selectJoinedTable);
 
   return (
     <div id="App" className="App">
-      {showModal && <NameModal onEnterName={handleEnterName} />}
-      {!!joinedTable && !!userId && <VideoHangout userId={userId} tableId={joinedTable.tableId} rtc={rtc} />}
+      {showModal && <NameModal onSubmit={handleSubmitUser} />}
+      {!!joinedTable && !!user && <VideoHangout userId={user.userId} tableId={joinedTable.tableId} rtc={rtc} />}
       {!joinedTable && (
         <>
-          <HomeNavbar userName={userName} />
-          <Cafeteria userId={userId} />
+          <HomeNavbar user={user} />
+          <Cafeteria userId={user ? user.userId : null} />
         </>
       )}
     </div>

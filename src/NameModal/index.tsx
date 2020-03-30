@@ -5,13 +5,16 @@ import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import { createUser } from '../services';
+import { UserType } from '../types';
+import { hashCode } from '../helpers';
 
 type PropTypes = {
-  onEnterName: (name: string) => void
+  onSubmit: (user: UserType) => void
 }
 
 function NameModal({
-  onEnterName
+  onSubmit
 }: PropTypes) {
   const initialName = window.localStorage.getItem('name');
   const [name, setName] = useState(initialName || '');
@@ -35,7 +38,16 @@ function NameModal({
       return;
     }
     window.localStorage.setItem('name', name);
-    onEnterName(name);
+    const names = name.split(' ');
+    const user: UserType = {
+      userId: hashCode(name).toString(),
+      facebookUserId: null,
+      email: null,
+      firstName: names[0],
+      lastName: names.length > 1 ? names[1] : null,
+      profilePictureUrl: null,
+    };
+    onSubmit(user);
   }
 
   type FacebookLoginType = {
@@ -64,14 +76,22 @@ function NameModal({
     FB.login(response => {
       handleFacebookLoginSuccess(response);
     }, {
-      // scope: 'email,user_friends,user_gender,user_age_range,user_birthday,user_location'
+      scope: 'email,user_friends,user_gender,user_age_range,user_birthday,user_location'
     });
   }
 
   function handleFacebookContinue() {
-    FB.api('/me', {fields: 'name'}, (response: any) => {
-      const { name } = response;
-      onEnterName(name);
+    FB.api('/me', {
+      fields: 'first_name, last_name, email, picture'
+    }, async (response: any) => {
+      const user = await createUser(
+        response.email,
+        response.first_name,
+        response.last_name,
+        response.id,
+        response.picture ? response.picture.data.url : null,
+      );
+      onSubmit(user);
     });
   }
 
