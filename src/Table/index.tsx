@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAndUpdateTable, joinAndUpdateTable, leaveAndUpdateTable } from '../redux/tablesActions';
+import { joinAndUpdateTable, leaveAndUpdateTable } from '../redux/tablesActions';
 import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from '../redux/tablesSelectors';
 import { selectUsersByIds } from '../redux/usersSelectors';
 import Container from 'react-bootstrap/Container';
@@ -13,7 +13,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChair, faUser } from '@fortawesome/free-solid-svg-icons';
 import { SeatType, UserInSeatType } from '../types';
 import { timeSince } from '../helpers';
-import { useInterval } from '../hooks';
 import cx from 'classnames';
 import './index.css';
 
@@ -29,14 +28,6 @@ function Table({ tableId, userId }: PropTypes) {
   const isUserJoined = joinedTableId === tableId;
   const isUserJoinedAnother = joinedTableId !== null && !isUserJoined;
   const seat = useSelector(selectJoinedTableSeat(userId || ""));
-
-  useEffect(() => {
-    dispatch(fetchAndUpdateTable(tableId))
-  }, [tableId, dispatch]);
-
-  useInterval(() => {
-    dispatch(fetchAndUpdateTable(tableId));
-  }, 20000);
 
   async function handlePickSeat(pickedSeat: number) {
     if (!userId) { return; }

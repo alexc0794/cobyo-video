@@ -20,6 +20,21 @@ export function fetchTable(tableId: string): Promise<any> {
   });
 }
 
+export function fetchTables(tableIds: Array<string>): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get(`${BASE_API_URL}/tables?table_ids=${tableIds.join(',')}`);
+      return resolve({
+        tables: response.data.tables.map((table: any) => transformTable(table)),
+        users: response.data.users.map((user: any) => transformUser(user))
+      });
+    } catch (e) {
+      console.error(e);
+      return reject("Something went wrong");
+    }
+  })
+}
+
 export function joinTable(tableId: string, seatNumber: number, userId: string): Promise<TableType> {
   return new Promise(async (resolve, reject) => {
     try {

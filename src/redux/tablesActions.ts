@@ -1,11 +1,16 @@
 import { TableType } from '../types';
 import { RTCType } from '../AgoraRTC';
 import { updateUsers } from './usersActions';
-import { fetchTable, joinTable, leaveTable, updateTableWithUserIdsFromRtc } from '../services';
+import { fetchTable, fetchTables, joinTable, leaveTable, updateTableWithUserIdsFromRtc } from '../services';
 
 export const updateTable = (table: TableType) => ({
   type: "UPDATE_TABLE",
   payload: { table }
+});
+
+export const updateTables = (tables: Array<TableType>) => ({
+  type: "UPDATE_TABLES",
+  payload: { tables }
 });
 
 export const joinedTable = (table: TableType) => ({
@@ -19,11 +24,18 @@ export const leftTable = (table: TableType) => ({
 });
 
 export function fetchAndUpdateTable(tableId: string) {
-  return function(dispatch: any, getState: () => any) {
-    return fetchTable(tableId).then(({table, users}) => {
-      dispatch(updateTable(table));
-      dispatch(updateUsers(users));
-    });
+  return async function(dispatch: any, getState: () => any) {
+    const { table, users } = await fetchTable(tableId);
+    dispatch(updateTable(table));
+    dispatch(updateUsers(users));
+  }
+}
+
+export function fetchAndUpdateTables(tableIds: Array<string>) {
+  return async function(dispatch: any, getState: () => any) {
+    const { tables, users } = await fetchTables(tableIds);
+    dispatch(updateTables(tables));
+    dispatch(updateUsers(users));
   }
 }
 

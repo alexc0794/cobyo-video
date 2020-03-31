@@ -3,6 +3,13 @@ import { UserType } from '../types';
 
 function byId(state = {}, action: any) {
   switch (action.type) {
+    case 'CREATE_USER_SUCCESS': {
+      const { user } = action.payload;
+      return {
+        ...state,
+        [user.userId]: user,
+      };
+    }
     case 'UPDATE_USERS':
     case 'UPDATE_ACTIVE_USERS': {
       const { users } = action.payload;

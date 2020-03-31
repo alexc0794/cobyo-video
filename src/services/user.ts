@@ -9,7 +9,7 @@ export function createUser(
   lastName: string|null = null,
   facebookUserId: string|null = null,
   profilePictureUrl: string|null = null,
-): Promise<UserType> {
+): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(`${BASE_API_URL}/user/create`, {
@@ -19,8 +19,8 @@ export function createUser(
         facebook_user_id: facebookUserId,
         profile_picture_url: profilePictureUrl,
       });
-      const user = transformUser(response.data);
-      return resolve(user);
+      const user = transformUser(response.data.user);
+      return resolve({ user, token: response.data.token });
     } catch (e) {
       console.error(e);
       return reject("Something went wrong");
@@ -28,15 +28,22 @@ export function createUser(
   });
 }
 
-export function fetchActiveUsers(): Promise<Array<UserType>> {
+export function fetchActiveUsers(token: string): Promise<Array<UserType>> {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await axios.get(`${BASE_API_URL}/active-users`);
+      const authorization = `Bearer ${token}`;
+      const response = await axios.get(`${BASE_API_URL}/active-users`, {
+        headers: {
+          'Authorization': authorization,
+        }
+      });
       const users = response.data.map((user: any) => transformUser(user));
       return resolve(users);
     } catch (e) {
-      console.error(e);
-      return reject("Something went wrong");
+      if (e && e.response && e.response.status) {
+        return reject(e.response.status);
+      }
+      return reject(500);
     }
   });
 }

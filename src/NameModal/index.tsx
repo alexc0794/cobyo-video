@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { createAndUpdateUser } from '../redux/usersActions';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import { createUser } from '../services';
 import { UserType } from '../types';
 import { hashCode } from '../helpers';
 
@@ -81,17 +82,18 @@ function NameModal({
     });
   }
 
+  const dispatch = useDispatch();
   function handleFacebookContinue() {
     FB.api('/me', {
       fields: 'first_name, last_name, email, picture'
     }, async (response: any) => {
-      const user = await createUser(
+      const user: UserType = await dispatch(createAndUpdateUser(
         response.email,
         response.first_name,
         response.last_name,
         response.id,
         response.picture ? response.picture.data.url : null,
-      );
+      ));
       onSubmit(user);
     });
   }

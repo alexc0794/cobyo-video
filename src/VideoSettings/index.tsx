@@ -12,6 +12,7 @@ import { RTCType } from '../AgoraRTC';
 import { getSpeechRecognition } from '../SpeechRecognition';
 import { sendAudioTranscript } from '../services';
 import { useInterval } from '../hooks';
+import { SEND_TRANSCRIPT_INTERVAL_MS } from '../config';
 import './index.css';
 
 type PropTypes = {
@@ -79,7 +80,7 @@ function VideoSettings({
     if (!!finalTranscript && await sendAudioTranscript(finalTranscript, tableId)) {
         finalTranscript = '';
     }
-  }, 15000);
+  }, SEND_TRANSCRIPT_INTERVAL_MS);
 
   const [unmuted, setUnmuted] = useState<boolean>(true);
   function handleMute() {

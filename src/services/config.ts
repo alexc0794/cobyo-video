@@ -1,4 +1,4 @@
-const IS_DEV = false;
+import { IS_DEV } from '../config';
 
 export const BASE_API_URL = IS_DEV ? (
   'http://localhost:8080'

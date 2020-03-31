@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAndUpdateTable, joinAndUpdateTable } from '../redux/tablesActions';
 import { selectJoinedTableSeat } from '../redux/tablesSelectors';
 import { useInterval } from '../hooks';
+import { RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS } from '../config';
 import { VideoUserType, VolumeType } from './types';
 import { RTCType } from '../AgoraRTC';
 import VideoTable from '../VideoTable';
@@ -27,7 +28,7 @@ export default function VideoHangout({
 
   useInterval(() => {
     dispatch(joinAndUpdateTable(tableId, seat, userId));
-  }, 10000);
+  }, RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS);
 
   useEffect(() => {
     rtc.client.on('user-published', handleUserPublished);

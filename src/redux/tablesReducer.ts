@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { TableType } from '../types';
 
 function byId(state = {}, action: any) {
   switch (action.type) {
@@ -12,6 +13,12 @@ function byId(state = {}, action: any) {
           ...table
         }
       };
+    }
+    case 'UPDATE_TABLES': {
+      const { tables } = action.payload;
+      return tables.reduce((acc: any, table: TableType) => {
+        return { ...acc, [table.tableId]: table };
+      }, {...state});
     }
     default:
       return state;

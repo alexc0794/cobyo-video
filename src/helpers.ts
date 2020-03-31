@@ -54,3 +54,13 @@ export function timeSince(inputDate: Date): string {
   }
   return Math.floor(seconds) + " seconds";
 }
+
+export function timeSinceShort(inputDate: Date): string {
+  const longText = timeSince(inputDate);
+  const [value, interval] = longText.split(' ');
+  if (value === '0') {
+    return 'now';
+  }
+
+  return `${value}${interval.slice(0,1)}`;
+}

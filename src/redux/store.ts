@@ -1,5 +1,6 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import app from './appReducer';
 import tables from './tablesReducer';
 import users from './usersReducer';
 
@@ -11,6 +12,7 @@ const enhancer = composeEnhancers(
 
 export default createStore(
   combineReducers({
+    app,
     tables,
     users,
   }),
