@@ -20,10 +20,11 @@ export function fetchTable(tableId: string): Promise<any> {
   });
 }
 
-export function fetchTables(tableIds: Array<string>): Promise<any> {
+export function fetchTables(tableIds: Array<string>, token: string|null = null): Promise<any> {
   return new Promise(async (resolve, reject) => {
+    const headers = token ? { 'Authorization': `Bearer ${token}`} : {};
     try {
-      const response = await axios.get(`${BASE_API_URL}/tables?table_ids=${tableIds.join(',')}`);
+      const response = await axios.get(`${BASE_API_URL}/tables?table_ids=${tableIds.join(',')}`, { headers });
       return resolve({
         tables: response.data.tables.map((table: any) => transformTable(table)),
         users: response.data.users.map((user: any) => transformUser(user))

@@ -1,5 +1,6 @@
 import { TableType } from '../types';
 import { RTCType } from '../AgoraRTC';
+import { selectToken } from './appSelectors';
 import { updateUsers } from './usersActions';
 import { fetchTable, fetchTables, joinTable, leaveTable, updateTableWithUserIdsFromRtc } from '../services';
 
@@ -33,7 +34,8 @@ export function fetchAndUpdateTable(tableId: string) {
 
 export function fetchAndUpdateTables(tableIds: Array<string>) {
   return async function(dispatch: any, getState: () => any) {
-    const { tables, users } = await fetchTables(tableIds);
+    const token = selectToken(getState());
+    const { tables, users } = await fetchTables(tableIds, token);
     dispatch(updateTables(tables));
     dispatch(updateUsers(users));
   }
