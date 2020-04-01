@@ -39,18 +39,21 @@ export default function VideoHangout({
       const publishedUserId = user.uid.toString();
       await rtc.client.subscribe(user);
       console.log(JSON.stringify(user));
-      // if (!user.videoTrack) {
-      //   alert(`User ${publishedUserId} did not allow video. ${JSON.stringify(user)}`);
-      // }
-      // if (!user.audioTrack) {
-      //   alert(`User ${publishedUserId} did not allow audio. ${JSON.stringify(user)}`);
-      // }
+      console.log(JSON.stringify(rtc.client.remoteUsers));
+      const videoTrack = user.videoTrack || user._videoTrack || null;
+      const audioTrack = user.audioTrack || user._audioTrack || null;
+      if (!videoTrack) {
+        alert(`User ${publishedUserId} did not allow video. ${JSON.stringify(user)}`);
+      }
+      if (!audioTrack) {
+        alert(`User ${publishedUserId} did not allow audio. ${JSON.stringify(user)}`);
+      }
 
       dispatch(fetchAndUpdateTable(tableId));
       setRemoteUsers(currentRemoteUsers => ([...currentRemoteUsers, {
         userId: publishedUserId,
-        videoTrack: user.videoTrack,
-        audioTrack: user.audioTrack,
+        videoTrack,
+        audioTrack,
       }]));
     }
 
