@@ -6,7 +6,7 @@ import { RTCType } from '../AgoraRTC';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { Video, MyVideo, VideoPlaceholder } from '../Video';
+import { RemoteVideo, LocalVideo, VideoPlaceholder } from '../Video';
 import { getTableRows } from './helpers';
 import './index.css';
 
@@ -64,11 +64,18 @@ function VideoTable({
                   return <VideoPlaceholder />;
                 }
                 if (seat && seat.userId === userId) {
-                  return <MyVideo userId={userId} tableId={tableId} rtc={rtc} />;
+                  return (
+                    <LocalVideo
+                      userId={userId}
+                      tableId={tableId}
+                      audioMuted={false} // TODO: Implement mute icon for own video
+                      rtc={rtc}
+                    />
+                  );
                 }
                 const remoteUser = remoteUsers.find(user => seat && user.userId === seat.userId) || null;
                 if (remoteUser) {
-                  return <Video {...remoteUser} />;
+                  return <RemoteVideo {...remoteUser} />;
                 }
                 return <VideoPlaceholder />
               })()}

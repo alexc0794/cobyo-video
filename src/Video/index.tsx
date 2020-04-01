@@ -3,16 +3,14 @@ import AgoraRTC from 'agora-rtc-sdk-ng';
 import { RTCType, AGORA_APP_ID } from '../AgoraRTC';
 import { VideoUserType } from '../VideoHangout/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChair } from '@fortawesome/free-solid-svg-icons';
+import { faChair, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import { fetchToken } from '../services';
 import cx from 'classnames';
 import './index.css';
 
-type VideoPropTypes = VideoUserType;
+type RemoteVideoPropTypes = VideoUserType;
 
-type VideoStateTypes = {}
-
-export class Video extends Component<VideoPropTypes, VideoStateTypes> {
+export class RemoteVideo extends Component<RemoteVideoPropTypes> {
 
   componentDidMount() {
     const { videoTrack, audioTrack, userId } = this.props;
@@ -25,17 +23,19 @@ export class Video extends Component<VideoPropTypes, VideoStateTypes> {
   }
 
   render() {
-    return <div id={`video-${this.props.userId}`} className={cx("video", {})} />;
+    const { userId, audioMuted } = this.props;
+    return <Video userId={userId} audioMuted={audioMuted} />;
   }
 }
 
-type MyVideoPropTypes = {
+type LocalVideoPropTypes = {
   userId: string,
   tableId: string,
+  audioMuted: boolean,
   rtc: RTCType,
 }
 
-export class MyVideo extends Component<MyVideoPropTypes> {
+export class LocalVideo extends Component<LocalVideoPropTypes> {
 
   async componentDidMount() {
     const { userId, tableId, rtc } = this.props;
@@ -51,6 +51,12 @@ export class MyVideo extends Component<MyVideoPropTypes> {
     }
 
     try {
+      await rtc.client.enableDualStream();
+    } catch (e) {
+      console.log('dual stream not enabled', e);
+    }
+
+    try {
       rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
       rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
     } catch (e) {
@@ -61,6 +67,11 @@ export class MyVideo extends Component<MyVideoPropTypes> {
     }
     await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
     rtc.localVideoTrack.play(`video-${userId}`);
+
+    // RTC client listeners
+    rtc.client.on('token-privilege-will-expire', () => {
+      rtc.client.renewToken(token);
+    });
   }
 
   async componentWillUnmount() {
@@ -75,8 +86,31 @@ export class MyVideo extends Component<MyVideoPropTypes> {
   }
 
   render() {
-    return <div id={`video-${this.props.userId}`} className={cx("video", {})} />;
+    const { audioMuted, userId } = this.props;
+    return (
+      <Video userId={userId} audioMuted={audioMuted} />
+    );
   }
+}
+
+type VideoPropTypes = {
+  userId: string,
+  audioMuted: boolean,
+};
+
+function Video({
+  userId,
+  audioMuted,
+}: VideoPropTypes) {
+  return (
+    <div id={`video-${userId}`} className={cx("video", {})}>
+      {audioMuted && (
+        <div className="video-overlay">
+          <div className="video-muted-icon"><FontAwesomeIcon icon={faMicrophoneSlash} /></div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function VideoPlaceholder() {

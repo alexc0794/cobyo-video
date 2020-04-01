@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { IAgoraRTCRemoteUser } from 'agora-rtc-sdk-ng';
 import { fetchAndUpdateTable, joinAndUpdateTable } from '../redux/tablesActions';
 import { selectJoinedTableSeat } from '../redux/tablesSelectors';
 import { useInterval } from '../hooks';
@@ -34,12 +35,11 @@ export default function VideoHangout({
     rtc.client.on('user-published', handleUserPublished);
     rtc.client.on('user-unpublished', handleUserUnpublished);
     rtc.client.on('volume-indicator', handleVolumeIndicator);
+    rtc.client.on('user-mute-updated', handleUserMuteUpdated);
 
     async function handleUserPublished(user: any) {
       const publishedUserId = user.uid.toString();
       await rtc.client.subscribe(user);
-      console.log(JSON.stringify(user));
-      console.log(JSON.stringify(rtc.client.remoteUsers));
       const videoTrack = user.videoTrack || user._videoTrack || null;
       const audioTrack = user.audioTrack || user._audioTrack || null;
       if (!videoTrack) {
@@ -54,6 +54,7 @@ export default function VideoHangout({
         userId: publishedUserId,
         videoTrack,
         audioTrack,
+        audioMuted: user.audioMuted,
       }]));
     }
 
@@ -67,6 +68,19 @@ export default function VideoHangout({
         level: volume.level,
         userId: volume.uid.toString()
       })));
+    }
+
+    function handleUserMuteUpdated(user: IAgoraRTCRemoteUser) {
+      setRemoteUsers(remoteUsers => remoteUsers.map(remoteUser => {
+        if (remoteUser.userId === user.uid.toString()) {
+          return {
+            ...remoteUser,
+            audioMuted: user.audioMuted,
+            videoMuted: user.videoMuted,
+          };
+        }
+        return remoteUser;
+      }));
     }
 
     return () => {

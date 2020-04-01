@@ -6,6 +6,26 @@
   border-radius: 3px;
 }
 
+.video-overlay {
+  z-index: 1; /* Hack to get this above the video? */
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 1vh;
+  left: 1vh;
+}
+
+.video-muted-icon {
+  background-color: white;
+  border-radius: 50%;
+  width: 5vh;
+  height: 5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: .5;
+}
+
 .video-spinner {
   position: absolute;
   top: 0;
