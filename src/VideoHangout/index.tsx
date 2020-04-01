@@ -39,12 +39,10 @@ export default function VideoHangout({
       const publishedUserId = user.uid.toString();
       await rtc.client.subscribe(user);
       if (!user.videoTrack) {
-        alert(`User ${publishedUserId} did not allow video.`);
-        return;
+        alert(`User ${publishedUserId} did not allow video. ${JSON.stringify(user)}`);
       }
       if (!user.audioTrack) {
-        alert(`User ${publishedUserId} did not allow audio.`);
-        return;
+        alert(`User ${publishedUserId} did not allow audio. ${JSON.stringify(user)}`);
       }
 
       dispatch(fetchAndUpdateTable(tableId));
