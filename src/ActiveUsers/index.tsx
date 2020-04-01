@@ -42,7 +42,7 @@ function ActiveUsersTab() {
       {errorMessage && (
         <Alert
           className="active-users-alert-error"
-          variant="danger"
+          variant="info"
           onClose={handleCloseErrorAlert}
           dismissible
         >{errorMessage}</Alert>

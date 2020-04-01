@@ -8,7 +8,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { UserType } from '../types';
-import { hashCode } from '../helpers';
+import { random } from '../helpers';
 
 type PropTypes = {
   onSubmit: (user: UserType) => void
@@ -41,7 +41,7 @@ function NameModal({
     window.localStorage.setItem('name', name);
     const names = name.split(' ');
     const user: UserType = {
-      userId: hashCode(name).toString(),
+      userId: random(2147483647).toString(), // 2^31-1
       facebookUserId: null,
       email: null,
       firstName: names[0],

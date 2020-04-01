@@ -5,6 +5,10 @@
   background-size: 200px;
 }
 
+.active-users-alert-error {
+  font-size: 9pt;
+}
+
 .active-user {
   display: flex;
   align-items: center;
