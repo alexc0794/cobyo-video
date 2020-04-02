@@ -15,15 +15,19 @@ type TableResponseType = {
 };
 
 export function transformTable(response: TableResponseType): TableType {
-  const seats: Array<SeatType> = response.seats.map((seatResponseData: SeatResponseType) => {
-    let seat: SeatType = null;
+  const seats: Array<SeatType> = response.seats.map((seatResponseData: SeatResponseType, i: number) => {
     if (seatResponseData) {
-      seat = {
+      return {
         userId: seatResponseData.user_id,
         satDownAt: seatResponseData.sat_down_at,
+        seatNumber: i, // THIS IS WHERE WE DECIDE SEAT NUMBER. TODO: REFACTOR
       };
     }
-    return seat;
+    return {
+      userId: null,
+      satDownAt: null,
+      seatNumber: i
+    };
   });
   return {
     tableId: response.table_id,

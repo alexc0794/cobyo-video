@@ -22,7 +22,7 @@ function TableRow({
   return (
     <Row noGutters>
       {seats.slice(startIndex, endIndex).map((seat: UserInSeatType, i: number) => {
-        const seatNumber = startIndex + i;
+        const { seatNumber } = seat;
         return (
           <Col key={seat ? `seat${seatNumber}-user${seat.userId}` : `seat${seatNumber}`}>
             <Seat userId={userId} seat={seat} seatNumber={seatNumber} onClick={onPickSeat} />

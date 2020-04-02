@@ -41,13 +41,13 @@ function CouchTable({
       <Row noGutters>
         <Col lg={2} className="vertical-table-row">
           {seatsAtFirstEnd.map((seat, i) => (
-            <Seat key={`seat-first-end-${i}`} userId={userId} seat={seat} seatNumber={i} onClick={onPickSeat} />
+            <Seat key={`seat-first-end-${i}`} userId={userId} seat={seat} seatNumber={seat.seatNumber} onClick={onPickSeat} />
           ))}
         </Col>
         <Col lg={8} className="table" />
         <Col lg={2} className="vertical-table-row">
           {seatsAtSecondEnd.map((seat, i) => (
-            <Seat key={`seat-second-end-${i}`} userId={userId} seat={seat} seatNumber={i} onClick={onPickSeat} />
+            <Seat key={`seat-second-end-${i}`} userId={userId} seat={seat} seatNumber={seat.seatNumber} onClick={onPickSeat} />
           ))}
         </Col>
       </Row>

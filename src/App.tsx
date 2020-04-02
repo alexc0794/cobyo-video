@@ -42,7 +42,7 @@ function App() {
   if (storefront === 'CLUB') {
     document.body.style.backgroundColor = 'rgba(0,0,0,.7)';
   }
-  
+
   const joinedTable: TableType|null = useSelector(selectJoinedTable);
   return (
     <div id="App" className="App">
@@ -51,7 +51,12 @@ function App() {
       {!joinedTable && <HomeNavbar user={user} />}
       {!joinedTable && (
         <div className="content">
-          <Storefront userId={user ? user.userId : null} tableIds={tableIds} />
+          <Storefront
+            userId={user ? user.userId : null}
+            storefront={storefront}
+            status={status}
+            tableIds={tableIds}
+          />
           {!!user && <ActiveUsers />}
         </div>
       )}

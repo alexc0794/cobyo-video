@@ -1,7 +1,8 @@
 export type SeatType = {
-  userId: string,
-  satDownAt: string,
-} | null;
+  userId: string|null,
+  satDownAt: string|null,
+  seatNumber: number,
+};
 
 export type TableType = {
   tableId: string,

@@ -24,7 +24,7 @@ function Seat({
   return (
     <div className="seat">
       {(() => {
-        if (!seat) {
+        if (!seat.userId || !seat.satDownAt) {
           return (
             <div className="seat-open" onClick={() => onClick(seatNumber)}>
               <FontAwesomeIcon icon={faChair} />
@@ -32,13 +32,13 @@ function Seat({
           );
         }
 
-        const iconElement = seat && seat.profilePictureUrl ? (
+        const iconElement = seat.profilePictureUrl ? (
           <img src={seat.profilePictureUrl} alt={seat.firstName} />
         ) : (
           <FontAwesomeIcon icon={faUser} />
         );
 
-        if (!!seat && seat.userId === userId) {
+        if (!!seat.userId && !!seat.satDownAt && seat.userId === userId) {
           return (
             <OverlayTrigger
               placement="bottom"
