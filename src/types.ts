@@ -8,6 +8,8 @@ export type TableType = {
   seats: Array<SeatType>,
   name: string,
   lastUpdatedAt: string,
+  connection: string,
+  shape: string,
 };
 
 export type UserType = {

@@ -1,0 +1,38 @@
+.seat > * {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  font-size: 20pt;
+  border-radius: 50%;
+  box-shadow: 2px 3px 0.3rem rgba(0,0,0,0.5);
+}
+
+.seat img {
+  border-radius: inherit;
+}
+
+.seat-open {
+  cursor: pointer;
+  color: white;
+  background-color: #007bff;
+}
+
+.seat-you {
+  cursor: pointer;
+  color: white;
+  background-color: #28a745;
+  opacity: .7;
+}
+
+.seat-occupied {
+  color: white;
+  background-color: #dc3545;
+  opacity: .7;
+}
+
+.seat-open:hover,
+.seat-you:hover {
+  opacity: .5;
+}

@@ -10,10 +10,12 @@ type TableResponseType = {
   seats: Array<SeatResponseType>,
   name: string,
   last_updated_at: string,
+  connection: string,
+  shape: string,
 };
 
-export function transformTable(tableResponse: TableResponseType): TableType {
-  const seats: Array<SeatType> = tableResponse.seats.map((seatResponseData: SeatResponseType) => {
+export function transformTable(response: TableResponseType): TableType {
+  const seats: Array<SeatType> = response.seats.map((seatResponseData: SeatResponseType) => {
     let seat: SeatType = null;
     if (seatResponseData) {
       seat = {
@@ -24,10 +26,12 @@ export function transformTable(tableResponse: TableResponseType): TableType {
     return seat;
   });
   return {
-    tableId: tableResponse.table_id,
+    tableId: response.table_id,
     seats,
-    lastUpdatedAt: tableResponse.last_updated_at,
-    name: tableResponse.name
+    lastUpdatedAt: response.last_updated_at,
+    name: response.name,
+    connection: response.connection,
+    shape: response.shape
   };
 }
 
@@ -41,14 +45,14 @@ type UserResponseType = {
   last_active_at: string|null,
 };
 
-export function transformUser(userResponse: UserResponseType): UserType {
+export function transformUser(response: UserResponseType): UserType {
   return {
-    userId: userResponse.user_id,
-    facebookUserId: userResponse.facebook_user_id,
-    email: userResponse.email,
-    firstName: userResponse.first_name,
-    lastName: userResponse.last_name,
-    profilePictureUrl: userResponse.profile_picture_url,
-    lastActiveAt: userResponse.last_active_at,
+    userId: response.user_id,
+    facebookUserId: response.facebook_user_id,
+    email: response.email,
+    firstName: response.first_name,
+    lastName: response.last_name,
+    profilePictureUrl: response.profile_picture_url,
+    lastActiveAt: response.last_active_at,
   };
 }
