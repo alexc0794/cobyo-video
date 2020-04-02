@@ -9,5 +9,4 @@ body {
 .content {
   display: flex;
   align-content: stretch;
-  height: calc(100vh - 56px);
 }

@@ -9,7 +9,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './index.css';
 
-const TABLE_IDS = ['1','2','3','4','5'];
+const TABLE_IDS = ['1','2','3','4','5', '6', '7'];
 
 type PropTypes = {
   userId: string|null,
@@ -36,6 +36,11 @@ function Cafeteria({ userId }: PropTypes) {
         <Col><Table key="3" tableId="3" userId={userId} /></Col>
         <Col><Table key="4" tableId="4" userId={userId} /></Col>
         <Col><Table key="5" tableId="5" userId={userId} /></Col>
+      </Row>
+      <Row/>
+      <Row>
+        <Col><Table key="6" tableId="6" userId={userId} /></Col>
+        <Col><Table key="7" tableId="7" userId={userId} /></Col>
       </Row>
     </Container>
   );

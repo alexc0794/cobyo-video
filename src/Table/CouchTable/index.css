@@ -1,8 +1,8 @@
-.table .row {
-  min-height: 50px;
+.couch-table {
+
 }
 
-.table .table-row {
+.couch-table .table {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,10 +10,12 @@
   min-height: 130px;
   border-radius: 10px;
   box-shadow: 5px 6px 0.5rem rgba(0,0,0,0.5);
+  margin-bottom: 0;
 }
 
-.table .col {
+.vertical-table-row {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  padding: 10px 0;
+  align-items: center;
 }

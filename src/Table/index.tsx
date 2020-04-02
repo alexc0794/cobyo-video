@@ -1,11 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { joinAndUpdateTable, leaveAndUpdateTable } from '../redux/tablesActions';
+import { joinAndUpdateTable } from '../redux/tablesActions';
 import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from '../redux/tablesSelectors';
 import { selectUsersByIds } from '../redux/usersSelectors';
 import RectangularTable from './RectangularTable';
+import CouchTable from './CouchTable';
 import { SeatType, UserInSeatType } from '../types';
-import './index.css';
 
 type PropTypes = {
   tableId: string,
@@ -31,11 +31,6 @@ function Table({ tableId, userId }: PropTypes) {
     dispatch(joinAndUpdateTable(tableId, pickedSeat, userId));
   }
 
-  function handleLeaveTable() {
-    if (!userId) { return; }
-    dispatch(leaveAndUpdateTable(tableId, userId));
-  }
-
   const seats = table ? table.seats : [];
   const tableUserIds: Array<string|null> = seats.map((seat: SeatType) => seat ? seat.userId : null);
   const users = useSelector(selectUsersByIds(tableUserIds));
@@ -44,9 +39,41 @@ function Table({ tableId, userId }: PropTypes) {
     ...users[i]
   }) : null);
 
-  return (
-    <RectangularTable tableId={tableId} userId={userId} seats={userInSeats} onPickSeat={handlePickSeat} />
-  );
+  if (!table) { return null; }
+
+  switch (table.shape) {
+    case 'UDOWN':
+      return (
+        <CouchTable
+          tableId={tableId}
+          userId={userId}
+          seats={userInSeats}
+          numSeatsAtEnds={2}
+          facingUp={false}
+          onPickSeat={handlePickSeat}
+        />
+      );
+    case 'UUP':
+      return (
+        <CouchTable
+          tableId={tableId}
+          userId={userId}
+          seats={userInSeats}
+          numSeatsAtEnds={2}
+          facingUp
+          onPickSeat={handlePickSeat}
+        />
+      )
+    default:
+      return (
+        <RectangularTable
+          tableId={tableId}
+          userId={userId}
+          seats={userInSeats}
+          onPickSeat={handlePickSeat}
+        />
+      )
+  }
 }
 
 export default Table;

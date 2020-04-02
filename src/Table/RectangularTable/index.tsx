@@ -1,10 +1,10 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Seat from '../Seat';
+import TableRow from '../TableRow';
 import { UserInSeatType } from '../../types';
 import cx from 'classnames';
+import './index.css';
 
 type PropTypes = {
   tableId: string,
@@ -29,7 +29,7 @@ function RectangularTable({
           endIndex={Math.ceil(seats.length / 2)}
           onPickSeat={onPickSeat}
         />
-        <Row bsPrefix="table-row" />
+        <Row className="rectangular-table" />
         <TableRow
           userId={userId}
           seats={seats}
@@ -39,35 +39,6 @@ function RectangularTable({
         />
       </Container>
     </div>
-  );
-}
-
-type TableRowPropTypes = {
-  userId: string|null,
-  seats: Array<UserInSeatType>,
-  startIndex: number,
-  endIndex: number,
-  onPickSeat: (seatNumber: number) => void
-};
-
-function TableRow({
-  userId,
-  seats,
-  startIndex,
-  endIndex,
-  onPickSeat,
-}: TableRowPropTypes) {
-  return (
-    <Row noGutters>
-      {seats.slice(startIndex, endIndex).map((seat: UserInSeatType, i: number) => {
-        const seatNumber = startIndex + i;
-        return (
-          <Col key={seat ? `seat${seatNumber}-user${seat.userId}` : `seat${seatNumber}`}>
-            <Seat userId={userId} seat={seat} seatNumber={seatNumber} onClick={onPickSeat} />
-          </Col>
-        );
-      })}
-    </Row>
   );
 }
 
