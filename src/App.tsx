@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAndUpdateStorefront } from './redux/storefrontActions';
 import { selectJoinedTable } from './redux/tablesSelectors';
 import HomeNavbar from './HomeNavbar';
 import NameModal from './NameModal';
-import Cafeteria from './Cafeteria';
+import Storefront from './Storefront';
 import VideoHangout from './VideoHangout';
 import ActiveUsers from './ActiveUsers';
 import { getRTC, RTCType } from './AgoraRTC';
 import { TableType, UserType } from './types';
+import { useInterval } from './hooks';
+import { REFRESH_STOREFRONT_INTERVAL_MS } from './config';
 
 let rtc: RTCType = getRTC();
+
 
 function App() {
   const [user, setUser] = useState<UserType|null>(null);
@@ -20,8 +24,26 @@ function App() {
     setUser(user);
   }
 
-  const joinedTable: TableType|null = useSelector(selectJoinedTable);
+  const [{ storefront, status, tableIds }, setStorefront] = useState<any>({ storefront: null, status: 'OPEN', tableIds: [] });
 
+  const dispatch = useDispatch();
+  const loadStorefront = useCallback(async () => {
+    setStorefront(await dispatch(fetchAndUpdateStorefront()));
+  }, [dispatch]);
+
+  useEffect(() => {
+    loadStorefront();
+  }, [loadStorefront]);
+
+  useInterval(() => {
+    loadStorefront();
+  }, REFRESH_STOREFRONT_INTERVAL_MS)
+
+  if (storefront === 'CLUB') {
+    document.body.style.backgroundColor = 'rgba(0,0,0,.7)';
+  }
+  
+  const joinedTable: TableType|null = useSelector(selectJoinedTable);
   return (
     <div id="App" className="App">
       {showModal && <NameModal onSubmit={handleSubmitUser} />}
@@ -29,7 +51,7 @@ function App() {
       {!joinedTable && <HomeNavbar user={user} />}
       {!joinedTable && (
         <div className="content">
-          <Cafeteria userId={user ? user.userId : null} />
+          <Storefront userId={user ? user.userId : null} tableIds={tableIds} />
           {!!user && <ActiveUsers />}
         </div>
       )}

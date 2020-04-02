@@ -22,7 +22,40 @@ function token(state = null, action: any) {
   }
 }
 
+function storefront(state = null, action: any) {
+  switch (action.type) {
+    case 'UPDATE_STOREFRONT': {
+      return action.payload.storefront;
+    }
+    default:
+      return state;
+  }
+}
+
+function status(state = 'OPEN', action: any) {
+  switch (action.type) {
+    case 'UPDATE_STOREFRONT': {
+      return action.payload.status;
+    }
+    default:
+      return state;
+  }
+}
+
+function tableIds(state = [], action: any) {
+  switch (action.type) {
+    case 'UPDATE_STOREFRONT': {
+      return action.payload.tableIds;
+    }
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   userId,
   token,
+  storefront,
+  status,
+  tableIds,
 });
