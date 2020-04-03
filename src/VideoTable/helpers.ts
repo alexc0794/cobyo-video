@@ -1,4 +1,47 @@
-import { TableType } from '../types';
+import { TableType, SeatType } from '../types';
+import { U_SHAPE_TABLE_END_SEAT_LENGTH } from '../Table';
+
+export function getTableGrid(table: TableType): Array<Array<SeatType|null>> {
+  switch (table.shape) {
+    case 'UUP':
+    case 'UDOWN': {
+      return getCouchTableGrid(table, U_SHAPE_TABLE_END_SEAT_LENGTH);
+    }
+    default:
+      return getRectangularTableGrid(table);
+  }
+}
+
+function getCouchTableGrid(table: TableType, tableEndSeatLength: number): Array<Array<SeatType|null>> {
+  const mainRow = table.seats.slice(tableEndSeatLength, table.seats.length - tableEndSeatLength);
+  const grid: Array<Array<SeatType|null>> = [];
+  if (table.shape === 'UUP') {
+    for (let i = 0; i < tableEndSeatLength; i++) {
+      const firstEndSeat = table.seats[i];
+      const lastEndSeat = table.seats[table.seats.length - 1 - i];
+      const row = [firstEndSeat, ...new Array(mainRow.length - 2).fill(null), lastEndSeat];
+      grid.push(row);
+    }
+    grid.push(mainRow);
+  } else if (table.shape === 'UDOWN') {
+    grid.push(mainRow);
+    for (let i = 0; i < tableEndSeatLength; i++) {
+      const firstEndSeat = table.seats[tableEndSeatLength - 1 - i];
+      const lastEndSeat = table.seats[table.seats.length - tableEndSeatLength + i];
+      const row = [firstEndSeat, ...new Array(mainRow.length - 2).fill(null), lastEndSeat];
+      grid.push(row);
+    }
+  }
+
+  return grid;
+}
+
+function getRectangularTableGrid(table: TableType): Array<Array<SeatType|null>> {
+  const totalLength = table.seats.length;
+  const mid = totalLength / 2;
+  return [table.seats.slice(0, mid), table.seats.slice(mid, totalLength)];
+}
+
 
 export function getTableRows(table: TableType, userId: string) {
   const rowSize = table.seats.length - 1;
@@ -6,8 +49,8 @@ export function getTableRows(table: TableType, userId: string) {
   const opposingRowSeats = removeNullsOnEnd(getOpposingRowSeats(seat, table.seats.length, rowSize));
   const sameRowSeats = removeNullsOnEnd(getSameRowSeats(seat, table.seats.length, rowSize));
   return [
-    opposingRowSeats.map(seat => seat !== null ? table.seats[seat] : null),
-    sameRowSeats.map(seat => seat !== null ? table.seats[seat] : null),
+    opposingRowSeats.map(seatNumber => seatNumber !== null ? table.seats[seatNumber] : null),
+    sameRowSeats.map(seatNumber => seatNumber !== null ? table.seats[seatNumber] : null),
   ];
 }
 

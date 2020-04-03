@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export function useInterval(callback: () => any, delay: number | null) {
   const savedCallback: any = useRef();
@@ -16,4 +16,23 @@ export function useInterval(callback: () => any, delay: number | null) {
       return () => clearInterval(id);
     }
   }, [delay]);
+}
+
+export function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState<Array<number>>([
+    window.innerWidth, window.innerHeight
+  ]);
+
+  useEffect(() => {
+    function onResize() {
+      setWindowDimensions([window.innerWidth, window.innerHeight]);
+    }
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
+
+  return windowDimensions;
 }

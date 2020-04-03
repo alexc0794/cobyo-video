@@ -12,7 +12,7 @@ type PropTypes = {
   userId: string|null,
   numSeatsAtEnds: number,
   seats: Array<UserInSeatType>,
-  facingUp: boolean,
+  shape: string,
   onPickSeat: (seatNumber: number) => void,
 };
 
@@ -21,15 +21,19 @@ function CouchTable({
   userId,
   seats,
   numSeatsAtEnds,
-  facingUp,
+  shape,
   onPickSeat,
 }: PropTypes) {
-  const seatsAtFirstEnd = seats.slice(0, numSeatsAtEnds);
-  const seatsAtSecondEnd = seats.slice(seats.length - numSeatsAtEnds, seats.length);
+  const seatsAtFirstEnd = (shape === 'UUP') ? seats.slice(0, numSeatsAtEnds) : seats.slice(0, numSeatsAtEnds).reverse();
+  const seatsAtSecondEnd = (shape === 'UUP') ? (
+    seats.slice(seats.length - numSeatsAtEnds, seats.length).reverse()
+  ) : (
+    seats.slice(seats.length - numSeatsAtEnds, seats.length)
+  );
 
   return (
     <Container fluid className="couch-table">
-      {!facingUp && (
+      {shape === 'UDOWN' && (
         <TableRow
           userId={userId}
           seats={seats}
@@ -51,7 +55,7 @@ function CouchTable({
           ))}
         </Col>
       </Row>
-      {facingUp && (
+      {shape === 'UUP' && (
         <TableRow
           userId={userId}
           seats={seats}

@@ -7,6 +7,8 @@ import RectangularTable from './RectangularTable';
 import CouchTable from './CouchTable';
 import { SeatType, UserInSeatType } from '../types';
 
+export const U_SHAPE_TABLE_END_SEAT_LENGTH = 2;
+
 type PropTypes = {
   tableId: string,
   userId: string|null,
@@ -48,8 +50,8 @@ function Table({ tableId, userId }: PropTypes) {
           tableId={tableId}
           userId={userId}
           seats={userInSeats}
-          numSeatsAtEnds={2}
-          facingUp={false}
+          numSeatsAtEnds={U_SHAPE_TABLE_END_SEAT_LENGTH}
+          shape={table.shape}
           onPickSeat={handlePickSeat}
         />
       );
@@ -59,8 +61,8 @@ function Table({ tableId, userId }: PropTypes) {
           tableId={tableId}
           userId={userId}
           seats={userInSeats}
-          numSeatsAtEnds={2}
-          facingUp
+          numSeatsAtEnds={U_SHAPE_TABLE_END_SEAT_LENGTH}
+          shape={table.shape}
           onPickSeat={handlePickSeat}
         />
       )

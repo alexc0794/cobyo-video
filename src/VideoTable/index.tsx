@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectTableById } from '../redux/tablesSelectors';
 import { VideoUserType } from '../VideoHangout/types';
@@ -6,16 +6,16 @@ import { RTCType } from '../AgoraRTC';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { RemoteVideo, LocalVideo, VideoPlaceholder } from '../Video';
-import { getTableRows } from './helpers';
+import RemoteVideo from '../Video/RemoteVideo';
+import LocalVideo from '../Video/LocalVideo';
+import { VideoPlaceholder } from '../Video';
+import { useWindowDimensions } from '../hooks';
+import { getTableGrid } from './helpers';
+import { SeatType } from '../types';
 import './index.css';
 
 const VIDEO_SETTINGS_HEIGHT_PX = 120;
 const TABLE_HEIGHT_PX = 0;
-
-function calculateVideoHeight(windowHeight: number): number {
-  return windowHeight - VIDEO_SETTINGS_HEIGHT_PX - TABLE_HEIGHT_PX;
-}
 
 type PropTypes = {
   tableId: string,
@@ -30,38 +30,19 @@ function VideoTable({
   rtc,
   remoteUsers,
 }: PropTypes) {
-  const [groupVideoDimensions, setGroupVideoDimensions] = useState<Array<number>>([
-    window.innerWidth, calculateVideoHeight(window.innerHeight)
-  ]);
-
-  useEffect(() => {
-    function onResize() {
-      const videoElements = document.getElementsByClassName("video");
-      Array.prototype.forEach.call(videoElements, function(videoElement) {
-        setGroupVideoDimensions([
-          window.innerWidth, calculateVideoHeight(window.innerHeight)
-        ]);
-      });
-    }
-    onResize();
-    window.addEventListener('resize', onResize);
-    return () => {
-      window.removeEventListener('resize', onResize);
-    };
-  }, []);
-
+  const [, windowHeight] = useWindowDimensions();
+  const groupVideoHeight = windowHeight - VIDEO_SETTINGS_HEIGHT_PX - TABLE_HEIGHT_PX;
   const table = useSelector(selectTableById(tableId));
-  const rows: Array<any> = getTableRows(table, userId);
-  const [, groupVideoHeight] = groupVideoDimensions;
+  const rows: Array<any> = getTableGrid(table);
   return (
     <Container fluid className="video-table">
       {rows.map((seats, i) => (
-        <Row key={`video-table-row-${i}`} style={{height: `${groupVideoHeight / 2}px`}}>
-          {seats.map((seat: any, i: number) => (
+        <Row key={`video-table-row-${i}`} style={{height: `${groupVideoHeight / rows.length}px`}}>
+          {seats.map((seat: SeatType|null, i: number) => (
             <Col key={i}>
               {(() => {
                 if (!seat) {
-                  return <VideoPlaceholder />;
+                  return null;
                 }
                 if (seat && seat.userId === userId) {
                   return (
