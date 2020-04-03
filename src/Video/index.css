@@ -58,7 +58,10 @@
   height: 50px;
   border-radius: 50%;
   box-shadow: 1px 2px .5rem rgba(0,0,0,0.2);
+}
 
+.club-mode .video-placeholder-icon svg {
+  color: rgba(255, 255, 255, .7);
 }
 
 .video-placeholder svg {

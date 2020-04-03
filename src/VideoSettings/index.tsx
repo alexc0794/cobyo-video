@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { leaveAndUpdateTable } from '../redux/tablesActions';
+import { selectStorefront } from '../redux/appSelectors';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMicrophone, faMicrophoneSlash, faSignOutAlt, faUserFriends, faQuoteRight } from '@fortawesome/free-solid-svg-icons';
+import { faMicrophone, faMicrophoneSlash, faSignOutAlt, faUserFriends, faPortrait } from '@fortawesome/free-solid-svg-icons';
 import { RTCType } from '../AgoraRTC';
 import { getSpeechRecognition } from '../SpeechRecognition';
 import { sendAudioTranscript } from '../services';
 import { useInterval } from '../hooks';
 import { SEND_TRANSCRIPT_INTERVAL_MS } from '../config';
+import cx from 'classnames';
 import './index.css';
 
 type PropTypes = {
@@ -100,45 +100,71 @@ function VideoSettings({
     dispatch(leaveAndUpdateTable(tableId, userId));
   }
 
+  const storefront = useSelector(selectStorefront);
+  const [beautyEffectOn, setBeautyEffectOn] = useState<boolean>(storefront === 'CLUB');
+  useEffect(() => {
+    if (!beautyEffectOn || !rtc.localVideoTrack) { return; }
+    rtc.localVideoTrack.setBeautyEffect(true, {
+      rednessLevel: 1,
+      smoothnessLevel: 1,
+      lighteningLevel: 0
+    });
+  }, [rtc.localVideoTrack, beautyEffectOn]);
+
+  async function handleClickBeautify() {
+    if (!rtc.localVideoTrack) { return; }
+    if (beautyEffectOn) {
+      await rtc.localVideoTrack.setBeautyEffect(false);
+    } else {
+      await rtc.localVideoTrack.setBeautyEffect(true, {
+        rednessLevel: 1,
+        smoothnessLevel: 1,
+      });
+    }
+    setBeautyEffectOn(!beautyEffectOn);
+  }
+
   return (
-    <div className="video-settings">
-      <ButtonToolbar className="video-settings-toolbar">
+    <div className={cx('video-settings', {
+      'club-mode-lighter': storefront === 'CLUB',
+    })}>
+      <ButtonToolbar className={cx('video-settings-toolbar', {
+        'club-mode': storefront === 'CLUB'
+      })}>
         <ButtonGroup>
-          <Button variant="primary" disabled>
+          <Button variant="secondary">
             <FontAwesomeIcon icon={faUserFriends} />
             <span>{numUsers === 1 ? `1 user` : `${numUsers} users`}</span>
           </Button>
-          <Button variant="danger" onClick={handleLeave}>
-            <FontAwesomeIcon icon={faSignOutAlt} />
-            <span>Leave</span>
-          </Button>
+          {beautyEffectOn ? (
+            <Button variant="danger" onClick={handleClickBeautify}>
+              <FontAwesomeIcon icon={faPortrait} />
+              <span>Club</span>
+            </Button>
+          ) : (
+            <Button variant="secondary" onClick={handleClickBeautify}>
+              <FontAwesomeIcon icon={faPortrait} />
+              <span>Normal</span>
+            </Button>
+          )}
+        </ButtonGroup>
+        <ButtonGroup>
           {unmuted ? (
             <Button variant="secondary" onClick={handleMute}>
               <FontAwesomeIcon icon={faMicrophoneSlash} />
               <span>Mute</span>
             </Button>
           ) : (
-            <Button variant="secondary" onClick={handleUnmute}>
+            <Button variant="danger" onClick={handleUnmute}>
               <FontAwesomeIcon icon={faMicrophone} />
               <span>Unmute</span>
             </Button>
           )}
+          <Button variant="secondary" onClick={handleLeave}>
+            <FontAwesomeIcon icon={faSignOutAlt} />
+            <span>Leave</span>
+          </Button>
         </ButtonGroup>
-        {false && (
-          <ButtonGroup>
-            <OverlayTrigger trigger="click" placement="top" overlay={
-                <Popover id="placement">
-                  <Popover.Title><strong>Discussed Topics</strong></Popover.Title>
-                  <Popover.Content>WIP</Popover.Content>
-                </Popover>
-            }>
-              <Button variant="info" onClick={() => {}}>
-                <FontAwesomeIcon icon={faQuoteRight} />
-                <span>Topics</span>
-              </Button>
-            </OverlayTrigger>
-          </ButtonGroup>
-        )}
       </ButtonToolbar>
       {recentlyJoinedUser && <span style={{display: 'none'}}>{recentlyJoinedUser.uid.toString()} joined</span>}
       {recentlyLeftUser && <span style={{display: 'none'}}>{recentlyLeftUser.uid.toString()} left</span>}

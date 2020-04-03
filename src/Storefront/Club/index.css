@@ -9,6 +9,7 @@
   background-size: 250px;
   background-position: center center;
   animation:pulse 0.5s infinite alternate;
+  min-height: 200px;
 }
 
 @keyframes pulse {

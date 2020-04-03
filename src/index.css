@@ -12,3 +12,17 @@ body {
   align-content: stretch;
   min-height: calc(100vh - 56px);
 }
+
+/* GLOBAL */
+
+.club-mode-lighter {
+  background-color: rgba(36, 36, 36, .5);
+}
+
+.club-mode {
+  background-color: rgb(36, 36, 36);
+}
+
+.club-mode-darker {
+  background-color: rgba(10, 10, 10, .5);
+}

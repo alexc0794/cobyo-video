@@ -14,6 +14,10 @@ function Club({
   userId,
   tableIds
 }: PropTypes) {
+  if (tableIds.length === 0) {
+    return null;
+  }
+
   return (
     <Container fluid className="club">
       <Row>

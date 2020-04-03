@@ -34,6 +34,7 @@ export default function VideoHangout({
   useEffect(() => {
     rtc.client.on('user-published', handleUserPublished);
     rtc.client.on('user-unpublished', handleUserUnpublished);
+    rtc.client.enableAudioVolumeIndicator();
     rtc.client.on('volume-indicator', handleVolumeIndicator);
     rtc.client.on('user-mute-updated', handleUserMuteUpdated);
 
@@ -50,6 +51,8 @@ export default function VideoHangout({
       }
 
       dispatch(fetchAndUpdateTable(tableId));
+      // audioTrack.setVolume(0);
+
       setRemoteUsers(currentRemoteUsers => ([...currentRemoteUsers, {
         userId: publishedUserId,
         videoTrack,

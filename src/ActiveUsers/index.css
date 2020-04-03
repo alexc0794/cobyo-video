@@ -1,8 +1,12 @@
 .active-users {
   width: 280px;
-  background-color: white;
   background-image: url('../images/outdoorfloor.jpg');
   background-size: 200px;
+}
+
+.active-users-club {
+  background-blend-mode: darken;
+  background-color: rgba(0,0,0,.7);
 }
 
 .active-users-alert-error {

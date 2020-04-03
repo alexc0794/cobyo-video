@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAndUpdateActiveUsers } from '../redux/usersActions';
+import { selectStorefront } from '../redux/appSelectors';
 import { selectActiveUsers } from '../redux/usersSelectors';
 import { useInterval } from '../hooks';
 import { REFRESH_ACTIVE_USERS_INTERVAL_MS } from '../config';
@@ -9,6 +10,7 @@ import { UserType } from '../types';
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import cx from 'classnames';
 import './index.css';
 
 function ActiveUsersTab() {
@@ -36,9 +38,11 @@ function ActiveUsersTab() {
   }
 
   const activeUsers = useSelector(selectActiveUsers);
-
+  const storefront = useSelector(selectStorefront);
   return (
-    <div className="active-users">
+    <div className={cx('active-users', {
+      'active-users-club': storefront === 'CLUB',
+    })}>
       {errorMessage && (
         <Alert
           className="active-users-alert-error"
