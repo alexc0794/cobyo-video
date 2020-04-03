@@ -10,4 +10,5 @@ body {
 .content {
   display: flex;
   align-content: stretch;
+  min-height: calc(100vh - 56px);
 }

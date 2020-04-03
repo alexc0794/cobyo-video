@@ -3,15 +3,33 @@ import Navbar from 'react-bootstrap/Navbar';
 import { UserType } from '../types';
 
 type PropTypes = {
-  user: UserType|null
+  user: UserType|null,
+  storefront: string|null,
+  status: string,
 };
 
-function HomeNavbar({ user }: PropTypes) {
+function HomeNavbar({ user, storefront }: PropTypes) {
   const userName = user ? (user.lastName ? `${user.firstName} ${user.lastName}`: user.firstName) : "";
+  const title = (() => {
+    switch (storefront) {
+      case 'CAFE':
+        return 'Virtual Cafe';
+      case 'CAFETERIA':
+        return 'Virtual Cafeteria';
+      case 'CLUB':
+        return 'Virtual Club';
+      default:
+        return null;
+    }
+  })();
+
+  if (!title) {
+    return null;
+  }
 
   return (
     <Navbar bg="dark" variant="dark">
-      <Navbar.Brand>Virtual Cafeteria</Navbar.Brand>
+      <Navbar.Brand>{title}</Navbar.Brand>
       <Navbar.Collapse className="justify-content-end">
         {user && user.profilePictureUrl && (
           <Navbar.Brand>

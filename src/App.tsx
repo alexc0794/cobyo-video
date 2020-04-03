@@ -14,7 +14,6 @@ import { REFRESH_STOREFRONT_INTERVAL_MS } from './config';
 
 let rtc: RTCType = getRTC();
 
-
 function App() {
   const [user, setUser] = useState<UserType|null>(null);
   const [showModal, setShowModal] = useState<boolean>(true);
@@ -48,14 +47,14 @@ function App() {
     <div id="App" className="App">
       {showModal && <NameModal onSubmit={handleSubmitUser} />}
       {!!joinedTable && !!user && <VideoHangout userId={user.userId} tableId={joinedTable.tableId} rtc={rtc} />}
-      {!joinedTable && <HomeNavbar user={user} />}
+      {!joinedTable && <HomeNavbar user={user} storefront={storefront} status={status} />}
       {!joinedTable && (
         <div className="content">
           <Storefront
             userId={user ? user.userId : null}
             storefront={storefront}
             status={status}
-            tableIds={tableIds}
+            tableIds={status === 'CLOSED' ? [] : tableIds}
           />
           {!!user && <ActiveUsers />}
         </div>

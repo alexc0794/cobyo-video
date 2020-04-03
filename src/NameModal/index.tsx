@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createAndUpdateUser } from '../redux/usersActions';
+import { selectStorefront, selectStatus } from '../redux/appSelectors';
 import Modal from 'react-bootstrap/Modal';
+import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -98,60 +100,107 @@ function NameModal({
     });
   }
 
+  const [showDisclaimer, setShowDisclaimer] = useState<boolean>(false);
+  function handleClickDislaimer(e: any) {
+    e.preventDefault();
+    setShowDisclaimer(prevShowDislcaimer => !prevShowDislcaimer);
+  }
+
+  const storefront = useSelector(selectStorefront);
+  const status = useSelector(selectStatus);
+  const closed = status === 'CLOSED';
+
+  const title = (() => {
+    let title = `Welcome${initialName ? ' back' : ''}`;
+    switch (storefront) {
+      case 'CLUB':
+        title += ' to the Virtual Club';
+        break;
+      case 'CAFE':
+        title += ' to the Virtual Cafe';
+        break;
+      case 'CAFETERIA':
+        title += ' to the Virtual Cafeteria';
+        break;
+    }
+    return title += '!';
+  })();
+
   return (
     <Modal show backdrop={"static"}>
       <Modal.Header>
-        <Modal.Title>Welcome {initialName ? "back" : ""} to Virtual Cafeteria!</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        This is a video hangout space attempting to simulate a real-life cafeteria.
-        You will need to allow the browser access to your <strong>webcam</strong> and <strong>microphone</strong>.
-        For your optimal experience, we recommend you use Google Chrome on a laptop or desktop.
-      </Modal.Body>
+      {closed && (
+        <Modal.Body>
+          We are currently closed. Please come back at a later time.
+        </Modal.Body>
+      )}
+      {!!storefront && !closed && (
+        <>
+          <Modal.Body>
+            You are about to enter a video simulation of a real-life {storefront.toLowerCase()}.
+            To partake, please allow the browser access to your <strong>webcam</strong> and <strong>microphone</strong>.
+          </Modal.Body>
+          <Modal.Body>
+            For your optimal experience, we recommend you use Google Chrome on a laptop or desktop.
+          </Modal.Body>
 
-      <Modal.Body>
-        Our video platform runs on <a href="https://www.agora.io/" target="_blank" rel="noopener noreferrer">agora.io</a>. What they do with your video and audio is not in our control.
-        You can read their privacy policy <a href="https://www.agora.io/en/privacy-policy/" target="_blank" rel="noopener noreferrer">here</a>.
-      </Modal.Body>
+            <Button variant="link" onClick={handleClickDislaimer}>{showDisclaimer ? 'Hide Disclaimer' : 'View Disclaimer'}</Button>
 
-      <Modal.Body>
-        <span>We will <strong>NOT</strong> record your video or audio, but your audio may be </span>
-        <OverlayTrigger
-          placement="left"
-          overlay={
-            <Tooltip id="audio-recording-tooltip">
-              We utilize speech recognition to parse conversations and display talking points to other users.
-            </Tooltip>
-          }
-        >
-          <span style={{textDecoration: 'underline'}}>transcribed</span>
-        </OverlayTrigger>
-        <span>. Transcriptions will be destroyed after one hour.</span>
-      </Modal.Body>
-      <Modal.Footer>
-        <InputGroup>
-          <Button
-            variant="primary"
-            onClick={facebookLogin ? handleFacebookContinue : handleFacebookLoginAttempt}
-            style={{marginRight: '10px'}}
-          >
-            {facebookLogin ? "Continue with Facebook" : "Login with Facebook"}
-          </Button>
-          <FormControl
-            placeholder="Enter name to continue"
-            aria-label="Name"
-            onChange={handleChangeName}
-            value={name}
-            onKeyPress={handleKeyPress}
-          />
-          <InputGroup.Append>
-            <Button
-              variant="outline-secondary"
-              onClick={handleClickEnterName}
-            >Go</Button>
-          </InputGroup.Append>
-        </InputGroup>
-      </Modal.Footer>
+          {showDisclaimer && (
+            <>
+              <Modal.Body>
+                <span>We will <strong>NOT</strong> record your video or audio, but your audio may be </span>
+                <OverlayTrigger
+                  placement="left"
+                  overlay={
+                    <Tooltip id="audio-recording-tooltip">
+                      We utilize speech recognition to parse conversations and display talking points to other users.
+                    </Tooltip>
+                  }
+                >
+                  <span style={{textDecoration: 'underline'}}>transcribed</span>
+                </OverlayTrigger>
+                <span>. Transcriptions will be destroyed after one hour.</span>
+              </Modal.Body>
+              <Modal.Body>
+                Our video platform runs on <a href="https://www.agora.io/" target="_blank" rel="noopener noreferrer">agora.io</a>. What they do with your video and audio is not in our control.
+                You can read their privacy policy <a href="https://www.agora.io/en/privacy-policy/" target="_blank" rel="noopener noreferrer">here</a>.
+              </Modal.Body>
+            </>
+          )}
+          <Modal.Footer>
+            <InputGroup>
+              <Button
+                variant="primary"
+                onClick={facebookLogin ? handleFacebookContinue : handleFacebookLoginAttempt}
+                style={{marginRight: '10px'}}
+              >
+                {facebookLogin ? "Continue with Facebook" : "Login with Facebook"}
+              </Button>
+              <FormControl
+                placeholder="Enter name to continue"
+                aria-label="Name"
+                onChange={handleChangeName}
+                value={name}
+                onKeyPress={handleKeyPress}
+              />
+              <InputGroup.Append>
+                <Button
+                  variant="outline-secondary"
+                  onClick={handleClickEnterName}
+                >Go</Button>
+              </InputGroup.Append>
+            </InputGroup>
+          </Modal.Footer>
+        </>
+      )}
+      {!storefront && !closed && (
+        <Modal.Body>
+          <Spinner animation="border" />
+        </Modal.Body>
+      )}
     </Modal>
   );
 }
