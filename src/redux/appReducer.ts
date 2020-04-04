@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-function userId(state = null, action: any) {
+function userId(state = null, action: any): string|null {
   switch (action.type) {
     case 'CREATE_USER_SUCCESS': {
       const { user } = action.payload;
@@ -11,7 +11,7 @@ function userId(state = null, action: any) {
   }
 }
 
-function token(state = null, action: any) {
+function token(state = null, action: any): string|null {
   switch (action.type) {
     case 'CREATE_USER_SUCCESS': {
       const { token } = action.payload;
@@ -22,7 +22,7 @@ function token(state = null, action: any) {
   }
 }
 
-function storefront(state = null, action: any) {
+function storefront(state = null, action: any): string|null {
   switch (action.type) {
     case 'UPDATE_STOREFRONT': {
       return action.payload.storefront;
@@ -32,20 +32,10 @@ function storefront(state = null, action: any) {
   }
 }
 
-function status(state = 'OPEN', action: any) {
+function status(state = 'OPEN', action: any): string {
   switch (action.type) {
     case 'UPDATE_STOREFRONT': {
       return action.payload.status;
-    }
-    default:
-      return state;
-  }
-}
-
-function tableIds(state = [], action: any) {
-  switch (action.type) {
-    case 'UPDATE_STOREFRONT': {
-      return action.payload.tableIds;
     }
     default:
       return state;
@@ -57,5 +47,4 @@ export default combineReducers({
   token,
   storefront,
   status,
-  tableIds,
 });

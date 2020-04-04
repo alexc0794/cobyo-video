@@ -23,7 +23,11 @@ function App() {
     setUser(user);
   }
 
-  const [{ storefront, status, tableIds }, setStorefront] = useState<any>({ storefront: null, status: 'OPEN', tableIds: [] });
+  const [{
+    storefront,
+    status,
+    tableIdGrid,
+  }, setStorefront] = useState<any>({ storefront: null, status: 'OPEN', tableIdGrid: [] });
 
   const dispatch = useDispatch();
   const loadStorefront = useCallback(async () => {
@@ -54,7 +58,7 @@ function App() {
             userId={user ? user.userId : null}
             storefront={storefront}
             status={status}
-            tableIds={status === 'CLOSED' ? [] : tableIds}
+            tableIdGrid={status === 'CLOSED' ? [] : tableIdGrid}
           />
           {!!user && <ActiveUsers />}
         </div>

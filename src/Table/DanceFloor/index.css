@@ -1,15 +1,13 @@
-.club > .row {
-  margin: 20px 0;
-  min-height: 40px;
-}
-
 .dance-floor {
   background-color: white;
   background-image: url('https://ak0.picdn.net/shutterstock/videos/29367880/thumb/1.jpg');
   background-size: 250px;
   background-position: center center;
-  animation:pulse 0.5s infinite alternate;
+  animation: pulse 0.5s infinite alternate;
   min-height: 200px;
+  width: 100%;
+  justify-self: center;
+  align-self: center;
 }
 
 @keyframes pulse {

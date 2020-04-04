@@ -8,7 +8,7 @@ export function fetchStorefront(): Promise<any> {
       return resolve({
         storefront: response.data.storefront,
         status: response.data.status,
-        tableIds: response.data.table_ids,
+        tableIdGrid: response.data.table_id_grid,
       });
     } catch (e) {
       console.error(e)

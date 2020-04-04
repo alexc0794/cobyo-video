@@ -8,8 +8,9 @@ const updateStorefront = (storefront: string, status: string, tableIds: Array<st
 
 export function fetchAndUpdateStorefront() {
   return async function(dispatch: any) {
-    const { storefront, status, tableIds } = await fetchStorefront();
+    const response = await fetchStorefront();
+    const { storefront, status, tableIds } = response;
     dispatch(updateStorefront(storefront, status, tableIds));
-    return { storefront, status, tableIds };
+    return response;
   }
 }

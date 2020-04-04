@@ -3,8 +3,8 @@ import { U_SHAPE_TABLE_END_SEAT_LENGTH } from '../Table';
 
 export function getTableGrid(table: TableType): Array<Array<SeatType|null>> {
   switch (table.shape) {
-    case 'UUP':
-    case 'UDOWN': {
+    case 'U_UP':
+    case 'U_DOWN': {
       return getCouchTableGrid(table, U_SHAPE_TABLE_END_SEAT_LENGTH);
     }
     default:
@@ -15,7 +15,7 @@ export function getTableGrid(table: TableType): Array<Array<SeatType|null>> {
 function getCouchTableGrid(table: TableType, tableEndSeatLength: number): Array<Array<SeatType|null>> {
   const mainRow = table.seats.slice(tableEndSeatLength, table.seats.length - tableEndSeatLength);
   const grid: Array<Array<SeatType|null>> = [];
-  if (table.shape === 'UUP') {
+  if (table.shape === 'U_UP') {
     for (let i = 0; i < tableEndSeatLength; i++) {
       const firstEndSeat = table.seats[i];
       const lastEndSeat = table.seats[table.seats.length - 1 - i];
@@ -23,7 +23,7 @@ function getCouchTableGrid(table: TableType, tableEndSeatLength: number): Array<
       grid.push(row);
     }
     grid.push(mainRow);
-  } else if (table.shape === 'UDOWN') {
+  } else if (table.shape === 'U_DOWN') {
     grid.push(mainRow);
     for (let i = 0; i < tableEndSeatLength; i++) {
       const firstEndSeat = table.seats[tableEndSeatLength - 1 - i];
