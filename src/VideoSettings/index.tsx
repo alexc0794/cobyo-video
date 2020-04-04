@@ -53,6 +53,7 @@ function VideoSettings({
   useEffect(() => {
     let shouldRecognize = true;
     speechRecognition = getSpeechRecognition();
+    if (!speechRecognition) { return; }
     speechRecognition.onresult = (event: SpeechRecognitionEvent) => {
       Array.from(event.results).forEach(result => {
         const transcript= result[0].transcript;
