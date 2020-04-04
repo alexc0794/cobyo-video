@@ -1,13 +1,21 @@
 .dance-floor {
   background-color: white;
-  background-image: url('https://ak0.picdn.net/shutterstock/videos/29367880/thumb/1.jpg');
-  background-size: 250px;
+  background-image: url('https://www.cabtivist.com/image/images.pond5.com/colorful-disco-nightclub-dance-floor-footage-085421387_prevstill.jpeg');
+  background-size: 450px;
   background-position: center center;
   animation: pulse 0.5s infinite alternate;
   min-height: 200px;
+  height: 100%;
   width: 100%;
-  justify-self: center;
+  justify-content: center;
   align-self: center;
+  border: none;
+}
+
+.dance-floor:hover {
+  animation: none;
+  box-shadow:0px 0px 10px 3px #ffff00;
+  opacity: .5;
 }
 
 @keyframes pulse {
@@ -17,6 +25,6 @@
   }
   to {
     box-shadow:0px 0px 20px 5px #ffff00;
-    opacity: .65;
+    opacity: .75;
   }
 }

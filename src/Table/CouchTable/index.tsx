@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import TableRow from '../TableRow';
 import Seat from '../Seat';
 import { UserInSeatType } from '../../types';
+import cx from 'classnames';
 import './index.css';
 
 type PropTypes = {
@@ -12,6 +13,7 @@ type PropTypes = {
   userId: string|null,
   numSeatsAtEnds: number,
   seats: Array<UserInSeatType>,
+  storefront: string,
   shape: string,
   onPickSeat: (seatNumber: number) => void,
 };
@@ -21,6 +23,7 @@ function CouchTable({
   userId,
   seats,
   numSeatsAtEnds,
+  storefront,
   shape,
   onPickSeat,
 }: PropTypes) {
@@ -33,7 +36,7 @@ function CouchTable({
 
   return (
     <Col>
-      <Container fluid className="couch-table">
+      <Container className="couch-table">
         {shape === 'U_DOWN' && (
           <TableRow
             userId={userId}
@@ -49,7 +52,9 @@ function CouchTable({
               <Seat key={`seat-first-end-${i}`} userId={userId} seat={seat} seatNumber={seat.seatNumber} onClick={onPickSeat} />
             ))}
           </Col>
-          <Col lg={8} className="table" />
+          <Col lg={8} className={cx("table-display", {
+            "club-table-display": storefront === 'CLUB',
+          })} />
           <Col lg={2} className="vertical-table-row">
             {seatsAtSecondEnd.map((seat, i) => (
               <Seat key={`seat-second-end-${i}`} userId={userId} seat={seat} seatNumber={seat.seatNumber} onClick={onPickSeat} />

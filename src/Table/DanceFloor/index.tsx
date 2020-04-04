@@ -6,14 +6,19 @@ type PropTypes = {
   tableId: string,
   userId: string|null,
   seats: Array<UserInSeatType>,
-  onEnter: (seatNumber: number) => void,
+  onEnter: (seatNumber: number|null) => void,
 };
 
 function DanceFloor({
+  seats,
   onEnter
 }: PropTypes) {
+  function handleClick() {
+    onEnter(null);
+  }
+
   return (
-    <button className="dance-floor" onClick={() => onEnter(1)}></button>
+    <button className="dance-floor" onClick={handleClick}></button>
   );
 }
 

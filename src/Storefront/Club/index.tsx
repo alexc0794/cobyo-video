@@ -36,7 +36,7 @@ function Club({
           </>
         )}
         {secondRow.slice(1).map((tableId: string) => (
-          <Col key={tableId}><Table tableId={tableId} userId={userId} /></Col>
+          <Col key={tableId} lg={3}><Table tableId={tableId} userId={userId} /></Col>
         ))}
       </Row>
       <Row />

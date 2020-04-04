@@ -2,17 +2,6 @@
 
 }
 
-.couch-table .table {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: lightsteelblue;
-  min-height: 130px;
-  border-radius: 10px;
-  box-shadow: 5px 6px 0.5rem rgba(0,0,0,0.5);
-  margin-bottom: 0;
-}
-
 .vertical-table-row {
   display: flex;
   flex-direction: column;

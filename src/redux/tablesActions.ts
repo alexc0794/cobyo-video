@@ -41,7 +41,7 @@ export function fetchAndUpdateTables(tableIds: Array<string>) {
   }
 }
 
-export function joinAndUpdateTable(tableId: string, seat: number, userId: string) {
+export function joinAndUpdateTable(tableId: string, seat: number|null, userId: string) {
   return function(dispatch: any) {
     return joinTable(tableId, seat, userId).then(table => {
       dispatch(joinedTable(table));

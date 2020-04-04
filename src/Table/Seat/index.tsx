@@ -26,9 +26,9 @@ function Seat({
       {(() => {
         if (!seat.userId || !seat.satDownAt) {
           return (
-            <div className="seat-open" onClick={() => onClick(seatNumber)}>
+            <button className="seat-open" onClick={() => onClick(seatNumber)}>
               <FontAwesomeIcon icon={faChair} />
-            </div>
+            </button>
           );
         }
 

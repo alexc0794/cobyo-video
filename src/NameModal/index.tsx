@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAndUpdateUser } from '../redux/usersActions';
-import { selectStorefront, selectStatus } from '../redux/appSelectors';
+import { selectStorefront, selectStatus } from '../redux/storefrontSelectors';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';

@@ -1,6 +1,8 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar';
+import virtualClubLogo from '../images/virtualclublogo.png';
 import { UserType } from '../types';
+import './index.css';
 
 type PropTypes = {
   user: UserType|null,
@@ -17,7 +19,9 @@ function HomeNavbar({ user, storefront }: PropTypes) {
       case 'CAFETERIA':
         return 'Virtual Cafeteria';
       case 'CLUB':
-        return 'Virtual Club';
+        return (
+          <img className="virtual-club-logo" src={virtualClubLogo} alt="Virtual Cafeteria" />
+        );
       default:
         return null;
     }

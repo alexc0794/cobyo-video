@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAndUpdateActiveUsers } from '../redux/usersActions';
-import { selectStorefront } from '../redux/appSelectors';
+import { selectStorefront } from '../redux/storefrontSelectors';
 import { selectActiveUsers } from '../redux/usersSelectors';
 import { useInterval } from '../hooks';
 import { REFRESH_ACTIVE_USERS_INTERVAL_MS } from '../config';
@@ -39,6 +39,9 @@ function ActiveUsersTab() {
 
   const activeUsers = useSelector(selectActiveUsers);
   const storefront = useSelector(selectStorefront);
+
+  if (errorMessage) { return null; }
+
   return (
     <div className={cx('active-users', {
       'active-users-club': storefront === 'CLUB',

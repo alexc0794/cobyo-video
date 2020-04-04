@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { selectStorefront } from '../redux/storefrontSelectors';
 import { joinAndUpdateTable } from '../redux/tablesActions';
 import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from '../redux/tablesSelectors';
 import { selectUsersByIds } from '../redux/usersSelectors';
@@ -7,6 +8,7 @@ import DanceFloor from './DanceFloor';
 import RectangularTable from './RectangularTable';
 import CouchTable from './CouchTable';
 import { SeatType, UserInSeatType } from '../types';
+import './index.css';
 
 export const U_SHAPE_TABLE_END_SEAT_LENGTH = 2;
 
@@ -22,8 +24,9 @@ function Table({ tableId, userId }: PropTypes) {
   const isUserJoined = joinedTableId === tableId;
   // const isUserJoinedOther = joinedTableId !== null && !isUserJoined;
   const seat = useSelector(selectJoinedTableSeat(userId || ""));
+  const storefront = useSelector(selectStorefront);
 
-  async function handlePickSeat(pickedSeatNumber: number) {
+  async function handlePickSeat(pickedSeatNumber: number|null) {
     if (!userId) { return; }
 
     const isSwitchingSeat = isUserJoined && pickedSeatNumber !== seat;
@@ -47,7 +50,12 @@ function Table({ tableId, userId }: PropTypes) {
   switch (table.shape) {
     case 'DANCE_FLOOR':
       return (
-        <DanceFloor tableId={tableId} userId={userId} seats={userInSeats} onEnter={handlePickSeat} />
+        <DanceFloor
+          tableId={tableId}
+          userId={userId}
+          seats={userInSeats}
+          onEnter={handlePickSeat}
+        />
       );
     case 'U_DOWN':
     case 'U_UP':
@@ -57,6 +65,7 @@ function Table({ tableId, userId }: PropTypes) {
           userId={userId}
           seats={userInSeats}
           numSeatsAtEnds={U_SHAPE_TABLE_END_SEAT_LENGTH}
+          storefront={storefront}
           shape={table.shape}
           onPickSeat={handlePickSeat}
         />
@@ -67,6 +76,7 @@ function Table({ tableId, userId }: PropTypes) {
           tableId={tableId}
           userId={userId}
           seats={userInSeats}
+          storefront={storefront}
           onPickSeat={handlePickSeat}
         />
       )

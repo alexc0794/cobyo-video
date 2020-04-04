@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { selectStorefront } from '../redux/appSelectors';
+import { selectStorefront } from '../redux/storefrontSelectors';
 import { selectTableById } from '../redux/tablesSelectors';
 import { VideoUserType } from '../VideoHangout/types';
 import { RTCType } from '../AgoraRTC';

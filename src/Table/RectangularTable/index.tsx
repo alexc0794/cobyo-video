@@ -10,6 +10,7 @@ type PropTypes = {
   tableId: string,
   userId: string|null,
   seats: Array<UserInSeatType>,
+  storefront: string,
   onPickSeat: (seatNumber: number) => void,
 };
 
@@ -17,10 +18,11 @@ function RectangularTable({
   tableId,
   userId,
   seats,
+  storefront,
   onPickSeat,
 }: PropTypes) {
   return (
-    <div className={cx("table", {})}>
+    <div className={cx("rectangular-table", {})}>
       <Container fluid>
         <TableRow
           userId={userId}
@@ -29,7 +31,9 @@ function RectangularTable({
           endIndex={Math.ceil(seats.length / 2)}
           onPickSeat={onPickSeat}
         />
-        <Row className="rectangular-table" />
+        <Row className={cx("table-display", {
+          "club-table-display": storefront === 'CLUB',
+        })} />
         <TableRow
           userId={userId}
           seats={seats}

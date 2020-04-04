@@ -1,6 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectStorefrontTableIds } from '../redux/appSelectors';
+import { selectStorefrontTableIds } from '../redux/storefrontSelectors';
 import { fetchAndUpdateTables } from '../redux/tablesActions';
 import { useInterval } from '../hooks';
 import { REFRESH_TABLES_INTERVAL_MS } from '../config';

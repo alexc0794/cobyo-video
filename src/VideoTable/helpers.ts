@@ -7,6 +7,9 @@ export function getTableGrid(table: TableType): Array<Array<SeatType|null>> {
     case 'U_DOWN': {
       return getCouchTableGrid(table, U_SHAPE_TABLE_END_SEAT_LENGTH);
     }
+    case 'DANCE_FLOOR': {
+      return getDanceFloorGrid(table);
+    }
     default:
       return getRectangularTableGrid(table);
   }
@@ -42,71 +45,29 @@ function getRectangularTableGrid(table: TableType): Array<Array<SeatType|null>> 
   return [table.seats.slice(0, mid), table.seats.slice(mid, totalLength)];
 }
 
+function getDanceFloorGrid(table: TableType): Array<Array<SeatType|null>> {
+  const factors: Array<number> = (
+    (number: number) => Array
+      .from(Array(number + 1), (_, i) => i)
+      .filter(i => number % i === 0)
+  )(table.seats.length);
+  const numRows = Math.floor(factors.length / 2);
+  const numCols = table.seats.length / numRows;
+  console.log(numRows, numCols, table.seats.length);
 
-export function getTableRows(table: TableType, userId: string) {
-  const rowSize = table.seats.length - 1;
-  const seat = table.seats.findIndex(seat => seat && seat.userId === userId);
-  const opposingRowSeats = removeNullsOnEnd(getOpposingRowSeats(seat, table.seats.length, rowSize));
-  const sameRowSeats = removeNullsOnEnd(getSameRowSeats(seat, table.seats.length, rowSize));
-  return [
-    opposingRowSeats.map(seatNumber => seatNumber !== null ? table.seats[seatNumber] : null),
-    sameRowSeats.map(seatNumber => seatNumber !== null ? table.seats[seatNumber] : null),
-  ];
-}
-
-function removeNullsOnEnd(
-  seats: Array<number|null>,
-): Array<number|null> {
-  const firstNonNullSeat = seats.findIndex(seat => seat !== null);
-  const lastNonNullSeat = seats.length - 1 - seats.slice().reverse().findIndex(seat => seat !== null);
-
-  return seats.slice(firstNonNullSeat, lastNonNullSeat + 1);
-}
-
-function getOpposingRowSeats(
-  fromSeat: number,
-  numSeats: number,
-  rowSize: number,
-): Array<number|null> {
-  const seats = [];
-  const halfNumSeats = numSeats / 2;
-  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
-  const minIndex = inTopRow ? halfNumSeats : 0;
-  const maxIndex = inTopRow ? numSeats - 1 : halfNumSeats - 1;
-
-  const startIndex = fromSeat + ((halfNumSeats + ((rowSize - 1) / 2)) * (inTopRow ? 1 : -1))
-  const endIndex = fromSeat + ((halfNumSeats - (rowSize / 2)) * (inTopRow ? 1 : -1));
-  for (let i = startIndex; (inTopRow ? i > endIndex :  i < endIndex); inTopRow ? i-- : i++) {
-    if (i < minIndex || i > maxIndex) {
-      seats.push(null);
-    } else {
-      seats.push(i);
+  const grid = [];
+  for (let x = 0; x < numRows; x++) {
+    const row = [];
+    for (let y = 0; y < numCols; y++) {
+      const seat = table.seats[x * numCols + y];
+      if (seat.userId) {
+        row.push(seat);
+      } else {
+        row.push(null);
+      }
     }
+    grid.push(row);
   }
 
-  return seats;
-}
-
-function getSameRowSeats(
-  fromSeat: number,
-  numSeats: number,
-  rowSize: number,
-): Array<number|null> {
-  const seats = [];
-  const halfNumSeats = numSeats / 2;
-  const inTopRow = fromSeat < halfNumSeats; // Top row is represented by first half of seats
-  const minIndex = inTopRow ? 0 : halfNumSeats;
-  const maxIndex = inTopRow ? halfNumSeats - 1 : numSeats - 1;
-
-  const startIndex = fromSeat + ((rowSize - 1) / 2) * (inTopRow ? 1 : -1);
-  const endIndex = fromSeat + (-1 * (rowSize - 1) / 2) * (inTopRow ? 1 : -1);
-  for (let i = startIndex; (inTopRow ? i >= endIndex : i <= endIndex); (inTopRow ? i-- : i++)) {
-    if (i < minIndex || i > maxIndex) {
-      seats.push(null);
-    } else {
-      seats.push(i);
-    }
-  }
-
-  return seats;
+  return grid;
 }

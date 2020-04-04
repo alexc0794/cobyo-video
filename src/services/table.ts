@@ -36,11 +36,12 @@ export function fetchTables(tableIds: Array<string>, token: string|null = null):
   })
 }
 
-export function joinTable(tableId: string, seatNumber: number, userId: string): Promise<TableType> {
+export function joinTable(tableId: string, seatNumber: number|null, userId: string): Promise<TableType> {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await axios.post(`${BASE_API_URL}/table/${tableId}/${seatNumber}`, {
+      const response = await axios.post(`${BASE_API_URL}/table/${tableId}/join`, {
         user_id: userId,
+        seat_number: seatNumber,
       });
       const table: TableType = transformTable(response.data);
       return resolve(table);

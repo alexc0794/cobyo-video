@@ -8,11 +8,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 45px;
-  height: 45px;
-  font-size: 16pt;
+  font-size: 14pt;
   border-radius: 50%;
   box-shadow: 2px 3px 0.3rem rgba(0,0,0,0.5);
+}
+
+.seat > *,
+.seat img {
+  width: 40px;
+  height: 40px;
 }
 
 .seat img {
@@ -23,6 +27,7 @@
   cursor: pointer;
   color: white;
   background-color: #007bff;
+  border: none;
 }
 
 .seat-you {
