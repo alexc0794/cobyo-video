@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_API_URL } from './config';
+import { BASE_API_URL } from '../config';
 import { TableType, SeatType } from '../types';
 import { transformTable, transformUser } from './transforms';
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_API_URL } from './config';
+import { BASE_API_URL } from '../config';
 
 export function fetchStorefront(): Promise<any> {
   return new Promise(async (resolve, reject) => {

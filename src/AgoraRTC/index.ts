@@ -4,7 +4,7 @@ import AgoraRTC, {
   ICameraVideoTrack,
 } from "agora-rtc-sdk-ng";
 
-export const AGORA_APP_ID = '0e12dacab1874ad5939be54efd01d4c3'
+export const AGORA_APP_ID = process.env.REACT_APP_AGORA_APP_ID || '';
 
 export type RTCType = {
  client: IAgoraRTCClient,
