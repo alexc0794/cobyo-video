@@ -1,12 +1,11 @@
-import React, { Fragment, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { memo, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectStorefrontTableIds } from '../redux/appSelectors';
 import { fetchAndUpdateTables } from '../redux/tablesActions';
 import { useInterval } from '../hooks';
 import { REFRESH_TABLES_INTERVAL_MS } from '../config';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from '../Table';
+import Club from './Club';
+import Cafeteria from './Cafeteria';
 import './index.css';
 
 type PropTypes = {
@@ -17,8 +16,7 @@ type PropTypes = {
 }
 
 function Storefront({ userId, storefront, tableIdGrid }: PropTypes) {
-  const empty: Array<string> = [];
-  const tableIds = empty.concat.apply([], tableIdGrid);
+  const tableIds = useSelector(selectStorefrontTableIds);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -29,22 +27,18 @@ function Storefront({ userId, storefront, tableIdGrid }: PropTypes) {
     dispatch(fetchAndUpdateTables(tableIds));
   }, REFRESH_TABLES_INTERVAL_MS);
 
-  return (
-    <Container fluid className="storefront">
-      {tableIdGrid.map((tableIdRow: Array<string>, rowI: number) => (
-        <Fragment key={rowI}>
-          <Row>
-            {tableIdRow.map(tableId => (
-              <Col key={tableId}>
-                <Table tableId={tableId} userId={userId} />
-              </Col>
-            ))}
-          </Row>
-          <Row />
-        </Fragment>
-      ))}
-    </Container>
-  )
+  switch (storefront) {
+    case 'CLUB': {
+      return (
+        <Club userId={userId} tableIdGrid={tableIdGrid} />
+      );
+    }
+    default: {
+      return (
+        <Cafeteria userId={userId} tableIdGrid={tableIdGrid} />
+      );
+    }
+  }
 }
 
-export default Storefront;
+export default memo(Storefront);

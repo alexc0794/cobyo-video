@@ -1,16 +1,16 @@
 import { fetchStorefront } from '../services/storefront';
 
-const updateStorefront = (storefront: string, status: string, tableIds: Array<string>) => ({
+const updateStorefront = (storefront: string, status: string, tableIdGrid: Array<Array<string>>) => ({
   type: "UPDATE_STOREFRONT",
-  payload: { storefront, status, tableIds }
+  payload: { storefront, status, tableIdGrid }
 });
 
 
 export function fetchAndUpdateStorefront() {
   return async function(dispatch: any) {
     const response = await fetchStorefront();
-    const { storefront, status, tableIds } = response;
-    dispatch(updateStorefront(storefront, status, tableIds));
+    const { storefront, status, tableIdGrid } = response;
+    dispatch(updateStorefront(storefront, status, tableIdGrid));
     return response;
   }
 }

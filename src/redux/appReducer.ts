@@ -42,9 +42,22 @@ function status(state = 'OPEN', action: any): string {
   }
 }
 
+function tableIds(state = [], action: any): Array<string> {
+  switch (action.type) {
+    case 'UPDATE_STOREFRONT': {
+      const { tableIdGrid } = action.payload;
+      const empty: Array<string> = [];
+      return empty.concat.apply([], tableIdGrid);
+    }
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   userId,
   token,
   storefront,
   status,
+  tableIds,
 });
