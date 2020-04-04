@@ -36,19 +36,21 @@ function VideoTable({
   const groupVideoHeight = windowHeight - VIDEO_SETTINGS_HEIGHT_PX - TABLE_HEIGHT_PX;
   const storefront = useSelector(selectStorefront);
   const table: TableType = useSelector(selectTableById(tableId));
-  const rows: Array<any> = getTableGrid(table);
+  const grid: Array<Array<SeatType|null>> = getTableGrid(table);
+  const [localUserRow, localUserCol] = findUserLocationInGrid(userId, grid);
 
   return (
     <Container fluid className={cx('video-table', {
       'club-mode-lighter': storefront === 'CLUB',
     })}>
-      {rows.map((seats, i) => (
-        <Row key={`video-table-row-${i}`} style={{height: `${groupVideoHeight / rows.length}px`}}>
-          {seats.map((seat: SeatType|null, i: number) => (
-            <Col key={i}>
+      {grid.map((seats, i) => (
+        <Row key={`video-table-row-${i}`} style={{height: `${groupVideoHeight / grid.length}px`}}>
+          {seats.map((seat: SeatType|null, j: number) => (
+            <Col key={j}>
               {(() => {
-                if (!seat) {
-                  return null;
+                if (!seat) { return null; }
+                if (seat && !seat.userId) {
+                  return <VideoPlaceholder />;
                 }
                 if (seat && seat.userId === userId) {
                   return (
@@ -60,11 +62,21 @@ function VideoTable({
                     />
                   );
                 }
+
                 const remoteUser = remoteUsers.find(user => seat && user.userId === seat.userId) || null;
                 if (remoteUser) {
-                  return <RemoteVideo {...remoteUser} />;
+                  return (
+                    <RemoteVideo
+                      {...remoteUser}
+                      localUserRow={localUserRow}
+                      localUserCol={localUserCol}
+                      remoteUserRow={i}
+                      remoteUserCol={j}
+                    />
+                  );
                 }
-                return <VideoPlaceholder />
+                // Hack for now. If dance floor dont show placeholder
+                return table.shape === 'DANCE_FLOOR' ? null : <VideoPlaceholder />;
               })()}
             </Col>
           ))}
@@ -72,6 +84,20 @@ function VideoTable({
       ))}
     </Container>
   );
+}
+
+function findUserLocationInGrid(userId: string, grid: Array<Array<SeatType|null>>): Array<number|null> {
+  if (grid.length > 0) {
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid[0].length; j++) {
+        const seat = grid[i][j];
+        if (seat && seat.userId === userId) {
+          return [i, j];
+        }
+      }
+    }
+  }
+  return [null, null];
 }
 
 export default memo(VideoTable);
