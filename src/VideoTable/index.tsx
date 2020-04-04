@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { selectStorefront } from '../redux/storefrontSelectors';
 import { selectTableById } from '../redux/tablesSelectors';
@@ -12,7 +12,7 @@ import LocalVideo from '../Video/LocalVideo';
 import { VideoPlaceholder } from '../Video';
 import { useWindowDimensions } from '../hooks';
 import { getTableGrid } from './helpers';
-import { SeatType } from '../types';
+import { TableType, SeatType } from '../types';
 import cx from 'classnames';
 import './index.css';
 
@@ -35,8 +35,9 @@ function VideoTable({
   const [, windowHeight] = useWindowDimensions();
   const groupVideoHeight = windowHeight - VIDEO_SETTINGS_HEIGHT_PX - TABLE_HEIGHT_PX;
   const storefront = useSelector(selectStorefront);
-  const table = useSelector(selectTableById(tableId));
+  const table: TableType = useSelector(selectTableById(tableId));
   const rows: Array<any> = getTableGrid(table);
+
   return (
     <Container fluid className={cx('video-table', {
       'club-mode-lighter': storefront === 'CLUB',
@@ -73,4 +74,4 @@ function VideoTable({
   );
 }
 
-export default VideoTable;
+export default memo(VideoTable);

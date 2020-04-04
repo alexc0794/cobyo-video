@@ -53,7 +53,6 @@ function getDanceFloorGrid(table: TableType): Array<Array<SeatType|null>> {
   )(table.seats.length);
   const numRows = Math.floor(factors.length / 2);
   const numCols = table.seats.length / numRows;
-  console.log(numRows, numCols, table.seats.length);
 
   const grid = [];
   for (let x = 0; x < numRows; x++) {
