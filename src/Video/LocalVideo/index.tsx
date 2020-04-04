@@ -41,8 +41,21 @@ class LocalVideo extends Component<LocalVideoPropTypes> {
       alert('Access to your microphone and camera must be granted for this to work!');
       return;
     }
-    await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
-    rtc.localVideoTrack.play(`video-${userId}`);
+
+    try {
+      await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+    
+    try {
+      rtc.localVideoTrack.play(`video-${userId}`);
+    } catch (e) {
+      console.log(e);
+      alert('Unable to play local video');
+      return;
+    }
 
     // RTC client listeners
     rtc.client.on('token-privilege-will-expire', () => {
