@@ -48,7 +48,7 @@ class LocalVideo extends Component<LocalVideoPropTypes> {
       console.error(e);
       return;
     }
-    
+
     try {
       rtc.localVideoTrack.play(`video-${userId}`);
     } catch (e) {

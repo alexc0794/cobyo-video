@@ -5,7 +5,7 @@ import { fetchAndUpdateTable, joinAndUpdateTable } from '../redux/tablesActions'
 import { selectJoinedTableSeat } from '../redux/tablesSelectors';
 import { useInterval } from '../hooks';
 import { RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS } from '../config';
-import { VideoUserType, VolumeType } from './types';
+import { VideoUserType } from './types';
 import { RTCType } from '../AgoraRTC';
 import VideoTable from '../VideoTable';
 import VideoSettings from '../VideoSettings';
@@ -23,7 +23,6 @@ export default function VideoHangout({
 }: PropTypes) {
 
   const [remoteUsers, setRemoteUsers] = useState<Array<VideoUserType>>([]);
-  const [, setVolumes] = useState<Array<VolumeType>>([]);
   const dispatch = useDispatch();
   const seat = useSelector(selectJoinedTableSeat(userId || ""));
 
@@ -35,7 +34,6 @@ export default function VideoHangout({
     rtc.client.on('user-published', handleUserPublished);
     rtc.client.on('user-unpublished', handleUserUnpublished);
     rtc.client.enableAudioVolumeIndicator();
-    rtc.client.on('volume-indicator', handleVolumeIndicator);
     rtc.client.on('user-mute-updated', handleUserMuteUpdated);
 
     async function handleUserPublished(user: any) {
@@ -64,13 +62,6 @@ export default function VideoHangout({
     async function handleUserUnpublished(user: any) {
       const unpublishedUserId = user.uid.toString();
       setRemoteUsers(currentRemoteUsers => currentRemoteUsers.filter(remoteUser => remoteUser.userId !== unpublishedUserId));
-    }
-
-    async function handleVolumeIndicator(volumes: Array<object>) {
-      setVolumes(volumes.map((volume: any) => ({
-        level: volume.level,
-        userId: volume.uid.toString()
-      })));
     }
 
     function handleUserMuteUpdated(user: IAgoraRTCRemoteUser) {
