@@ -7,6 +7,7 @@ import { selectUsersByIds } from '../redux/usersSelectors';
 import DanceFloor from './DanceFloor';
 import RectangularTable from './RectangularTable';
 import CouchTable from './CouchTable';
+import TableLayout from '../ChannelLayout';
 import { SeatType, UserInSeatType } from '../types';
 import './index.css';
 
@@ -57,25 +58,13 @@ function Table({ tableId, userId }: PropTypes) {
           onEnter={handlePickSeat}
         />
       );
-    case 'U_DOWN':
-    case 'U_UP':
-      return (
-        <CouchTable
-          tableId={tableId}
-          userId={userId}
-          seats={userInSeats}
-          numSeatsAtEnds={U_SHAPE_TABLE_END_SEAT_LENGTH}
-          storefront={storefront}
-          shape={table.shape}
-          onPickSeat={handlePickSeat}
-        />
-      );
     default:
       return (
-        <RectangularTable
+        <TableLayout
           tableId={tableId}
           userId={userId}
           seats={userInSeats}
+          shape={table.shape}
           storefront={storefront}
           onPickSeat={handlePickSeat}
         />

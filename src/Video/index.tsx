@@ -32,14 +32,15 @@ export default function Video({
 export function VideoPlaceholder() {
   const storefront = useSelector(selectStorefront);
   return (
-      <div className={cx("video video-placeholder", {
-        'club-mode': storefront === 'CLUB'
-      })}>
-        <div className={cx("video-placeholder-icon", {
-          'club-mode-darker': storefront === 'CLUB'
-        })}>
-          <FontAwesomeIcon icon={faChair} />
-        </div>
-      </div>
+      // <div className={cx("video video-placeholder", {
+      //   'club-mode': storefront === 'CLUB'
+      // })}>
+      //   <div className={cx("video-placeholder-icon", {
+      //     'club-mode-darker': storefront === 'CLUB'
+      //   })}>
+      //     <FontAwesomeIcon icon={faChair} />
+      //   </div>
+      // </div>
+      <div className="Video Video-placeholder" />
   );
 }
