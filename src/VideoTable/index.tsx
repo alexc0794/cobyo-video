@@ -17,6 +17,7 @@ import cx from 'classnames';
 import './index.css';
 
 const DEFAULT_ROW = 3;
+const DEFAULT_COLUMN = 6;
 
 type PropTypes = {
   tableId: string,
@@ -34,9 +35,19 @@ function VideoTable({
   const storefront = useSelector(selectStorefront);
   const table: TableType = useSelector(selectTableById(tableId));
   const {seats} = table;
-  let columns = seats.length > 6 ? seats.length - 2*2 : seats.length - 2*1;
-  columns = table.shape ==='RECTANGULAR' ? seats.length / 2 : columns;
-  const rows = table.shape ==='RECTANGULAR' ? DEFAULT_ROW +1 : DEFAULT_ROW;
+  let columns;
+  switch(table.shape) {
+    case 'RECTANGULAR':
+      columns = seats.length / 2;
+      break;
+    case 'U_UP':
+    case 'U_DOWN':
+      columns = seats.length > 6 ? seats.length - 2*2 : seats.length - 2*1;
+      break;
+    default:
+      columns = DEFAULT_COLUMN;
+  }
+  const rows = (table.shape ==='RECTANGULAR' || table.shape === 'DANCE_FLOOR') ? DEFAULT_ROW + 1 : DEFAULT_ROW;
   const styleVar = {'--columns': columns,'--rows': rows} as React.CSSProperties;
   const [boughtDrink, setBoughtDrink] = useState<number|null>(null);
   const drinks =[CocktailImage1, CocktailImage2, CocktailImage3];
