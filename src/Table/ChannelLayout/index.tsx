@@ -1,5 +1,6 @@
 import React from 'react';
-import { UserInSeatType } from '../types';
+import { UserInSeatType } from '../../types';
+import Seat from '../Seat'
 import cx from 'classnames';
 import './index.css';
 
@@ -33,9 +34,9 @@ function Layout({
       style={styleVar}
       className={cx('ChannelContainer', {'ChannelContainer--clubMode':storefront === 'CLUB'})}
     >
-        <div className={`Channel-table Channel-table--${shape}`} />
+      <div className={`Channel-table Channel-table--${shape}`} />
       {seats.map((seat, i) => (
-        <button className="Channel-seat" key={i} onClick={() => onPickSeat(i)} />
+        <Seat userId={userId} seat={seat} seatNumber={i} onClick={onPickSeat} storefront={storefront} />
       ))}
     </div>
   );

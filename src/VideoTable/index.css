@@ -29,8 +29,9 @@
   width: 100%;
   align-self: stretch;
   grid-area: 1/2/var(--rows)/var(--columns); /* row start/column start/row end/column end */
-  background-image: url('../images/woodTable.jpg');
-  background-size: 100% auto;
+  background-color: rgb(189, 189, 189);
+  box-shadow: 0px 0px 10px 3px rgb(153, 153, 153);
+  border-radius: 8px;
   /* following code map the table into same grid, for future feature such as buying drinks so each user has a fraction of the table  */
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
@@ -39,6 +40,10 @@
   justify-items: center;
   grid-gap: 8px;
   padding: 8px;
+}
+.VideoTableContainer--clubMode .VideoTable {
+  background-color: rgb(251, 204, 255);
+  box-shadow: 0px 0px 10px 3px rgb(255, 137, 239);
 }
 .VideoTable-commonArea {
   width: 100%;

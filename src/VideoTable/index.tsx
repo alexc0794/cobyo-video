@@ -7,9 +7,7 @@ import { RTCType } from '../AgoraRTC';
 import RemoteVideo from '../Video/RemoteVideo';
 import LocalVideo from '../Video/LocalVideo';
 import { VideoPlaceholder } from '../Video';
-import { useWindowDimensions } from '../hooks';
-import { getTableGrid } from './helpers';
-import { TableType, SeatType } from '../types';
+import { TableType } from '../types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import CocktailImage1 from '../images/cocktail.png';
@@ -52,10 +50,9 @@ function VideoTable({
         <div className={`VideoTable VideoTable--${table.shape}`}>
           <div className="VideoTable-commonArea" />
           {seats.map((seat, i) => (
-            <div className="VideoTable-drink">
+            <div className="VideoTable-drink" key={i}>
               {(() => {
                 if (seat && seat.userId === userId) {
-                  console.log("drink", boughtDrink)
                   if (boughtDrink === null) {
                     return (
                       <button className="VideoTable-buyButton" onClick={()=>setBoughtDrink(Math.floor(Math.random()*3))}>

@@ -5,9 +5,7 @@ import { joinAndUpdateTable } from '../redux/tablesActions';
 import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from '../redux/tablesSelectors';
 import { selectUsersByIds } from '../redux/usersSelectors';
 import DanceFloor from './DanceFloor';
-import RectangularTable from './RectangularTable';
-import CouchTable from './CouchTable';
-import TableLayout from '../ChannelLayout';
+import TableLayout from './ChannelLayout';
 import { SeatType, UserInSeatType } from '../types';
 import './index.css';
 

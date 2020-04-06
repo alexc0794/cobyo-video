@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectStorefront } from '../redux/storefrontSelectors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMicrophoneSlash, faChair } from '@fortawesome/free-solid-svg-icons';
+import { faMicrophoneSlash, faChair, faCouch } from '@fortawesome/free-solid-svg-icons';
 import cx from 'classnames';
 import './index.css';
 
@@ -32,15 +32,18 @@ export default function Video({
 export function VideoPlaceholder() {
   const storefront = useSelector(selectStorefront);
   return (
-      // <div className={cx("video video-placeholder", {
-      //   'club-mode': storefront === 'CLUB'
-      // })}>
-      //   <div className={cx("video-placeholder-icon", {
-      //     'club-mode-darker': storefront === 'CLUB'
-      //   })}>
-      //     <FontAwesomeIcon icon={faChair} />
-      //   </div>
-      // </div>
-      <div className="Video Video-placeholder" />
+    <div className={cx("video video-placeholder", {
+      'club-mode': storefront === 'CLUB'
+    })}>
+      <div className={cx("video-placeholder-icon", {
+        'club-mode-darker': storefront === 'CLUB'
+      })}>
+        {storefront === 'CLUB' ? (
+          <FontAwesomeIcon icon={faCouch} />
+        ) : (
+          <FontAwesomeIcon icon={faChair} />
+        )}
+      </div>
+    </div>
   );
 }
