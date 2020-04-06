@@ -2,7 +2,7 @@ import React from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChair, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faChair, faUser, faCouch } from '@fortawesome/free-solid-svg-icons';
 import { UserInSeatType } from '../../types';
 import { timeSince } from '../../helpers';
 import './index.css';
@@ -11,7 +11,8 @@ type PropTypes = {
   userId: string|null,
   seat: UserInSeatType,
   seatNumber: number,
-  onClick: (seatNumber: number) => void
+  onClick: (seatNumber: number) => void,
+  storefront: string
 }
 
 function Seat({
@@ -19,15 +20,16 @@ function Seat({
   seat,
   seatNumber,
   onClick,
+  storefront
 }: PropTypes) {
 
   return (
-    <div className="seat">
+    <>
       {(() => {
         if (!seat.userId || !seat.satDownAt) {
           return (
-            <button className="seat-open" onClick={() => onClick(seatNumber)}>
-              <FontAwesomeIcon icon={faChair} />
+            <button className="Seat Seat--open" onClick={() => onClick(seatNumber)}>
+              {storefront === 'CLUB' ? (<FontAwesomeIcon icon={faCouch} />) : (<FontAwesomeIcon icon={faChair} />)}
             </button>
           );
         }
@@ -48,7 +50,7 @@ function Seat({
                 </Tooltip>
               }
             >
-              <div className="seat-you" onClick={() => onClick(seatNumber)}>
+              <div className="Seat Seat--you" onClick={() => onClick(seatNumber)}>
                 {iconElement}
               </div>
             </OverlayTrigger>
@@ -64,13 +66,13 @@ function Seat({
               </Tooltip>
             }
           >
-            <div className="seat-occupied">
+            <div className="Seat Seat--occupied">
               {iconElement}
             </div>
           </OverlayTrigger>
         );
       })()}
-    </div>
+    </>
   );
 }
 
