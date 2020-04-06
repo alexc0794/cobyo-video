@@ -3,6 +3,7 @@ dotenv.config();
 
 export const IS_DEV = process.env.NODE_ENV === 'development';
 export const BASE_API_URL = process.env.REACT_APP_BASE_API_URL;
+export const BASE_WS_URL = process.env.REACT_APP_BASE_WS_URL;
 
 // Intervals
 export const REFRESH_STOREFRONT_INTERVAL_MS = 10 * 60 * 1000;

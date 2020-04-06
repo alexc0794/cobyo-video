@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAndUpdateActiveUsers } from '../redux/usersActions';
+import { selectUserId } from '../redux/appSelectors';
 import { selectStorefront } from '../redux/storefrontSelectors';
 import { selectActiveUsers } from '../redux/usersSelectors';
 import { useInterval } from '../hooks';
@@ -10,6 +11,7 @@ import { UserType } from '../types';
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Chat from '../Chat';
 import cx from 'classnames';
 import './index.css';
 
@@ -39,6 +41,7 @@ function ActiveUsersTab() {
 
   const activeUsers = useSelector(selectActiveUsers);
   const storefront = useSelector(selectStorefront);
+  const userId = useSelector(selectUserId);
 
   if (errorMessage) { return null; }
 
@@ -61,6 +64,7 @@ function ActiveUsersTab() {
           </Row>
         ))}
       </Container>
+      <Chat userId={userId} title="room" />
     </div>
   );
 }
