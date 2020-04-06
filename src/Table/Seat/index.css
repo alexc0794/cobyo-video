@@ -1,49 +1,31 @@
-.seat {
-  display: flex;
-  justify-content: center;
-  padding: 10px 0;
-}
-
-.seat > * {
+.Seat {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 14pt;
-  border-radius: 50%;
-  box-shadow: 2px 3px 0.3rem rgba(0,0,0,0.5);
-}
-
-.seat > *,
-.seat img {
-  width: 40px;
-  height: 40px;
-}
-
-.seat img {
-  border-radius: inherit;
-}
-
-.seat-open {
+  background: rgba(0, 0, 0, 0.5);
   cursor: pointer;
   color: white;
-  background-color: #007bff;
-  border: none;
+}
+.Seat svg {
+  width: 25px;
+  height: 25px;
+  color:#FFF;
 }
 
-.seat-you {
-  cursor: pointer;
-  color: white;
+.Seat--you {
   background-color: #28a745;
-  opacity: .7;
 }
 
-.seat-occupied {
-  color: white;
+.Seat--occupied {
   background-color: #dc3545;
-  opacity: .7;
 }
 
-.seat-open:hover,
-.seat-you:hover {
+.Seat--open:hover,
+.Seat--you:hover {
   opacity: .5;
 }

@@ -1,23 +1,22 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectStorefront } from '../redux/storefrontSelectors';
 import { selectTableById } from '../redux/tablesSelectors';
 import { VideoUserType } from '../VideoHangout/types';
 import { RTCType } from '../AgoraRTC';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import RemoteVideo from '../Video/RemoteVideo';
 import LocalVideo from '../Video/LocalVideo';
 import { VideoPlaceholder } from '../Video';
-import { useWindowDimensions } from '../hooks';
-import { getTableGrid } from './helpers';
-import { TableType, SeatType } from '../types';
+import { TableType } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import CocktailImage1 from '../images/cocktail.png';
+import CocktailImage2 from '../images/cocktail2.png';
+import CocktailImage3 from '../images/cocktail3.png';
 import cx from 'classnames';
 import './index.css';
 
-const VIDEO_SETTINGS_HEIGHT_PX = 120;
-const TABLE_HEIGHT_PX = 0;
+const DEFAULT_ROW = 3;
 
 type PropTypes = {
   tableId: string,
@@ -32,72 +31,69 @@ function VideoTable({
   rtc,
   remoteUsers,
 }: PropTypes) {
-  const [, windowHeight] = useWindowDimensions();
-  const groupVideoHeight = windowHeight - VIDEO_SETTINGS_HEIGHT_PX - TABLE_HEIGHT_PX;
   const storefront = useSelector(selectStorefront);
   const table: TableType = useSelector(selectTableById(tableId));
-  const grid: Array<Array<SeatType|null>> = getTableGrid(table);
-  const [localUserRow, localUserCol] = findUserLocationInGrid(userId, grid);
+  const {seats} = table;
+  let columns = seats.length > 6 ? seats.length - 2*2 : seats.length - 2*1;
+  columns = table.shape ==='RECTANGULAR' ? seats.length / 2 : columns;
+  const rows = table.shape ==='RECTANGULAR' ? DEFAULT_ROW +1 : DEFAULT_ROW;
+  const styleVar = {'--columns': columns,'--rows': rows} as React.CSSProperties;
+  const [boughtDrink, setBoughtDrink] = useState<number|null>(null);
+  const drinks =[CocktailImage1, CocktailImage2, CocktailImage3];
 
   return (
-    <Container fluid className={cx('video-table', {
-      'club-mode-lighter': storefront === 'CLUB',
-    })}>
-      {grid.map((seats, i) => (
-        <Row key={`video-table-row-${i}`} style={{height: `${groupVideoHeight / grid.length}px`}}>
-          {seats.map((seat: SeatType|null, j: number) => (
-            <Col key={j}>
+    <div
+      style={styleVar}
+      className={cx('VideoTableContainer', {'VideoTableContainer--clubMode':storefront === 'CLUB'})}
+    >
+      {table.shape !== 'DANCE_FLOOR' && (
+        <div className={`VideoTable VideoTable--${table.shape}`}>
+          <div className="VideoTable-commonArea" />
+          {seats.map((seat, i) => (
+            <div className="VideoTable-drink" key={i}>
               {(() => {
-                if (!seat) { return null; }
-                if (seat && !seat.userId) {
-                  return <VideoPlaceholder />;
-                }
                 if (seat && seat.userId === userId) {
-                  return (
-                    <LocalVideo
-                      userId={userId}
-                      tableId={tableId}
-                      audioMuted={false} // TODO: Implement mute icon for own video
-                      rtc={rtc}
-                    />
-                  );
+                  if (boughtDrink === null) {
+                    return (
+                      <button className="VideoTable-buyButton" onClick={()=>setBoughtDrink(Math.floor(Math.random()*3))}>
+                        <FontAwesomeIcon icon={faDollarSign} />
+                      </button>
+                    )
+                  } else {
+                    return (<img src={drinks[boughtDrink]} alt="cocktail" />);
+                  }
                 }
-
-                const remoteUser = remoteUsers.find(user => seat && user.userId === seat.userId) || null;
-                if (remoteUser) {
-                  return (
-                    <RemoteVideo
-                      {...remoteUser}
-                      localUserRow={localUserRow}
-                      localUserCol={localUserCol}
-                      remoteUserRow={i}
-                      remoteUserCol={j}
-                    />
-                  );
-                }
-                // Hack for now. If dance floor dont show placeholder
-                return table.shape === 'DANCE_FLOOR' ? null : <VideoPlaceholder />;
               })()}
-            </Col>
+            </div>
           ))}
-        </Row>
+        </div>
+      )}
+      {seats.map((seat, i) => (
+        <div className="VideoTable-seat" key={i}>
+          {(() => {
+            if (!seat) {
+              return null;
+            }
+            if (seat && seat.userId === userId) {
+              return (
+                <LocalVideo
+                  userId={userId}
+                  tableId={tableId}
+                  audioMuted={false} // TODO: Implement mute icon for own video
+                  rtc={rtc}
+                />
+              );
+            }
+            const remoteUser = remoteUsers.find(user => seat && user.userId === seat.userId) || null;
+            if (remoteUser) {
+              return <RemoteVideo {...remoteUser} />;
+            }
+            return <VideoPlaceholder />
+          })()}
+        </div>
       ))}
-    </Container>
+    </div>
   );
-}
-
-function findUserLocationInGrid(userId: string, grid: Array<Array<SeatType|null>>): Array<number|null> {
-  if (grid.length > 0) {
-    for (let i = 0; i < grid.length; i++) {
-      for (let j = 0; j < grid[0].length; j++) {
-        const seat = grid[i][j];
-        if (seat && seat.userId === userId) {
-          return [i, j];
-        }
-      }
-    }
-  }
-  return [null, null];
 }
 
 export default memo(VideoTable);
