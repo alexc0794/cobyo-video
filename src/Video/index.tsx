@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { selectStorefront } from '../redux/storefrontSelectors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,7 +11,7 @@ type VideoPropTypes = {
   audioMuted: boolean,
 };
 
-export default function Video({
+function Video({
   userId,
   audioMuted,
 }: VideoPropTypes) {
@@ -29,7 +29,7 @@ export default function Video({
   );
 }
 
-export function VideoPlaceholder() {
+function UnmemoizedVideoPlaceholder() {
   const storefront = useSelector(selectStorefront);
   return (
     <div className={cx("video video-placeholder", {
@@ -47,3 +47,6 @@ export function VideoPlaceholder() {
     </div>
   );
 }
+
+export const VideoPlaceholder = memo(UnmemoizedVideoPlaceholder);
+export default memo(Video);

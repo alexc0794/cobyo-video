@@ -18,7 +18,12 @@ class RemoteVideo extends Component<RemoteVideoPropTypes> {
 
   render() {
     const { userId, audioMuted } = this.props;
-    return <Video userId={userId} audioMuted={audioMuted} />;
+    return (
+      <Video
+        userId={userId}
+        audioMuted={audioMuted}
+      />
+    );
   }
 }
 

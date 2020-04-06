@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { leaveAndUpdateTable } from '../redux/tablesActions';
 import { selectStorefront } from '../redux/storefrontSelectors';
@@ -173,4 +173,4 @@ function VideoSettings({
   )
 }
 
-export default VideoSettings;
+export default memo(VideoSettings);
