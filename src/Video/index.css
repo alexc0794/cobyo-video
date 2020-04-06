@@ -72,13 +72,3 @@
   font-size: 24pt;
   color: rgb(201, 45, 131);
 }
-
-/* barstool version for testing */
-.Video {
-  width: 100%;
-  height: 100%;
-}
-.Video-placeholder {
-  background: url('../images/barstool.png') 50% 50% no-repeat;
-  background-size: 60px auto;
-}

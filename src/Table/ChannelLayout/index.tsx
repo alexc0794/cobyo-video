@@ -23,7 +23,6 @@ function Layout({
   storefront,
   onPickSeat
 }: PropTypes) {
-  console.log("shape",shape);
   let columns = seats.length > 6 ? seats.length - 2*2 : seats.length - 2*1;
   columns = shape ==='RECTANGULAR' ? seats.length / 2 : columns;
   const rows = shape ==='RECTANGULAR' ? DEFAULT_ROW +1 : DEFAULT_ROW;

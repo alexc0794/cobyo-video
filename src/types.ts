@@ -23,8 +23,4 @@ export type UserType = {
   lastActiveAt: string|null,
 };
 
-export type drinkType = {
-  [key: string]: number
-}
-
 export type UserInSeatType = UserType & SeatType;
