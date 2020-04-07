@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { createChatMessage } from '../redux/chatActions';
 import { BASE_WS_URL } from '../config';
 import { ChatMessageRequest, ChatMessage } from './types';
-import { fetchChatMessages } from './services';
 import { transformChatMessage } from './transforms';
 import MessageInput from './MessageInput';
-import cx from 'classnames';
+import './index.css';
 
 type PropTypes = {
   userId: string,
   title: string,
+  createChatMessage: (chatMessage: ChatMessage) => void,
 };
 
 type StateTypes = {
-  chatMessages: Array<ChatMessage>,
   connected: boolean,
   showRetry: boolean,
 };
@@ -20,7 +21,6 @@ type StateTypes = {
 class Chat extends Component<PropTypes, StateTypes> {
 
   state = {
-    chatMessages: [],
     connected: false,
     showRetry: false,
   };
@@ -31,8 +31,6 @@ class Chat extends Component<PropTypes, StateTypes> {
     this.ws.onopen = this.handleOpenConnection;
     this.ws.onmessage = this.handleReceiveMessage;
     this.ws.onclose = this.handleCloseConnection;
-    const chatMessages = await fetchChatMessages();
-    this.setState({ chatMessages });
   }
 
   handleOpenConnection = () => {
@@ -40,10 +38,8 @@ class Chat extends Component<PropTypes, StateTypes> {
   };
 
   handleReceiveMessage = (event: any) => {
-    const chatMessage = transformChatMessage(JSON.parse(event.data))
-    this.setState(prevState => ({
-      chatMessages: [...prevState.chatMessages, chatMessage]
-    }));
+    const chatMessage = transformChatMessage(JSON.parse(event.data));
+    this.props.createChatMessage(chatMessage);
   }
 
   handleCloseConnection = () => {
@@ -68,23 +64,25 @@ class Chat extends Component<PropTypes, StateTypes> {
   };
 
   render() {
-    const { userId, title } = this.props;
-    const { chatMessages, connected } = this.state;
+    const { title } = this.props;
+    const { connected } = this.state;
     return (
       <div className="chat">
-        <div className="messages">
-          {chatMessages.map((chatMessage: ChatMessage) => (
-            <div key={chatMessage.messageId} className={cx('message', {
-              'message--me': userId === chatMessage.userId
-            })}>
-              {chatMessage.message}
-            </div>
-          ))}
-        </div>
-        <MessageInput title={title} disabled={!connected} onSend={this.handleSendMessage} />
+        <MessageInput
+          title={title}
+          disabled={!connected}
+          onSend={this.handleSendMessage}
+        />
       </div>
     );
   }
 }
 
-export default Chat;
+const mapDispatchToProps = {
+  createChatMessage,
+};
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(Chat);

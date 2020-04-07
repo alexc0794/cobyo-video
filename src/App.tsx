@@ -60,7 +60,7 @@ function App() {
             status={status}
             tableIdGrid={status === 'CLOSED' ? [] : tableIdGrid}
           />
-          {!!user && <ActiveUsers />}
+            {!!user && <ActiveUsers />}
         </div>
       )}
     </div>
