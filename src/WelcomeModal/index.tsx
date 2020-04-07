@@ -16,7 +16,7 @@ type PropTypes = {
   onSubmit: (user: UserType) => void
 }
 
-function NameModal({
+function WelcomeModal({
   onSubmit
 }: PropTypes) {
   const initialName = window.localStorage.getItem('name');
@@ -205,4 +205,4 @@ function NameModal({
   );
 }
 
-export default NameModal;
+export default WelcomeModal;

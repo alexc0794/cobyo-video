@@ -30,3 +30,7 @@ export function getRTC(): RTCType {
     localVideoTrack: null,
   };
 }
+
+export function checkSystemRequirements(): boolean {
+  return AgoraRTC.checkSystemRequirements();
+}
