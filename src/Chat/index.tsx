@@ -5,7 +5,6 @@ import { BASE_WS_URL } from '../config';
 import { ChatMessageRequest, ChatMessage } from './types';
 import { transformChatMessage } from './transforms';
 import MessageInput from './MessageInput';
-import './index.css';
 
 type PropTypes = {
   userId: string,
@@ -67,7 +66,7 @@ class Chat extends Component<PropTypes, StateTypes> {
     const { title } = this.props;
     const { connected } = this.state;
     return (
-      <div className="chat">
+      <div className="Chat">
         <MessageInput
           title={title}
           disabled={!connected}
