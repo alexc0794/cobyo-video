@@ -17,6 +17,7 @@ import cx from 'classnames';
 import './index.css';
 
 const DEFAULT_ROW = 3;
+const DEFAULT_COLUMN = 6;
 
 type PropTypes = {
   tableId: string,
@@ -33,10 +34,20 @@ function VideoTable({
 }: PropTypes) {
   const storefront = useSelector(selectStorefront);
   const table: TableType = useSelector(selectTableById(tableId));
-  const {seats} = table;
-  let columns = seats.length > 6 ? seats.length - 2*2 : seats.length - 2*1;
-  columns = table.shape ==='RECTANGULAR' ? seats.length / 2 : columns;
-  const rows = table.shape ==='RECTANGULAR' ? DEFAULT_ROW +1 : DEFAULT_ROW;
+  const { seats } = table;
+  let columns;
+  switch(table.shape) {
+    case 'RECTANGULAR':
+      columns = seats.length / 2;
+      break;
+    case 'U_UP':
+    case 'U_DOWN':
+      columns = seats.length > 6 ? seats.length - 2*2 : seats.length - 2*1;
+      break;
+    default:
+      columns = DEFAULT_COLUMN;
+  }
+  const rows = (table.shape ==='RECTANGULAR' || table.shape === 'DANCE_FLOOR') ? DEFAULT_ROW + 1 : DEFAULT_ROW;
   const styleVar = {'--columns': columns,'--rows': rows} as React.CSSProperties;
   const [boughtDrink, setBoughtDrink] = useState<number|null>(null);
   const drinks =[CocktailImage1, CocktailImage2, CocktailImage3];
@@ -49,8 +60,8 @@ function VideoTable({
       {table.shape !== 'DANCE_FLOOR' && (
         <div className={`VideoTable VideoTable--${table.shape}`}>
           <div className="VideoTable-commonArea" />
-          {seats.map((seat, i) => (
-            <div className="VideoTable-drink" key={i}>
+          {seats.map(seat => (
+            <div className="VideoTable-drink" key={seat.seatNumber}>
               {(() => {
                 if (seat && seat.userId === userId) {
                   if (boughtDrink === null) {
@@ -68,13 +79,13 @@ function VideoTable({
           ))}
         </div>
       )}
-      {seats.map((seat, i) => (
-        <div className="VideoTable-seat" key={i}>
+      {seats.map(seat => (
+        <div className="VideoTable-seat" key={seat.seatNumber}>
           {(() => {
             if (!seat) {
               return null;
             }
-            if (seat && seat.userId === userId) {
+            if (seat.userId === userId) {
               return (
                 <LocalVideo
                   userId={userId}
@@ -84,11 +95,12 @@ function VideoTable({
                 />
               );
             }
-            const remoteUser = remoteUsers.find(user => seat && user.userId === seat.userId) || null;
+            const remoteUser = remoteUsers.find(user => user.userId === seat.userId) || null;
             if (remoteUser) {
               return <RemoteVideo {...remoteUser} />;
             }
-            return <VideoPlaceholder />
+
+            return table.shape === 'DANCE_FLOOR' ? null : <VideoPlaceholder />;
           })()}
         </div>
       ))}
