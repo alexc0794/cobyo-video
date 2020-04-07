@@ -50,7 +50,7 @@ function App() {
   }
 
   const modal = (() => {
-    if (passesSystemRequirements) {
+    if (!passesSystemRequirements) {
       return <DeviceErrorModal />;
     }
     if (showModal) {
