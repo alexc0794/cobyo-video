@@ -35,7 +35,14 @@ function Layout({
     >
       <div className={`Channel-table Channel-table--${shape}`} />
       {seats.map((seat, i) => (
-        <Seat userId={userId} seat={seat} seatNumber={i} onClick={onPickSeat} storefront={storefront} />
+        <Seat
+          key={seat.seatNumber}
+          userId={userId}
+          seat={seat}
+          seatNumber={seat.seatNumber}
+          onClick={onPickSeat}
+          storefront={storefront}
+        />
       ))}
     </div>
   );

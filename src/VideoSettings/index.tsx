@@ -140,7 +140,7 @@ function VideoSettings({
           {beautyEffectOn ? (
             <Button variant="danger" onClick={handleClickBeautify}>
               <FontAwesomeIcon icon={faPortrait} />
-              <span>Club</span>
+              <span>Beauty</span>
             </Button>
           ) : (
             <Button variant="secondary" onClick={handleClickBeautify}>
