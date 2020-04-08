@@ -9,6 +9,7 @@ import { VideoUserType } from './types';
 import { RTC } from '../AgoraRTC';
 import VideoTable from '../VideoTable';
 import VideoSettings from '../VideoSettings';
+import VideoQuality from '../VideoQuality';
 
 type PropTypes = {
   tableId: string,
@@ -31,9 +32,17 @@ export default function VideoHangout({
   }, RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS);
 
   useEffect(() => {
+    // rtc.client.enableAudioVolumeIndicator();
+    async function initClient() {
+      try {
+        await rtc.client.enableDualStream();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    initClient();
     rtc.client.on('user-published', handleUserPublished);
     rtc.client.on('user-unpublished', handleUserUnpublished);
-    rtc.client.enableAudioVolumeIndicator();
     rtc.client.on('user-mute-updated', handleUserMuteUpdated);
 
     async function handleUserPublished(user: any) {
@@ -86,6 +95,7 @@ export default function VideoHangout({
     <>
       <VideoTable tableId={tableId} userId={userId} rtc={rtc} remoteUsers={remoteUsers} />
       <VideoSettings tableId={tableId} userId={userId} rtc={rtc} />
+      <VideoQuality tableId={tableId} userId={userId} rtc={rtc} />
     </>
   );
 }
