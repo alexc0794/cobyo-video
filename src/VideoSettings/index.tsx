@@ -7,7 +7,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash, faSignOutAlt, faUserFriends, faPortrait } from '@fortawesome/free-solid-svg-icons';
-import { RTCType } from '../AgoraRTC';
+import { RTC } from '../AgoraRTC';
 import { getSpeechRecognition } from '../SpeechRecognition';
 import { sendAudioTranscript } from '../services';
 import { useInterval } from '../hooks';
@@ -18,7 +18,7 @@ import './index.css';
 type PropTypes = {
   tableId: string,
   userId: string,
-  rtc: RTCType,
+  rtc: RTC,
 };
 
 let speechRecognition: SpeechRecognition;
@@ -102,15 +102,15 @@ function VideoSettings({
   }
 
   const storefront = useSelector(selectStorefront);
-  const [beautyEffectOn, setBeautyEffectOn] = useState<boolean>(storefront === 'CLUB');
+  const [beautyEffectOn, setBeautyEffectOn] = useState<boolean>(false);
   useEffect(() => {
-    if (!beautyEffectOn || !rtc.localVideoTrack) { return; }
-    rtc.localVideoTrack.setBeautyEffect(true, {
-      rednessLevel: 1,
-      smoothnessLevel: 1,
-      lighteningLevel: 0
+    if (!rtc.localVideoTrack) { return; }
+    rtc.localVideoTrack.on('beauty-effect-overload', () => {
+      if (!rtc.localVideoTrack) { return; }
+      rtc.localVideoTrack.setBeautyEffect(false);
+      setBeautyEffectOn(false);
     });
-  }, [rtc.localVideoTrack, beautyEffectOn]);
+  }, [rtc.localVideoTrack]);
 
   async function handleClickBeautify() {
     if (!rtc.localVideoTrack) { return; }

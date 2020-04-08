@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { selectStorefront } from '../redux/storefrontSelectors';
 import { selectTableById } from '../redux/tablesSelectors';
 import { VideoUserType } from '../VideoHangout/types';
-import { RTCType } from '../AgoraRTC';
+import { RTC } from '../AgoraRTC';
 import RemoteVideo from '../Video/RemoteVideo';
 import LocalVideo from '../Video/LocalVideo';
 import { VideoPlaceholder } from '../Video';
@@ -22,7 +22,7 @@ const DEFAULT_COLUMN = 6;
 type PropTypes = {
   tableId: string,
   userId: string,
-  rtc: RTCType,
+  rtc: RTC,
   remoteUsers: Array<VideoUserType>,
 };
 

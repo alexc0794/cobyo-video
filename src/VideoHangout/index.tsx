@@ -6,14 +6,14 @@ import { selectJoinedTableSeat } from '../redux/tablesSelectors';
 import { useInterval } from '../hooks';
 import { RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS } from '../config';
 import { VideoUserType } from './types';
-import { RTCType } from '../AgoraRTC';
+import { RTC } from '../AgoraRTC';
 import VideoTable from '../VideoTable';
 import VideoSettings from '../VideoSettings';
 
 type PropTypes = {
   tableId: string,
   userId: string,
-  rtc: RTCType,
+  rtc: RTC,
 };
 
 export default function VideoHangout({

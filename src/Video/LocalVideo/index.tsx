@@ -1,89 +1,54 @@
 import React, { Component } from 'react';
-import AgoraRTC from 'agora-rtc-sdk-ng';
-import { RTCType, AGORA_APP_ID } from '../../AgoraRTC';
-import { fetchToken } from '../../services';
+import { RTC, joinCall, leaveCall } from '../../AgoraRTC';
 import Video from '../../Video';
+import Modal from 'react-bootstrap/Modal';
 
-export type LocalVideoPropTypes = {
+type LocalVideoPropTypes = {
   userId: string,
   tableId: string,
   audioMuted: boolean,
-  rtc: RTCType,
+  rtc: RTC,
 }
 
 class LocalVideo extends Component<LocalVideoPropTypes> {
 
+  state = {
+    error: null,
+  };
+
   async componentDidMount() {
     const { userId, tableId, rtc } = this.props;
-    const token = await fetchToken(userId, tableId);
     try {
-      await rtc.client.join(AGORA_APP_ID, tableId, token,
-        parseInt(userId, 10), // Must be an int, otherwise token invalidates :(
-      );
-    } catch(e) {
-      console.error(e);
-      alert('Failed to join the table!');
-      return;
-    }
-
-    try {
-      await rtc.client.enableDualStream();
+      await joinCall(rtc, userId, tableId);
     } catch (e) {
-      console.log('dual stream not enabled', e);
+      this.setState({ error: e.message });
     }
-
-    try {
-      rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-        ANS: true,
-        encoderConfig: 'standard_stereo',
-      });
-      rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack({
-        encoderConfig: '480p_2',
-        facingMode: 'user',
-      });
-    } catch (e) {
-      // this.props.leaveAndUpdateTable(table.tableId, userId);
-      console.error(e);
-      alert('Access to your microphone and camera must be granted for this to work!');
-      return;
-    }
-
-    try {
-      await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
-    } catch (e) {
-      console.error(e);
-      return;
-    }
-
-    try {
-      rtc.localVideoTrack.play(`video-${userId}`);
-    } catch (e) {
-      console.log(e);
-      alert('Unable to play local video');
-      return;
-    }
-
-    // RTC client listeners
-    rtc.client.on('token-privilege-will-expire', () => {
-      rtc.client.renewToken(token);
-    });
   }
 
   async componentWillUnmount() {
     const { rtc } = this.props;
-    if (rtc.localAudioTrack) {
-      rtc.localAudioTrack.close();
-    }
-    if (rtc.localVideoTrack) {
-      rtc.localVideoTrack.close();
-    }
-    await rtc.client.leave();
+    await leaveCall(rtc)
   }
 
   render() {
     const { audioMuted, userId } = this.props;
+    const { error } = this.state;
     return (
-      <Video userId={userId} audioMuted={audioMuted} />
+      <>
+        <Video userId={userId} audioMuted={audioMuted} />
+        {!!error && (
+          <Modal show backdrop={"static"}>
+            <Modal.Header>
+              <Modal.Title>
+                An error has occurred <span role="img" aria-label="Sweat">😓</span>.
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Footer>
+              {error}
+            </Modal.Footer>
+          </Modal>
+        )}
+      </>
     );
   }
 }

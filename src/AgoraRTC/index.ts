@@ -2,9 +2,11 @@ import AgoraRTC, {
   IAgoraRTCClient,
   IMicrophoneAudioTrack,
   ICameraVideoTrack,
-} from "agora-rtc-sdk-ng";
+} from 'agora-rtc-sdk-ng';
 import { IS_DEV } from '../config';
+import { fetchToken } from '../services';
 
+const AGORA_APP_ID = process.env.REACT_APP_AGORA_APP_ID || '';
 /**
   0: DEBUG. Output all API logs.
   1: INFO. Output logs of the INFO, WARNING and ERROR level.
@@ -15,19 +17,14 @@ import { IS_DEV } from '../config';
 const DEV_DEBUG_LEVEL = 1;
 const PROD_DEBUG_LEVEL = 2;
 
-export const AGORA_APP_ID = process.env.REACT_APP_AGORA_APP_ID || '';
-
-export type RTCType = {
+export type RTC = {
  client: IAgoraRTCClient,
- joined: boolean,
- published: boolean,
- localStream: null,
- remoteStreams: Array<null>,
  localAudioTrack: IMicrophoneAudioTrack | null,
  localVideoTrack: ICameraVideoTrack | null,
+ passesSystemRequirements: boolean,
 };
 
-export function getRTC(): RTCType {
+export function getRTC(): RTC {
   const params = new URLSearchParams(window.location.search);
   const debug = params.get('debug');
   const explicitOn = debug === '1' || debug === 'true';
@@ -43,18 +40,71 @@ export function getRTC(): RTCType {
 
   return {
     client: AgoraRTC.createClient({
-      mode: "rtc",
-      codec: "h264",
+      mode: 'rtc',
+      codec: 'h264',
     }),
-    joined: false,
-    published: false,
-    localStream: null,
-    remoteStreams: [],
     localAudioTrack: null,
     localVideoTrack: null,
+    passesSystemRequirements: AgoraRTC.checkSystemRequirements(),
   };
 }
 
-export function checkSystemRequirements(): boolean {
-  return AgoraRTC.checkSystemRequirements();
+// Agora logic should go here to simplify usage in components
+export async function joinCall(rtc: RTC, userId: string, channelId: string) {
+  const token = await fetchToken(userId, channelId);
+  try {
+    await rtc.client.join(AGORA_APP_ID, channelId, token,
+      parseInt(userId, 10), // Must be an int otherwise Agora breaks
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error('Failed to join.');
+  }
+
+  try {
+    await rtc.client.enableDualStream();
+  } catch (e) {
+    console.warn(e);
+  }
+
+  try {
+    rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
+      ANS: true,
+      encoderConfig: 'standard_stereo',
+    });
+    rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack({
+      encoderConfig: '480p_2',
+      facingMode: 'user',
+    });
+  } catch (e) {
+    console.error(e);
+    await rtc.client.leave();
+    throw new Error('Access to your microphone and camera must be granted for this to work!');
+  }
+
+  try {
+    await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
+  } catch (e) {
+    console.error(e);
+    await rtc.client.leave();
+    throw new Error('Failed to publish audio and video to others.');
+  }
+
+  try {
+    rtc.localVideoTrack.play(`video-${userId}`);
+  } catch (e) {
+    console.error(e);
+    await rtc.client.leave();
+    throw new Error('Unable to play local video.');
+  }
+
+  rtc.client.on('token-privilege-will-expire', () => {
+    rtc.client.renewToken(token);
+  });
+}
+
+export async function leaveCall(rtc: RTC) {
+  rtc.localAudioTrack && rtc.localAudioTrack.close();
+  rtc.localVideoTrack && rtc.localVideoTrack.close();
+  await rtc.client.leave();
 }
