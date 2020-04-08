@@ -63,7 +63,6 @@ export async function joinCall(rtc: RTC, userId: string, channelId: string) {
 
   try {
     rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-      ANS: true,
       encoderConfig: 'standard_stereo',
     });
     rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack({
