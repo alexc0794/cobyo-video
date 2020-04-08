@@ -1,0 +1,12 @@
+.VideoQuality-toast {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+.VideoQuality-toast-rejoin {
+  border: none;
+  padding: 0;
+  margin-left: 15px;
+  font-size: 9pt;
+}
