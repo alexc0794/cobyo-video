@@ -33,8 +33,14 @@ class LocalVideo extends Component<LocalVideoPropTypes> {
     }
 
     try {
-      rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-      rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+      rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
+        ANS: true,
+        encoderConfig: 'standard_stereo',
+      });
+      rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack({
+        encoderConfig: '480p_2',
+        facingMode: 'user',
+      });
     } catch (e) {
       // this.props.leaveAndUpdateTable(table.tableId, userId);
       console.error(e);
