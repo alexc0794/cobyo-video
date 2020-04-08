@@ -81,7 +81,7 @@ function VideoQuality({
   return (
     <>
       <div className="VideoQuality-toast">
-        <Toast show={!!lowUrgencyError} delay={3000} onClose={handleCloseToast}>
+        <Toast show={!!lowUrgencyError} delay={500} onClose={handleCloseToast}>
           <Toast.Header>
             {lowUrgencyError}
             <button className="VideoQuality-toast-rejoin" onClick={handleRejoin} disabled={rejoinDisabled}>
