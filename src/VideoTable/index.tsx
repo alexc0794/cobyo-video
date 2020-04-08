@@ -58,7 +58,6 @@ function VideoTable({
     if (!userId) { return; }
     const isSeatOccupied = pickedSeatNumber && seats[pickedSeatNumber].userId !== null;
     if (isSeatOccupied) {
-      alert('Seat is already taken');
       return;
     }
     dispatch(joinAndUpdateTable(tableId, pickedSeatNumber, userId));
