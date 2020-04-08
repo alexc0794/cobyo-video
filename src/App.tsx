@@ -8,13 +8,12 @@ import WelcomeModal from './WelcomeModal';
 import Storefront from './Storefront';
 import VideoHangout from './VideoHangout';
 import ActiveUsers from './ActiveUsers';
-import { checkSystemRequirements, getRTC, RTCType } from './AgoraRTC';
+import { getRTC, RTC } from './AgoraRTC';
 import { TableType, UserType } from './types';
 import { useInterval } from './hooks';
 import { REFRESH_STOREFRONT_INTERVAL_MS } from './config';
 
-let rtc: RTCType = getRTC();
-const passesSystemRequirements = checkSystemRequirements();
+const rtc: RTC = getRTC();
 
 function App() {
   const [user, setUser] = useState<UserType|null>(null);
@@ -50,7 +49,7 @@ function App() {
   }
 
   const modal = (() => {
-    if (!passesSystemRequirements) {
+    if (!rtc.passesSystemRequirements) {
       return <DeviceErrorModal />;
     }
     if (showModal) {
