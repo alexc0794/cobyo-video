@@ -34,17 +34,19 @@ function VideoSettings({
   const [recentlyLeftUser, setRecentlyLeftUser] = useState<any>(null);
 
   useEffect(() => {
-    rtc.client.on('user-published', (user: any) => {
+    function handleUserPublished(user: any) {
       setRecentlyJoinedUser(user);
       setNumUsers(rtc.client.remoteUsers.length + 1);
-    });
-    rtc.client.on('user-unpublished', (user: any) => {
+    }
+    function handleUserUnpublished(user: any) {
       setRecentlyLeftUser(user);
       setNumUsers(rtc.client.remoteUsers.length + 1);
-    });
+    }
+    rtc.client.on('user-published', handleUserPublished);
+    rtc.client.on('user-unpublished', handleUserUnpublished);
     return () => {
-      rtc.client.removeAllListeners('user-published');
-      rtc.client.removeAllListeners('user-unpublished');
+      rtc.client.off('user-published', handleUserPublished);
+      rtc.client.off('user-unpublished', handleUserUnpublished);
     };
   }, [rtc.client]);
 
