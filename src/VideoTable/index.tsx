@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectStorefront } from '../redux/storefrontSelectors';
 import { selectTableById } from '../redux/tablesSelectors';
 import { VideoUserType } from '../VideoHangout/types';
@@ -13,6 +13,7 @@ import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import CocktailImage1 from '../images/cocktail.png';
 import CocktailImage2 from '../images/cocktail2.png';
 import CocktailImage3 from '../images/cocktail3.png';
+import { joinAndUpdateTable } from '../redux/tablesActions';
 import cx from 'classnames';
 import './index.css';
 
@@ -33,6 +34,7 @@ function VideoTable({
   remoteUsers,
 }: PropTypes) {
   const storefront = useSelector(selectStorefront);
+  const dispatch = useDispatch();
   const table: TableType = useSelector(selectTableById(tableId));
   const { seats } = table;
   let columns;
@@ -51,6 +53,17 @@ function VideoTable({
   const styleVar = {'--columns': columns,'--rows': rows} as React.CSSProperties;
   const [boughtDrink, setBoughtDrink] = useState<number|null>(null);
   const drinks =[CocktailImage1, CocktailImage2, CocktailImage3];
+
+  async function handlePickSeat(pickedSeatNumber: number|null) {
+    if (!userId) { return; }
+    console.log(seats)
+    const isSeatOccupied = pickedSeatNumber && seats[pickedSeatNumber].userId !== null;
+    if (isSeatOccupied) {
+      alert('Seat is already taken');
+      return;
+    }
+    dispatch(joinAndUpdateTable(tableId, pickedSeatNumber, userId));
+  }
 
   return (
     <div
@@ -80,7 +93,12 @@ function VideoTable({
         </div>
       )}
       {seats.map(seat => (
-        <div className="VideoTable-seat" key={seat.seatNumber}>
+        <div
+          className="VideoTable-seat"
+          key={seat.seatNumber}
+          onClick={()=>handlePickSeat(seat.seatNumber)}
+          role="button"
+        >
           {(() => {
             if (!seat) {
               return null;
