@@ -56,7 +56,6 @@ function VideoTable({
 
   async function handlePickSeat(pickedSeatNumber: number|null) {
     if (!userId) { return; }
-    console.log(seats)
     const isSeatOccupied = pickedSeatNumber && seats[pickedSeatNumber].userId !== null;
     if (isSeatOccupied) {
       alert('Seat is already taken');
