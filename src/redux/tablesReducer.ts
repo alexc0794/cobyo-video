@@ -20,6 +20,16 @@ function byId(state = {}, action: any) {
         return { ...acc, [table.tableId]: table };
       }, {...state});
     }
+    case 'UPDATE_TABLE_NAME': {
+      const { table } = action.payload
+      return {
+        ...state,
+        [table.tableId]: {
+          table_id: table.table_id,
+          name: table.name
+        }
+      }
+    }
     default:
       return state;
   }
