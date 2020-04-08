@@ -62,12 +62,6 @@ export async function joinCall(rtc: RTC, userId: string, channelId: string) {
   }
 
   try {
-    await rtc.client.enableDualStream();
-  } catch (e) {
-    console.warn(e);
-  }
-
-  try {
     rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
       ANS: true,
       encoderConfig: 'standard_stereo',
@@ -104,7 +98,13 @@ export async function joinCall(rtc: RTC, userId: string, channelId: string) {
 }
 
 export async function leaveCall(rtc: RTC) {
-  rtc.localAudioTrack && rtc.localAudioTrack.close();
-  rtc.localVideoTrack && rtc.localVideoTrack.close();
+  if (rtc.localAudioTrack) {
+    rtc.localAudioTrack.stop();
+    rtc.localAudioTrack.close();
+  }
+  if (rtc.localVideoTrack) {
+    rtc.localVideoTrack.stop();
+    rtc.localVideoTrack.close();
+  }
   await rtc.client.leave();
 }
