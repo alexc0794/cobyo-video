@@ -1,3 +1,14 @@
+export function getDebugMode() {
+  const params = new URLSearchParams(window.location.search);
+  const debug = params.get('debug');
+  const explicitOn = debug === '1' || debug === 'true';
+  const explicitOff = debug === '0' || debug === 'false';
+  return {
+    explicitOn,
+    explicitOff,
+  };
+}
+
 
 // Between 1 and max
 export function random(max: number) {

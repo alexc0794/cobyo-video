@@ -32,15 +32,6 @@ export default function VideoHangout({
   }, RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS);
 
   useEffect(() => {
-    // rtc.client.enableAudioVolumeIndicator();
-    async function initClient() {
-      try {
-        await rtc.client.enableDualStream();
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    initClient();
     rtc.client.on('user-published', handleUserPublished);
     rtc.client.on('user-unpublished', handleUserUnpublished);
     rtc.client.on('user-mute-updated', handleUserMuteUpdated);
@@ -58,7 +49,6 @@ export default function VideoHangout({
       }
 
       dispatch(fetchAndUpdateTable(tableId));
-      // audioTrack.setVolume(0);
 
       setRemoteUsers(currentRemoteUsers => ([...currentRemoteUsers, {
         userId: publishedUserId,
