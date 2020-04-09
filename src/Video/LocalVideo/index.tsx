@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { RTC, joinCall, leaveCall } from '../../AgoraRTC';
+import { RTC, joinCall, leaveCall, playRemoteUsers } from '../../AgoraRTC';
 import Video from '../../Video';
 import Modal from 'react-bootstrap/Modal';
 
@@ -20,6 +20,7 @@ class LocalVideo extends Component<LocalVideoPropTypes> {
     const { userId, tableId, rtc } = this.props;
     try {
       await joinCall(rtc, userId, tableId);
+      playRemoteUsers(rtc); // Gawd this is such a hack but I want to see how this behaves on prod
     } catch (e) {
       this.setState({ error: e.message });
     }
@@ -27,7 +28,7 @@ class LocalVideo extends Component<LocalVideoPropTypes> {
 
   async componentWillUnmount() {
     const { rtc } = this.props;
-    await leaveCall(rtc)
+    await leaveCall(rtc);
   }
 
   render() {

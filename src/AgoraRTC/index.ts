@@ -2,9 +2,11 @@ import AgoraRTC, {
   IAgoraRTCClient,
   IMicrophoneAudioTrack,
   ICameraVideoTrack,
+  IAgoraRTCRemoteUser,
 } from 'agora-rtc-sdk-ng';
 import { IS_DEV } from '../config';
 import { fetchToken } from '../services';
+import { getDebugMode } from '../helpers';
 
 const AGORA_APP_ID = process.env.REACT_APP_AGORA_APP_ID || '';
 /**
@@ -25,10 +27,10 @@ export type RTC = {
 };
 
 export function getRTC(): RTC {
-  const params = new URLSearchParams(window.location.search);
-  const debug = params.get('debug');
-  const explicitOn = debug === '1' || debug === 'true';
-  const explicitOff = debug === '0' || debug === 'false';
+  const {
+    explicitOn,
+    explicitOff,
+  } = getDebugMode();
   if (explicitOn) {
     AgoraRTC.setLogLevel(DEV_DEBUG_LEVEL);
     AgoraRTC.enableLogUpload();
@@ -62,9 +64,7 @@ export async function joinCall(rtc: RTC, userId: string, channelId: string) {
   }
 
   try {
-    rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-      encoderConfig: 'standard_stereo',
-    });
+    rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
     rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack({
       encoderConfig: '480p_2',
       facingMode: 'user',
@@ -106,4 +106,12 @@ export async function leaveCall(rtc: RTC) {
     rtc.localVideoTrack.close();
   }
   await rtc.client.leave();
+}
+
+export function playRemoteUsers(rtc: RTC) {
+  rtc.client.remoteUsers.forEach((user: IAgoraRTCRemoteUser) => {
+    if (user.videoTrack) {
+      user.videoTrack.play(`video-${user.uid.toString()}`);
+    }
+  });
 }

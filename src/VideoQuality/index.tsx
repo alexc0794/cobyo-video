@@ -3,12 +3,13 @@ import { useDispatch } from 'react-redux';
 import { leaveAndUpdateTable } from '../redux/tablesActions';
 import { RTC } from '../AgoraRTC';
 import { NetworkQuality } from 'agora-rtc-sdk-ng';
-import { joinCall, leaveCall } from '../AgoraRTC';
+import { joinCall, leaveCall, playRemoteUsers } from '../AgoraRTC';
 import Toast from 'react-bootstrap/Toast';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo } from '@fortawesome/free-solid-svg-icons';
+import { getDebugMode } from '../helpers';
 import './index.css';
 
 type PropTypes = {
@@ -48,10 +49,11 @@ function VideoQuality({
         setLowUrgencyError('Experiencing network quality issues?');
       }
     }
-    rtc.client.on('exception', handleException);
+    const { explicitOn } = getDebugMode();
+    explicitOn && rtc.client.on('exception', handleException);
     rtc.client.on('network-quality', handleNetworkQuality);
     return () => {
-      rtc.client.off('exception', handleException);
+      explicitOn && rtc.client.off('exception', handleException);
       rtc.client.off('network-quality', handleNetworkQuality);
     };
   }, [rtc.client]);
@@ -71,6 +73,7 @@ function VideoQuality({
     setRejoinDisabled(false);
     setHighUrgencyError(null);
     setLowUrgencyError(null);
+    playRemoteUsers(rtc);
   }
 
   const dispatch = useDispatch();
