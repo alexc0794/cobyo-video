@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChair, faUser, faCouch } from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { UserInSeatType } from '../../types';
 import { timeSince } from '../../helpers';
 import './index.css';
@@ -22,11 +22,10 @@ function DanceFloor({
   function handleClick() {
     onEnter(null);
   }
-
   return (
     <div role="button" className="DanceFloor" onClick={handleClick}>
       {seats.map((seat, i) => (
-        <>
+        <Fragment key={seat.seatNumber}>
         {(() => {
           if (!seat.userId || !seat.satDownAt) {
             return (
@@ -70,7 +69,7 @@ function DanceFloor({
             </OverlayTrigger>
           );
         })()}
-      </>
+      </Fragment>
       ))}
     </div>
   );
