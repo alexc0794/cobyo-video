@@ -1,5 +1,10 @@
 import React from 'react';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChair, faUser, faCouch } from '@fortawesome/free-solid-svg-icons';
 import { UserInSeatType } from '../../types';
+import { timeSince } from '../../helpers';
 import './index.css';
 
 type PropTypes = {
@@ -11,14 +16,63 @@ type PropTypes = {
 
 function DanceFloor({
   seats,
-  onEnter
+  onEnter,
+  userId,
 }: PropTypes) {
   function handleClick() {
     onEnter(null);
   }
 
   return (
-    <button className="dance-floor" onClick={handleClick}></button>
+    <div role="button" className="DanceFloor" onClick={handleClick}>
+      {seats.map((seat, i) => (
+        <>
+        {(() => {
+          if (!seat.userId || !seat.satDownAt) {
+            return (
+              <div className="DanceFloor-seat DanceFloor-seat--empty" />
+            );
+          }
+          const iconElement = seat.profilePictureUrl ? (
+            <img src={seat.profilePictureUrl} alt={seat.firstName} />
+          ) : (
+            <FontAwesomeIcon icon={faUser} />
+          );
+          if (!!seat.userId && !!seat.satDownAt && seat.userId === userId) {
+            return (
+              <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  <Tooltip id={`tooltip-${userId}`}>
+                    {`You joined ${timeSince(new Date(seat.satDownAt))} ago`}
+                  </Tooltip>
+                }
+              >
+                <div className="DanceFloor-seat DanceFloor-seat--you">
+                  {iconElement}
+                </div>
+              </OverlayTrigger>
+            );
+          }
+
+          return (
+            <OverlayTrigger
+              placement="bottom"
+              overlay={
+                <Tooltip id={`tooltip-${seat.userId}`}>
+                  {`${seat.firstName || `User ${seat.userId}`} joined ${timeSince(new Date(seat.satDownAt))} ago`}
+                </Tooltip>
+              }
+            >
+              <div className="DanceFloor-seat DanceFloor-seat--occupied">
+                {iconElement}
+              </div>
+            </OverlayTrigger>
+          );
+        })()}
+      </>
+      ))}
+    </div>
   );
 }
 
