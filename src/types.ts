@@ -23,4 +23,12 @@ export type UserType = {
   lastActiveAt: string|null,
 };
 
+export type menuItemType = {
+  name: string,
+  cents: number,
+  inventory: number,
+  category: string,
+  imageUrl: string,
+};
+
 export type UserInSeatType = UserType & SeatType;
