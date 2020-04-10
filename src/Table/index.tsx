@@ -36,7 +36,7 @@ function Table({ tableId, userId }: PropTypes) {
     dispatch(joinAndUpdateTable(tableId, pickedSeatNumber, userId));
   }
 
-  const seats = table ? table.seats : [];
+  const seats = table && table.seats ? table.seats : [];
   const tableUserIds: Array<string|null> = seats.map((seat: SeatType) => seat ? seat.userId : null);
   const users = useSelector(selectUsersByIds(tableUserIds));
   const userInSeats: Array<UserInSeatType> = seats.map((seat: SeatType, i: number) => seat ? ({

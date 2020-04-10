@@ -3,7 +3,6 @@ import { RTC } from '../AgoraRTC';
 import { selectToken } from './appSelectors';
 import { updateUsers } from './usersActions';
 import { fetchTable, fetchTables, joinTable, leaveTable, updateTableWithUserIdsFromRtc, updateTableName } from '../services';
-import {AxiosResponse} from "axios";
 
 export const updateTable = (table: TableType) => ({
   type: "UPDATE_TABLE",
@@ -25,7 +24,7 @@ export const leftTable = (table: TableType) => ({
   payload: { table }
 });
 
-export const updateTableAction = (table: AxiosResponse<any>) => ({
+export const updateTableAction = (table: TableType) => ({
   type: "UPDATE_TABLE_NAME",
   payload: { table }
 })

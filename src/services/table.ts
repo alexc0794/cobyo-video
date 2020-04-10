@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios  from 'axios';
 import { BASE_API_URL } from '../config';
 import { TableType, SeatType } from '../types';
 import { transformTable, transformUser } from './transforms';
@@ -85,7 +85,7 @@ export async function updateTableWithUserIdsFromRtc(
   });
 }
 
-export async function updateTableName(payload: { table_id: string, name: string }): Promise<AxiosResponse<any>> {
+export async function updateTableName(payload: { table_id: string, name: string }): Promise<TableType> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.put(`${BASE_API_URL}/table`, {
@@ -93,7 +93,8 @@ export async function updateTableName(payload: { table_id: string, name: string 
         name: payload.name
       })
 
-      return resolve(response)
+      const table: TableType = transformTable(response.data)
+      return resolve(table)
     } catch(e) {
       console.error(e);
       return reject("Something went wrong");
