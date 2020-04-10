@@ -110,8 +110,7 @@ export async function leaveCall(rtc: RTC) {
 
 export function playRemoteUsers(rtc: RTC) {
   rtc.client.remoteUsers.forEach((user: IAgoraRTCRemoteUser) => {
-    if (user.videoTrack) {
-      user.videoTrack.play(`video-${user.uid.toString()}`);
-    }
+    user.videoTrack && user.videoTrack.play(`video-${user.uid.toString()}`);
+    user.audioTrack && user.audioTrack.play();
   });
 }
