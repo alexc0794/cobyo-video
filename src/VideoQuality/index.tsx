@@ -41,7 +41,8 @@ function VideoQuality({
         downlinkNetworkQuality >= HIGH_URGENCY_NETWORK_QUALITY_THRESHOLD ||
         uplinkNetworkQuality >= HIGH_URGENCY_NETWORK_QUALITY_THRESHOLD
       ) {
-        setHighUrgencyError('Looks like you may be experiencing network quality issues. Want to rejoin?');
+        setLowUrgencyError('Experiencing network quality issues?');
+        // setHighUrgencyError('Looks like you may be experiencing network quality issues. Want to rejoin?');
       } else if (
         downlinkNetworkQuality >= LOW_URGENCY_NETWORK_QUALITY_THRESHOLD ||
         uplinkNetworkQuality >= LOW_URGENCY_NETWORK_QUALITY_THRESHOLD
