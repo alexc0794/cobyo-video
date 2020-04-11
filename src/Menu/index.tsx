@@ -4,9 +4,9 @@ import {fetchMenu} from '../services/menu';
 import {saveMenuToStore} from '../redux/menuActions';
 import {selectMenuItems} from '../redux/menuSelectors';
 import {buyMenuItem} from '../redux/userMenuItemsActions';
-import {menuItemType} from '../types';
+import {MenuItemType} from '../types';
 import Button from 'react-bootstrap/Button';
-import './menu.css';
+import './index.css';
 
 type PropTypes = {
   storefront: string,
@@ -25,10 +25,10 @@ function Menu({storefront, userId, onRequestClose}:PropTypes) {
   const [selectedItem, selectItem] = useState<string>('');
   const [userSelection, toggleSelectUser] = useState<userSelectType>({});
   useEffect(()=>{
-    fetchMenu(storefront).then(items=>{
+    fetchMenu(storefront).then(items => {
       dispatch(saveMenuToStore(items));
     });
-  }, []);
+  }, [storefront, dispatch]);
   const formatPrice = (cents:number) => {
     return (cents/100).toFixed(2);
   };
@@ -61,7 +61,7 @@ function Menu({storefront, userId, onRequestClose}:PropTypes) {
       ) : (
         <>
           <h4 className="Menu-header">Menu</h4>
-          {menuItems.map((item:menuItemType) => {
+          {menuItems.map((item: MenuItemType) => {
             return (
               <dl className="Menu-item" key={item.name} role="button" onClick={() => handleSelectItem(item.name)} >
                 <dt className="Menu-item-name">{item.name}</dt>

@@ -23,7 +23,7 @@ export type UserType = {
   lastActiveAt: string|null,
 };
 
-export type menuItemType = {
+export type MenuItemType = {
   name: string,
   cents: number,
   inventory: number,
@@ -31,7 +31,7 @@ export type menuItemType = {
   imageUrl: string,
 };
 
-export type userMenuItemType = {
+export type UserMenuItemType = {
   menuItemName: string,
   fromUserId: string,
   expireOn: string,

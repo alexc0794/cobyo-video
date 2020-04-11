@@ -9,8 +9,8 @@ import LocalVideo from '../Video/LocalVideo';
 import { VideoPlaceholder } from '../Video';
 import { TableType } from '../types';
 import { joinAndUpdateTable } from '../redux/tablesActions';
-import Menu from './menu';
-import UserSpace from './userSpace';
+import Menu from '../Menu';
+import UserSpace from './UserSpace';
 import cx from 'classnames';
 import './index.css';
 

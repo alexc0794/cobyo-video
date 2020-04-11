@@ -1,11 +1,11 @@
 import {combineReducers} from 'redux';
-import {userMenuItemType} from '../types';
+import {UserMenuItemType} from '../types';
 
-type byId = {
-  [key: string]: Array<userMenuItemType>,
+type ById = {
+  [key: string]: Array<UserMenuItemType>,
 };
 
-function byId(state: byId = {}, action:any) {
+function byId(state: ById = {}, action:any) {
   switch(action.type) {
     case "BUY_MENU_ITEM": {
       console.log(action.payload);
