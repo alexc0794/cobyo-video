@@ -8,12 +8,9 @@ import RemoteVideo from '../Video/RemoteVideo';
 import LocalVideo from '../Video/LocalVideo';
 import { VideoPlaceholder } from '../Video';
 import { TableType } from '../types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
-import CocktailImage1 from '../images/cocktail.png';
-import CocktailImage2 from '../images/cocktail2.png';
-import CocktailImage3 from '../images/cocktail3.png';
 import { joinAndUpdateTable } from '../redux/tablesActions';
+import Menu from '../Menu';
+import UserSpace from './UserSpace';
 import cx from 'classnames';
 import './index.css';
 
@@ -51,8 +48,7 @@ function VideoTable({
   }
   const rows = (table.shape ==='RECTANGULAR' || table.shape === 'DANCE_FLOOR') ? DEFAULT_ROW + 1 : DEFAULT_ROW;
   const styleVar = {'--columns': columns,'--rows': rows} as React.CSSProperties;
-  const [boughtDrink, setBoughtDrink] = useState<number|null>(null);
-  const drinks =[CocktailImage1, CocktailImage2, CocktailImage3];
+  const [isMenuOpen, toggleMenuOpen] = useState<boolean>(false);
 
   async function handlePickSeat(pickedSeatNumber: number|null) {
     if (!userId) { return; }
@@ -69,26 +65,19 @@ function VideoTable({
       className={cx('VideoTableContainer', {'VideoTableContainer--clubMode':storefront === 'CLUB'})}
     >
       {table.shape !== 'DANCE_FLOOR' && (
-        <div className={`VideoTable VideoTable--${table.shape}`}>
-          <div className="VideoTable-commonArea" />
-          {seats.map(seat => (
-            <div className="VideoTable-drink" key={seat.seatNumber}>
-              {(() => {
-                if (seat && seat.userId === userId) {
-                  if (boughtDrink === null) {
-                    return (
-                      <button className="VideoTable-buyButton" onClick={()=>setBoughtDrink(Math.floor(Math.random()*3))}>
-                        <FontAwesomeIcon icon={faDollarSign} />
-                      </button>
-                    )
-                  } else {
-                    return (<img src={drinks[boughtDrink]} alt="cocktail" />);
-                  }
-                }
-              })()}
-            </div>
-          ))}
-        </div>
+        <>
+          <div className={`VideoTable VideoTable--${table.shape}`}>
+            <div className="VideoTable-commonArea" />
+            {seats.map(seat => (
+              <div className="VideoTable-userSpace" key={seat.seatNumber}>
+                {seat && seat.userId && <UserSpace userId={seat.userId} />}
+              </div>
+            ))}
+          </div>
+          <div className="VideoTable-menu">
+            {isMenuOpen && <Menu storefront={storefront} userId={userId} onRequestClose={()=>{toggleMenuOpen(false)}} />}
+          </div>
+        </>
       )}
       {seats.map(seat => (
         <div
@@ -103,12 +92,15 @@ function VideoTable({
             }
             if (seat.userId === userId) {
               return (
-                <LocalVideo
-                  userId={userId}
-                  tableId={tableId}
-                  audioMuted={false} // TODO: Implement mute icon for own video
-                  rtc={rtc}
-                />
+                <>
+                  <LocalVideo
+                    userId={userId}
+                    tableId={tableId}
+                    audioMuted={false} // TODO: Implement mute icon for own video
+                    rtc={rtc}
+                  />
+                  <button className="VideoTable-menuButton" onClick={()=>toggleMenuOpen(true)}>Menu</button>
+                </>
               );
             }
             const remoteUser = remoteUsers.find(user => user.userId === seat.userId) || null;

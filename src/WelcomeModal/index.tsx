@@ -139,14 +139,13 @@ function WelcomeModal({
       {!!storefront && !closed && (
         <>
           <Modal.Body>
-            You are about to enter a video simulation of a real-life {storefront.toLowerCase()}.
-            To partake, please allow the browser access to your <strong>webcam</strong> and <strong>microphone</strong>.
-          </Modal.Body>
-          <Modal.Body>
-            For your optimal experience, we recommend you use Google Chrome on a laptop or desktop.
+            <p>You are about to enter a video simulation of a real-life {storefront.toLowerCase()}.
+            To partake, please allow the browser access to your <strong>webcam</strong> and <strong>microphone</strong>.</p>
+
+            <p>For your optimal experience, we recommend you use Google Chrome on a laptop or desktop.</p>
           </Modal.Body>
 
-            <Button variant="link" onClick={handleClickDislaimer}>{showDisclaimer ? 'Hide Disclaimer' : 'View Disclaimer'}</Button>
+          <Button variant="link" onClick={handleClickDislaimer}>{showDisclaimer ? 'Hide Disclaimer' : 'View Disclaimer'}</Button>
 
           {showDisclaimer && (
             <>
