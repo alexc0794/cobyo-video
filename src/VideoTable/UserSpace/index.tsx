@@ -14,11 +14,11 @@ function UserSpace({userId}:PropTypes) {
     <>
       {userItems && userItems.length > 0 ? (
         userItems.map((item: UserMenuItemType) => (
-          <UserItem itemName={item.menuItemName} key={item.menuItemName} />
+          <UserItem itemId={item.itemId} key={item.itemId} />
         ))
       ) : null}
     </>
-  )
+  );
 }
 
 export default memo(UserSpace);

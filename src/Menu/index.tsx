@@ -1,39 +1,34 @@
-import React, {useEffect, useState, memo} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {fetchMenu} from '../services/menu';
-import {saveMenuToStore} from '../redux/menuActions';
+import React, { useState, memo } from 'react';
+import { useSelector } from 'react-redux';
 import {selectMenuItems} from '../redux/menuSelectors';
-import {buyMenuItem} from '../redux/userMenuItemsActions';
 import {MenuItemType} from '../types';
 import Button from 'react-bootstrap/Button';
 import './index.css';
 
 type PropTypes = {
+  tableId: string,
   storefront: string,
   userId: string,
   onRequestClose: () => void,
+  ws: WebSocket,
 };
 
 type userSelectType = {
   [userId: string]: boolean,
 };
 
-function Menu({storefront, userId, onRequestClose}:PropTypes) {
-  const dispatch = useDispatch();
+const formatPrice = (cents:number) => {
+  return (cents/100).toFixed(2);
+};
+
+function Menu({ tableId, storefront, userId, onRequestClose, ws }: PropTypes) {
   const menuItems = useSelector(selectMenuItems);
   const [showSelectUsers, toggleShowSelectUsers] = useState<boolean>(false);
-  const [selectedItem, selectItem] = useState<string>('');
+  const [selectedItemId, setSelectedItemId] = useState<string>('');
   const [userSelection, toggleSelectUser] = useState<userSelectType>({});
-  useEffect(()=>{
-    fetchMenu(storefront).then(items => {
-      dispatch(saveMenuToStore(items));
-    });
-  }, [storefront, dispatch]);
-  const formatPrice = (cents:number) => {
-    return (cents/100).toFixed(2);
-  };
-  const handleSelectItem = (itemName: string) => {
-    selectItem(itemName);
+
+  const handleSelectItem = (itemId: string) => {
+    setSelectedItemId(itemId);
     toggleShowSelectUsers(true);
   };
   const handleSelectUser = (userId: string) => {
@@ -45,7 +40,16 @@ function Menu({storefront, userId, onRequestClose}:PropTypes) {
   };
   const handleBuyItem = () => {
     const toUserIds = Object.keys(userSelection).filter(x => userSelection[x]=== true);
-    dispatch(buyMenuItem(selectedItem, userId, toUserIds));
+    // TODO: Request to purchase on our server before sending out with websockets.
+    toUserIds.forEach(toUserId => {
+      ws.send(JSON.stringify({
+        action: 'purchasedMenuItem',
+        itemId: selectedItemId,
+        userId: toUserId,
+        fromUserId: userId,
+        channelId: tableId,
+      }));
+    });
     onRequestClose();
   };
 
@@ -63,7 +67,7 @@ function Menu({storefront, userId, onRequestClose}:PropTypes) {
           <h4 className="Menu-header">Menu</h4>
           {menuItems.map((item: MenuItemType) => {
             return (
-              <dl className="Menu-item" key={item.name} role="button" onClick={() => handleSelectItem(item.name)} >
+              <dl className="Menu-item" key={item.itemId} role="button" onClick={() => handleSelectItem(item.itemId)} >
                 <dt className="Menu-item-name">{item.name}</dt>
                 <dd className="Menu-item-price">{formatPrice(item.cents)}</dd>
               </dl>

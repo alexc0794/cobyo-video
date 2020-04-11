@@ -22,6 +22,7 @@ type PropTypes = {
   userId: string,
   rtc: RTC,
   remoteUsers: Array<VideoUserType>,
+  ws: WebSocket|undefined,
 };
 
 function VideoTable({
@@ -29,6 +30,7 @@ function VideoTable({
   userId,
   rtc,
   remoteUsers,
+  ws,
 }: PropTypes) {
   const storefront = useSelector(selectStorefront);
   const dispatch = useDispatch();
@@ -75,7 +77,7 @@ function VideoTable({
             ))}
           </div>
           <div className="VideoTable-menu">
-            {isMenuOpen && <Menu storefront={storefront} userId={userId} onRequestClose={()=>{toggleMenuOpen(false)}} />}
+            {isMenuOpen && ws && <Menu tableId={tableId} storefront={storefront} userId={userId} onRequestClose={()=>{toggleMenuOpen(false)}} ws={ws} />}
           </div>
         </>
       )}

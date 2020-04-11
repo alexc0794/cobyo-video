@@ -23,7 +23,12 @@ export type UserType = {
   lastActiveAt: string|null,
 };
 
+export type MenuType = {
+  items: Array<MenuItemType>
+};
+
 export type MenuItemType = {
+  itemId: string,
   name: string,
   cents: number,
   inventory: number,
@@ -32,9 +37,9 @@ export type MenuItemType = {
 };
 
 export type UserMenuItemType = {
-  menuItemName: string,
+  itemId: string,
   fromUserId: string,
-  expireOn: string,
-}
+  expireOn: string|null,
+};
 
 export type UserInSeatType = UserType & SeatType;

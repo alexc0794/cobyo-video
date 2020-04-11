@@ -7,11 +7,14 @@ export function fetchMenu(storefront: string): Promise<any> {
         const response = await axios.get(
           `${BASE_API_URL}/menu/${storefront}`
         );
-        return resolve(
-          response.data.menu.items
-        );
+        return resolve(response.data.menu);
       } catch (e) {
-        return reject("fail to get menu");
+        return reject("Failed to fetch menu");
       }
     })
   }
+
+
+export function purchaseMenuItem() {
+
+}
