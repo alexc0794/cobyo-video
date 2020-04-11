@@ -10,6 +10,7 @@ import { RTC } from '../AgoraRTC';
 import VideoTable from '../VideoTable';
 import VideoSettings from '../VideoSettings';
 import VideoQuality from '../VideoQuality';
+import { useWebSocket } from './hooks';
 
 type PropTypes = {
   tableId: string,
@@ -22,7 +23,7 @@ export default function VideoHangout({
   userId,
   rtc,
 }: PropTypes) {
-
+  const { ws, connected } = useWebSocket(tableId, userId);
   const [remoteUsers, setRemoteUsers] = useState<Array<VideoUserType>>([]);
   const dispatch = useDispatch();
   const seat = useSelector(selectJoinedTableSeat(userId || ""));
