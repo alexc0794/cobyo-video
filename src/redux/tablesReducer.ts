@@ -25,8 +25,7 @@ function byId(state = {}, action: any) {
       return {
         ...state,
         [table.tableId]: {
-          table_id: table.table_id,
-          name: table.name
+          ...table
         }
       }
     }
