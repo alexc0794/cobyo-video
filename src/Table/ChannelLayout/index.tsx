@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { UserInSeatType } from '../../types';
 import Seat from '../Seat'
 import cx from 'classnames';
+import { updateTableName_ } from "../../redux/tablesActions"
+import { useDispatch } from 'react-redux'
 import './index.css';
 
 type PropTypes = {
@@ -27,6 +29,19 @@ function Layout({
   columns = shape ==='RECTANGULAR' ? seats.length / 2 : columns;
   const rows = shape ==='RECTANGULAR' ? DEFAULT_ROW +1 : DEFAULT_ROW;
   const styleVar = {'--columns': columns,'--rows': rows} as React.CSSProperties;
+  const [tableName, setTableName] = useState("")
+  const dispatch = useDispatch()
+
+  const handleNameUpdate = async (e: any) => {
+    e.preventDefault()
+    if (!tableName) return
+
+    try {
+      dispatch(updateTableName_({ table_id: tableId, name: tableName }))
+    } catch(e) {
+      console.error(e)
+    }
+  }
 
   return (
     <div
@@ -34,7 +49,7 @@ function Layout({
       className={cx('ChannelContainer', {'ChannelContainer--clubMode':storefront === 'CLUB'})}
     >
       <div className={`Channel-table Channel-table--${shape}`} />
-      {seats.map((seat, i) => (
+      {seats.map((seat) => (
         <Seat
           key={seat.seatNumber}
           userId={userId}
@@ -44,6 +59,18 @@ function Layout({
           storefront={storefront}
         />
       ))}
+      <form onSubmit={handleNameUpdate}>
+        <input
+          className="Channel-table--name-input"
+          type="text"
+          value={tableName}
+          onChange={(e) => setTableName(e.target.value)}
+        />
+        <button
+          type="submit"
+          onClick={handleNameUpdate}
+        >Update Name</button>
+      </form>
     </div>
   );
 }

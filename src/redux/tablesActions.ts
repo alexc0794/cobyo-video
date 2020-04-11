@@ -2,7 +2,7 @@ import { TableType } from '../types';
 import { RTC } from '../AgoraRTC';
 import { selectToken } from './appSelectors';
 import { updateUsers } from './usersActions';
-import { fetchTable, fetchTables, joinTable, leaveTable, updateTableWithUserIdsFromRtc } from '../services';
+import { fetchTable, fetchTables, joinTable, leaveTable, updateTableWithUserIdsFromRtc, updateTableName } from '../services';
 
 export const updateTable = (table: TableType) => ({
   type: "UPDATE_TABLE",
@@ -23,6 +23,11 @@ export const leftTable = (table: TableType) => ({
   type: "LEFT_TABLE",
   payload: { table }
 });
+
+export const updateTableAction = (table: TableType) => ({
+  type: "UPDATE_TABLE_NAME",
+  payload: { table }
+})
 
 export function fetchAndUpdateTable(tableId: string) {
   return async function(dispatch: any, getState: () => any) {
@@ -66,5 +71,11 @@ export function updateTableWithRTC(tableId: string, rtc: RTC, userId: string|nul
     return updateTableWithUserIdsFromRtc(tableId, userIds).then(table => {
       dispatch(updateTable(table));
     });
+  }
+}
+
+export function updateTableName_(payload: { table_id: string, name: string }) {
+  return function(dispatch: any) {
+    return updateTableName(payload).then(table => dispatch(updateTableAction(table)))
   }
 }

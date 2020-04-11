@@ -15,7 +15,7 @@ type TableResponseType = {
 };
 
 export function transformTable(response: TableResponseType): TableType {
-  const seats: Array<SeatType> = response.seats.map((seatResponseData: SeatResponseType, i: number) => {
+  const seats: Array<SeatType> = response.seats ? response.seats.map((seatResponseData: SeatResponseType, i: number) => {
     if (seatResponseData) {
       return {
         userId: seatResponseData.user_id,
@@ -28,7 +28,7 @@ export function transformTable(response: TableResponseType): TableType {
       satDownAt: null,
       seatNumber: i
     };
-  });
+  }) : [];
   return {
     tableId: response.table_id,
     seats,
