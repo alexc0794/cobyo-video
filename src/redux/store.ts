@@ -5,6 +5,8 @@ import tables from './tablesReducer';
 import users from './usersReducer';
 import storefront from './storefrontReducer';
 import chat from './chatReducer';
+import menu from './menuReducer';
+import userMenuItems from './userMenuItemsReducer';
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -19,6 +21,8 @@ export default createStore(
     users,
     storefront,
     chat,
+    menu,
+    userMenuItems,
   }),
   enhancer
 );

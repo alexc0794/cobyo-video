@@ -9,6 +9,7 @@
 }
 .Menu-header {
   margin-bottom: 20px;
+  padding-bottom: 10px;
   text-align: center;
   position: relative;
   border-bottom: 1px solid #333;
@@ -29,4 +30,7 @@
   background-color: purple;
   color: white;
   cursor: pointer;
+}
+.Menu-userSelect {
+  display: block;
 }

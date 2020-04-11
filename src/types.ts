@@ -31,4 +31,10 @@ export type menuItemType = {
   imageUrl: string,
 };
 
+export type userMenuItemType = {
+  menuItemName: string,
+  fromUserId: string,
+  expireOn: string,
+}
+
 export type UserInSeatType = UserType & SeatType;

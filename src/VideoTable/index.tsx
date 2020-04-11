@@ -10,6 +10,7 @@ import { VideoPlaceholder } from '../Video';
 import { TableType } from '../types';
 import { joinAndUpdateTable } from '../redux/tablesActions';
 import Menu from './menu';
+import UserSpace from './userSpace';
 import cx from 'classnames';
 import './index.css';
 
@@ -68,25 +69,13 @@ function VideoTable({
           <div className={`VideoTable VideoTable--${table.shape}`}>
             <div className="VideoTable-commonArea" />
             {seats.map(seat => (
-              <div className="VideoTable-drink" key={seat.seatNumber}>
-                {/* {(() => {
-                  if (seat && seat.userId === userId) {
-                    if (boughtDrink === null) {
-                      return (
-                        <button className="VideoTable-buyButton" onClick={()=>setBoughtDrink(Math.floor(Math.random()*3))}>
-                          <FontAwesomeIcon icon={faDollarSign} />
-                        </button>
-                      )
-                    } else {
-                      return (<img src={drinks[boughtDrink]} alt="cocktail" />);
-                    }
-                  }
-                })()} */}
+              <div className="VideoTable-userSpace" key={seat.seatNumber}>
+                {seat && seat.userId && <UserSpace userId={seat.userId} />}
               </div>
             ))}
           </div>
           <div className="VideoTable-menu">
-            {isMenuOpen && <Menu storefront={storefront} onRequestClose={()=>{toggleMenuOpen(false)}} />}
+            {isMenuOpen && <Menu storefront={storefront} userId={userId} onRequestClose={()=>{toggleMenuOpen(false)}} />}
           </div>
         </>
       )}
