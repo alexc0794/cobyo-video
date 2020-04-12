@@ -8,7 +8,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import './index.css';
 
 type LocalStorageLogin = {
-  firstName: string,
+  name: string,
   userId: string,
   facebookUserId: string|null,
 };
@@ -23,19 +23,30 @@ type PropTypes = {
   onSubmit: (user: UserType) => void
 };
 
+type Name = {
+  firstName: string,
+  lastName: string|null,
+};
+
+function parseName(name: string): Name {
+  const names = name.split(' ');
+  return {
+    firstName: names[0],
+    lastName: names.slice(1).join(' ') || null,
+  };
+}
+
 function Login({ onSubmit }: PropTypes) {
   const localStorageLoginStr: string|null = window.localStorage.getItem('login');
   const localStorageLogin: LocalStorageLogin|null = localStorageLoginStr ? JSON.parse(localStorageLoginStr) : null;
   const [isReturningUser, setIsReturningUser] = useState<boolean>(!!localStorageLogin);
-  const [firstName, setFirstName] = useState<string>(
-    localStorageLogin ? localStorageLogin.firstName : ''
-  );
+  const [name, setName] = useState<string>(localStorageLogin ? localStorageLogin.name : '');
 
   function handleChangeName(e: any) {
-    const alphaExp = /^[a-zA-Z]+$/;
+    const alphaExp = /^[a-zA-Z ]+$/;
     const value = e.target.value;
     if (!value || value.match(alphaExp)) {
-      setFirstName(e.target.value);
+      setName(value);
     }
   }
 
@@ -47,7 +58,7 @@ function Login({ onSubmit }: PropTypes) {
 
   function prepareToSubmit(user: UserType) {
     const localStorageLogin: LocalStorageLogin = {
-      firstName: user.firstName,
+      name: user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName,
       userId: user.userId,
       facebookUserId: user.facebookUserId,
     };
@@ -56,8 +67,9 @@ function Login({ onSubmit }: PropTypes) {
   }
 
   async function handleClickEnterName() {
-    if (!firstName) { return; }
-    const user: UserType = await dispatch(createAndUpdateUser(null, firstName));
+    if (!name) { return; }
+    const { firstName, lastName } = parseName(name);
+    const user: UserType = await dispatch(createAndUpdateUser(null, firstName, lastName));
     prepareToSubmit(user);
   }
 
@@ -115,10 +127,10 @@ function Login({ onSubmit }: PropTypes) {
             variant="warning"
             onClick={() => handleLogin(localStorageLogin.userId)}
           >
-            Continue as {firstName}
+            Continue as {name}
           </Button>
           <Button variant="link" onClick={() => setIsReturningUser(false)}>
-            Not {firstName}?
+            Not {name}?
           </Button>
         </>
       ) : (
@@ -135,7 +147,7 @@ function Login({ onSubmit }: PropTypes) {
               placeholder="Enter name to continue"
               aria-label="Name"
               onChange={handleChangeName}
-              value={firstName}
+              value={name}
               onKeyPress={handleKeyPress}
             />
             <InputGroup.Append>
