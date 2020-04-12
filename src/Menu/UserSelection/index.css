@@ -1,0 +1,31 @@
+.UserSelection {
+  display: flex;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+.UserSelection-user {
+  width: 22%;
+  margin: 0 3% 3% 0;
+  text-align: center;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.UserSelection-userImage {
+  padding: 1px;
+  border-radius: 50%;
+  border: 1px solid #CCC;
+  cursor: pointer;
+  height: 80%;
+}
+.UserSelection-userImage:hover {
+  border: 1px solid purple;
+}
+.UserSelection-userImage.is-selected {
+  border: 2px solid purple;
+}
+.UserSelection-userName {
+  height: 20%;
+  margin-bottom: 0;
+  font-size: 9px;
+}

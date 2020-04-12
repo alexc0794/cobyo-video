@@ -1,0 +1,23 @@
+.UserProfile {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #CCC;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.UserProfile--self {
+  background-color: #167866;
+}
+.UserProfile--unavailable {
+  background-color: #ff7733;
+}
+.UserProfile svg {
+  color: white;
+  fill: white;
+}
+.UserProfile-image {
+  width: 100%;
+}
