@@ -1,7 +1,8 @@
 import React, { useState, memo } from 'react';
 import { useSelector } from 'react-redux';
-import {selectMenuItems} from '../redux/menuSelectors';
-import {MenuItemType} from '../types';
+import { selectMenuItems } from '../redux/menuSelectors';
+import { purchaseMenuItem } from '../services';
+import { MenuItemType } from '../types';
 import Button from 'react-bootstrap/Button';
 import UserSelection from './UserSelection';
 import './index.css';
@@ -45,9 +46,10 @@ function Menu({ tableId, storefront, userId, onRequestClose, ws }: PropTypes) {
       })
     }
   };
-  const handleBuyItem = () => {
-    const toUserIds = Object.keys(selectedUser).filter(x => selectedUser[x]=== true);
+  const handleBuyItem = async () => {
+    let toUserIds: Array<string> = Object.keys(selectedUser).filter(x => selectedUser[x] === true);
     // TODO: Request to purchase on our server before sending out with websockets.
+    toUserIds = await purchaseMenuItem(selectedItemId, userId, toUserIds);
     toUserIds.forEach(toUserId => {
       ws.send(JSON.stringify({
         action: 'purchasedMenuItem',
