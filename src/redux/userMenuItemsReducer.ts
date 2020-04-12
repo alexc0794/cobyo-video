@@ -8,7 +8,6 @@ type ById = {
 function byId(state: ById = {}, action:any) {
   switch(action.type) {
     case "BUY_MENU_ITEM": {
-      console.log(action.payload);
       const {itemName, fromUserId, toUserIds} = action.payload;
       let newState = {...state};
       toUserIds.forEach((id: string) => {

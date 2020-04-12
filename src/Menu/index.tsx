@@ -6,6 +6,7 @@ import {selectMenuItems} from '../redux/menuSelectors';
 import {buyMenuItem} from '../redux/userMenuItemsActions';
 import {MenuItemType} from '../types';
 import Button from 'react-bootstrap/Button';
+import UserSelection from './UserSelection';
 import './index.css';
 
 type PropTypes = {
@@ -14,7 +15,7 @@ type PropTypes = {
   onRequestClose: () => void,
 };
 
-type userSelectType = {
+type SelectedUserType = {
   [userId: string]: boolean,
 };
 
@@ -23,12 +24,12 @@ function Menu({storefront, userId, onRequestClose}:PropTypes) {
   const menuItems = useSelector(selectMenuItems);
   const [showSelectUsers, toggleShowSelectUsers] = useState<boolean>(false);
   const [selectedItem, selectItem] = useState<string>('');
-  const [userSelection, toggleSelectUser] = useState<userSelectType>({});
+  const [selectedUser, toggleSelectUser] = useState<SelectedUserType>({});
   useEffect(()=>{
     fetchMenu(storefront).then(items => {
       dispatch(saveMenuToStore(items));
     });
-  }, [storefront, dispatch]);
+  }, [storefront, dispatch, selectedItem, selectedUser]);
   const formatPrice = (cents:number) => {
     return (cents/100).toFixed(2);
   };
@@ -37,24 +38,61 @@ function Menu({storefront, userId, onRequestClose}:PropTypes) {
     toggleShowSelectUsers(true);
   };
   const handleSelectUser = (userId: string) => {
-    if (userSelection[userId]) {
-      userSelection[userId] = !userSelection[userId];
+    if (selectedUser[userId]) {
+      toggleSelectUser({
+        ...selectedUser,
+        [userId]: !selectedUser[userId]
+      })
     } else {
-      userSelection[userId] = true;
+      toggleSelectUser({
+        ...selectedUser,
+        [userId]: true
+      })
     }
   };
   const handleBuyItem = () => {
-    const toUserIds = Object.keys(userSelection).filter(x => userSelection[x]=== true);
+    const toUserIds = Object.keys(selectedUser).filter(x => selectedUser[x]=== true);
     dispatch(buyMenuItem(selectedItem, userId, toUserIds));
     onRequestClose();
   };
+  // mock data to test user selection component
+  const users = [
+    {
+      userId,
+      firstName: 'Megan',
+      facebookUserId: null,
+      email: null,
+      lastName: null,
+      profilePictureUrl: null,
+      lastActiveAt: null,
+    },
+    {
+      userId: 'fakeId',
+      firstName: 'My Twin',
+      facebookUserId: null,
+      email: null,
+      lastName: null,
+      profilePictureUrl: 'https://ca.slack-edge.com/T0115CVBWNP-U011DA8124V-gfac171cb152-72',
+      lastActiveAt: null,
+    },
+    {
+      userId: 'whatever',
+      firstName: 'Alex',
+      facebookUserId: null,
+      email: null,
+      lastName: null,
+      profilePictureUrl: 'https://ca.slack-edge.com/T0115CVBWNP-U0115CVBWSF-310820805f84-72',
+      lastActiveAt: null,
+    },
+  ]
 
   return (
     <div className="Menu">
       {showSelectUsers ? (
         <>
           <p>Who do you want to buy this for?</p>
-          <label className="Menu-userSelect"><input type="checkbox" checked={userSelection[userId]} onChange={() => handleSelectUser(userId)} /> Myself</label>
+          {/* <label className="Menu-userSelect"><input type="checkbox" checked={selectedUser[userId]} onChange={() => handleSelectUser(userId)} /> Myself</label> */}
+          <UserSelection users={users} userId={userId} onSelectUser={handleSelectUser} selectedUser={selectedUser} />
           <Button size="sm" onClick={handleBuyItem} >Submit</Button>{' '}
           <Button size="sm" onClick={()=>toggleShowSelectUsers(false)} variant="outline-primary">Cancel</Button>
         </>
