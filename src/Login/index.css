@@ -1,16 +1,9 @@
 .Login {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: stretch;
 }
 
 .Login > p {
   text-align: center;
   margin: 10px 0;
-
-}
-
-.Continue {
-  margin-right: 10px;
 }

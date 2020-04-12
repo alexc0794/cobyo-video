@@ -114,7 +114,6 @@ function Login({ onSubmit }: PropTypes) {
           <Button
             variant="warning"
             onClick={() => handleLogin(localStorageLogin.userId)}
-            className="Continue"
           >
             Continue as {firstName}
           </Button>
@@ -127,11 +126,10 @@ function Login({ onSubmit }: PropTypes) {
           <Button
             variant="primary"
             onClick={facebookLogin ? handleFacebookContinue : handleFacebookLoginAttempt}
-            className="Continue"
           >
             {facebookLogin ? "Continue with Facebook" : "Login with Facebook"}
           </Button>
-          <p>or login as a guest</p>
+          <p>or as a guest</p>
           <InputGroup>
             <FormControl
               placeholder="Enter name to continue"
