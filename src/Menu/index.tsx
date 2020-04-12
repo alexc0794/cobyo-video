@@ -59,36 +59,6 @@ function Menu({ tableId, storefront, userId, onRequestClose, ws }: PropTypes) {
     });
     onRequestClose();
   };
-  // mock data to test user selection component
-  const users = [
-    {
-      userId,
-      firstName: 'Megan',
-      facebookUserId: null,
-      email: null,
-      lastName: null,
-      profilePictureUrl: null,
-      lastActiveAt: null,
-    },
-    {
-      userId: 'fakeId',
-      firstName: 'My Twin',
-      facebookUserId: null,
-      email: null,
-      lastName: null,
-      profilePictureUrl: 'https://ca.slack-edge.com/T0115CVBWNP-U011DA8124V-gfac171cb152-72',
-      lastActiveAt: null,
-    },
-    {
-      userId: '3935076807',
-      firstName: 'Alex',
-      facebookUserId: null,
-      email: null,
-      lastName: null,
-      profilePictureUrl: 'https://ca.slack-edge.com/T0115CVBWNP-U0115CVBWSF-310820805f84-72',
-      lastActiveAt: null,
-    },
-  ]
 
   return (
     <div className="Menu">
@@ -96,7 +66,7 @@ function Menu({ tableId, storefront, userId, onRequestClose, ws }: PropTypes) {
         <>
           <p>Who do you want to buy this for?</p>
           {/* <label className="Menu-userSelect"><input type="checkbox" checked={selectedUser[userId]} onChange={() => handleSelectUser(userId)} /> Myself</label> */}
-          <UserSelection users={users} userId={userId} onSelectUser={handleSelectUser} selectedUser={selectedUser} />
+          <UserSelection tableId={tableId} userId={userId} onSelectUser={handleSelectUser} selectedUser={selectedUser} />
           <Button size="sm" onClick={handleBuyItem} >Submit</Button>{' '}
           <Button size="sm" onClick={()=>toggleShowSelectUsers(false)} variant="outline-primary">Cancel</Button>
         </>

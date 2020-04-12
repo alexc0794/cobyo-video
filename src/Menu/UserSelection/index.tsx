@@ -1,11 +1,13 @@
 import React, {memo} from 'react';
+import { useSelector } from 'react-redux';
+import { selectTableUsers } from '../../redux/tablesSelectors';
 import UserProfile from '../../UserProfile';
-import {UserType} from '../../types';
+import { UserType } from '../../types';
 import cx from 'classnames';
 import './index.css';
 
 type PropTypes = {
-  users: Array<UserType>,
+  tableId: string,
   userId: string,
   selectedUser: SelectedUserType,
   onSelectUser: (userId: string)=> void,
@@ -16,11 +18,12 @@ type SelectedUserType = {
 };
 
 function UserSelection({
-  users,
+  tableId,
   userId,
   selectedUser,
   onSelectUser
 }: PropTypes) {
+  const users: Array<UserType> = useSelector(selectTableUsers(tableId));
   return (
     <div className="UserSelection">
       {users.map((user:UserType) =>  (
