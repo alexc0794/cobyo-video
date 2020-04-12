@@ -1,8 +1,7 @@
 import { TableType } from '../types';
-import { RTC } from '../AgoraRTC';
 import { selectToken } from './appSelectors';
 import { updateUsers } from './usersActions';
-import { fetchTable, fetchTables, joinTable, leaveTable, updateTableWithUserIdsFromRtc } from '../services';
+import { fetchTable, fetchTables, joinTable, leaveTable } from '../services';
 
 export const updateTable = (table: TableType) => ({
   type: "UPDATE_TABLE",
@@ -53,18 +52,6 @@ export function leaveAndUpdateTable(tableId: string, userId: string) {
   return function(dispatch: any) {
     return leaveTable(tableId, userId).then(table => {
       dispatch(leftTable(table));
-    });
-  }
-}
-
-export function updateTableWithRTC(tableId: string, rtc: RTC, userId: string|null) {
-  return function(dispatch: any) {
-    const userIds = rtc.client.remoteUsers.map(user => user.uid.toString());
-    if (userId) {
-      userIds.push(userId);
-    }
-    return updateTableWithUserIdsFromRtc(tableId, userIds).then(table => {
-      dispatch(updateTable(table));
     });
   }
 }
