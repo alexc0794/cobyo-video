@@ -1,5 +1,5 @@
 import { UserType } from '../types';
-import { fetchActiveUsers, createUser } from '../services';
+import { fetchActiveUsers, createUser, loginGuestUser } from '../services';
 import { selectToken } from './appSelectors';
 
 export const updateUsers = (users: Array<UserType>) => ({
@@ -31,7 +31,7 @@ export function fetchAndUpdateActiveUsers() {
 }
 
 export function createAndUpdateUser(
-  email: string,
+  email: string|null,
   firstName: string,
   lastName: string|null = null,
   facebookUserId: string|null = null,
@@ -39,6 +39,14 @@ export function createAndUpdateUser(
 ): any {
   return async function(dispatch: any) {
     const { user, token } = await createUser(email, firstName, lastName, facebookUserId, profilePictureUrl);
+    dispatch(createUserSuccess(user, token));
+    return user;
+  }
+}
+
+export function loginAndUpdateGuestUser(userId: string): any {
+  return async function(dispatch: any) {
+    const { user, token } = await loginGuestUser(userId);
     dispatch(createUserSuccess(user, token));
     return user;
   }

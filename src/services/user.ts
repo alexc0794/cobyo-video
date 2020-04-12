@@ -3,13 +3,18 @@ import { BASE_API_URL } from '../config';
 import { transformUser } from './transforms';
 import { UserType } from '../types';
 
+type UserTokenResponse = {
+  user: UserType,
+  token: string,
+};
+
 export function createUser(
-  email: string,
+  email: string|null,
   firstName: string,
   lastName: string|null = null,
   facebookUserId: string|null = null,
   profilePictureUrl: string|null = null,
-): Promise<any> {
+): Promise<UserTokenResponse> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(`${BASE_API_URL}/user/create`, {
@@ -19,7 +24,20 @@ export function createUser(
         facebook_user_id: facebookUserId,
         profile_picture_url: profilePictureUrl,
       });
-      const user = transformUser(response.data.user);
+      const user: UserType = transformUser(response.data.user);
+      return resolve({ user, token: response.data.token });
+    } catch (e) {
+      console.error(e);
+      return reject("Something went wrong");
+    }
+  });
+}
+
+export function loginGuestUser(userId: string): Promise<UserTokenResponse> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get(`${BASE_API_URL}/user/guest/${userId}`);
+      const user: UserType = transformUser(response.data.user);
       return resolve({ user, token: response.data.token });
     } catch (e) {
       console.error(e);

@@ -1,105 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { createAndUpdateUser } from '../redux/usersActions';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { selectStorefront, selectStatus } from '../redux/storefrontSelectors';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
-import FormControl from 'react-bootstrap/FormControl';
-import InputGroup from 'react-bootstrap/InputGroup';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import Login from '../Login';
 import { UserType } from '../types';
-import { random } from '../helpers';
+import './index.css';
 
 type PropTypes = {
   onSubmit: (user: UserType) => void
 }
 
-function WelcomeModal({
-  onSubmit
-}: PropTypes) {
-  const initialName = window.localStorage.getItem('name');
-  const [name, setName] = useState(initialName || '');
-
-  function handleChangeName(e: any) {
-    const alphaExp = /^[a-zA-Z]+$/;
-    const value = e.target.value;
-    if (!value || value.match(alphaExp)) {
-      setName(e.target.value);
-    }
-  }
-
-  function handleKeyPress(e: any) {
-    if (e.charCode === 13) {
-      handleClickEnterName();
-    }
-  }
-
-  function handleClickEnterName() {
-    if (!name) {
-      return;
-    }
-    window.localStorage.setItem('name', name);
-    const names = name.split(' ');
-    const user: UserType = {
-      userId: random(2147483647).toString(), // 2^31-1
-      facebookUserId: null,
-      email: null,
-      firstName: names[0],
-      lastName: names.length > 1 ? names[1] : null,
-      profilePictureUrl: null,
-      lastActiveAt: null,
-    };
-    onSubmit(user);
-  }
-
-  type FacebookLoginType = {
-    facebookLoginDetected: boolean,
-    facebookUserId: string,
-    facebookAccessToken: string,
-  };
-  const [facebookLogin, setFacebookLogin] = useState<FacebookLoginType|null>(null);
-
-  function handleFacebookLoginSuccess(response: any) {
-    const { status, authResponse } = response;
-    if (!authResponse) { return; }
-    const { accessToken, userID } = authResponse;
-    setFacebookLogin({
-      facebookLoginDetected: status === 'connected',
-      facebookUserId: userID,
-      facebookAccessToken: accessToken,
-    });
-  }
-
-  useEffect(() => {
-    FB.getLoginStatus(handleFacebookLoginSuccess);
-  }, []);
-
-  function handleFacebookLoginAttempt() {
-    FB.login(response => {
-      handleFacebookLoginSuccess(response);
-    }, {
-      scope: 'email,user_friends,user_gender,user_age_range,user_birthday,user_location'
-    });
-  }
-
-  const dispatch = useDispatch();
-  function handleFacebookContinue() {
-    FB.api('/me', {
-      fields: 'first_name, last_name, email, picture'
-    }, async (response: any) => {
-      const user: UserType = await dispatch(createAndUpdateUser(
-        response.email,
-        response.first_name,
-        response.last_name,
-        response.id,
-        response.picture ? response.picture.data.url : null,
-      ));
-      onSubmit(user);
-    });
-  }
-
+function WelcomeModal({ onSubmit }: PropTypes) {
   const [showDisclaimer, setShowDisclaimer] = useState<boolean>(false);
   function handleClickDislaimer(e: any) {
     e.preventDefault();
@@ -111,7 +26,7 @@ function WelcomeModal({
   const closed = status === 'CLOSED';
 
   const title = (() => {
-    let title = `Welcome${initialName ? ' back' : ''}`;
+    let title = 'Welcome';
     switch (storefront) {
       case 'CLUB':
         title += ' to the Virtual Club';
@@ -145,11 +60,11 @@ function WelcomeModal({
             <p>For your optimal experience, we recommend you use Google Chrome on a laptop or desktop.</p>
           </Modal.Body>
 
-          <Button variant="link" onClick={handleClickDislaimer}>{showDisclaimer ? 'Hide Disclaimer' : 'View Disclaimer'}</Button>
+          <Button size="sm" variant="link" onClick={handleClickDislaimer}>{showDisclaimer ? 'Hide Disclaimer' : 'View Disclaimer'}</Button>
 
           {showDisclaimer && (
-            <>
-              <Modal.Body>
+            <Modal.Body>
+              <p>
                 <span>We will <strong>NOT</strong> record your video or audio, but your audio may be </span>
                 <OverlayTrigger
                   placement="left"
@@ -162,37 +77,16 @@ function WelcomeModal({
                   <span style={{textDecoration: 'underline'}}>transcribed</span>
                 </OverlayTrigger>
                 <span>. Transcriptions will be destroyed after one hour.</span>
-              </Modal.Body>
-              <Modal.Body>
+              </p>
+              <p>
                 Our video platform runs on <a href="https://www.agora.io/" target="_blank" rel="noopener noreferrer">agora.io</a>. What they do with your video and audio is not in our control.
                 You can read their privacy policy <a href="https://www.agora.io/en/privacy-policy/" target="_blank" rel="noopener noreferrer">here</a>.
-              </Modal.Body>
-            </>
+              </p>
+            </Modal.Body>
           )}
-          <Modal.Footer>
-            <InputGroup>
-              <Button
-                variant="primary"
-                onClick={facebookLogin ? handleFacebookContinue : handleFacebookLoginAttempt}
-                style={{marginRight: '10px'}}
-              >
-                {facebookLogin ? "Continue with Facebook" : "Login with Facebook"}
-              </Button>
-              <FormControl
-                placeholder="Enter name to continue"
-                aria-label="Name"
-                onChange={handleChangeName}
-                value={name}
-                onKeyPress={handleKeyPress}
-              />
-              <InputGroup.Append>
-                <Button
-                  variant="outline-secondary"
-                  onClick={handleClickEnterName}
-                >Go</Button>
-              </InputGroup.Append>
-            </InputGroup>
-          </Modal.Footer>
+          <Modal.Body>
+            <Login onSubmit={onSubmit} />
+          </Modal.Body>
         </>
       )}
       {!storefront && !closed && (
