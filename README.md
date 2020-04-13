@@ -14,7 +14,7 @@ See `package.json` for other scripts to run.
 2. Create `.env.development.local` if it does not exist
 3. Add `REACT_APP_BASE_API_URL=https://<ip address>:8080` to `.env.development.local`
 4. Re-run `npm run dev`
-5. Open the page and check the network tab for requests that are made to the ip address.
+5. Go to `https://<ip address>:3000` and check the network tab for requests that are made to `https://<ip address>:8080`.
 
 ### Computer 2
 1. Go to `https://<ip address>:3000`
