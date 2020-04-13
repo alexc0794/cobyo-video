@@ -2,6 +2,7 @@ import React, { memo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectStorefront } from '../redux/storefrontSelectors';
 import { selectTableById } from '../redux/tablesSelectors';
+import { selectMenuItems } from '../redux/menuSelectors';
 import { VideoUserType } from '../VideoHangout/types';
 import { RTC } from '../AgoraRTC';
 import RemoteVideo from '../Video/RemoteVideo';
@@ -34,6 +35,7 @@ function VideoTable({
 }: PropTypes) {
   const storefront = useSelector(selectStorefront);
   const dispatch = useDispatch();
+  const menuItems = useSelector(selectMenuItems);
   const table: TableType = useSelector(selectTableById(tableId));
   const { seats } = table;
   let columns;
@@ -76,11 +78,11 @@ function VideoTable({
               </div>
             ))}
           </div>
-          <div className="VideoTable-menu">
-            {isMenuOpen && ws && <Menu tableId={tableId} storefront={storefront} userId={userId} onRequestClose={()=>{toggleMenuOpen(false)}} ws={ws} />}
-          </div>
         </>
       )}
+      <div className="VideoTable-menu">
+        {isMenuOpen && ws && <Menu tableId={tableId} storefront={storefront} userId={userId} onRequestClose={()=>{toggleMenuOpen(false)}} ws={ws} />}
+      </div>
       {seats.map(seat => (
         <div
           className="VideoTable-seat"
@@ -101,7 +103,7 @@ function VideoTable({
                     audioMuted={false} // TODO: Implement mute icon for own video
                     rtc={rtc}
                   />
-                  <button className="VideoTable-menuButton" onClick={()=>toggleMenuOpen(true)}>Menu</button>
+                  {menuItems.length > 0 && <button className="VideoTable-menuButton" onClick={()=>toggleMenuOpen(true)}>Menu</button>}
                 </>
               );
             }
@@ -112,6 +114,11 @@ function VideoTable({
 
             return table.shape === 'DANCE_FLOOR' ? null : <VideoPlaceholder />;
           })()}
+          {seat && seat.userId && table.shape === 'DANCE_FLOOR' && (
+            <div className="VideoTable-seat-danceFloorSpace">
+              {<UserSpace userId={seat.userId} />}
+            </div>
+          )}
         </div>
       ))}
     </div>

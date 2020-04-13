@@ -17,6 +17,7 @@
   border: 1px solid #CCC;
   cursor: pointer;
   height: 80%;
+  min-height: 45px;
 }
 .UserSelection-userImage:hover {
   border: 1px solid purple;
