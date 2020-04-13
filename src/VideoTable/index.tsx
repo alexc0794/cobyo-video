@@ -114,7 +114,7 @@ function VideoTable({
 
             return table.shape === 'DANCE_FLOOR' ? null : <VideoPlaceholder />;
           })()}
-          {seat && seat.userId && (
+          {seat && seat.userId && table.shape === 'DANCE_FLOOR' && (
             <div className="VideoTable-seat-danceFloorSpace">
               {<UserSpace userId={seat.userId} />}
             </div>
