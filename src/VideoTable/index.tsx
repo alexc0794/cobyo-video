@@ -90,7 +90,7 @@ function VideoTable({
       </div>
       {seats.map(seat => (
         <div
-          className={`VideoTable-seat ${useBlinkingTile ? 'VideoTable-seat--blinking' :''} VideoTable-seat--${Math.floor(Math.random()*9)}`}
+          className={`VideoTable-seat ${useBlinkingTile &&  table.shape === 'DANCE_FLOOR' ? 'VideoTable-seat--blinking' :''} VideoTable-seat--${Math.floor(Math.random()*9)}`}
           key={seat.seatNumber}
           onClick={()=>handlePickSeat(seat.seatNumber)}
           role="button"
