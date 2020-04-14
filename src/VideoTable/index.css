@@ -25,6 +25,13 @@
   grid-gap: 12px;
   padding: 12px;
   position: relative;
+  background-color: #000;
+}
+.VideoTable-lightingEffects {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: LightingEffects 4s infinite;
 }
 .VideoTable {
   width: 100%;
@@ -67,6 +74,37 @@
   cursor: pointer;
   position: relative;
 }
+.VideoTable-seat--blinking {
+  animation: seatAnimation 12s infinite;
+}
+.VideoTable-seat--1 {
+  animation-delay: 1s;
+}
+.VideoTable-seat--2 {
+  animation-delay: 2s;
+}
+.VideoTable-seat--3 {
+  animation-delay: 3s;
+}
+.VideoTable-seat--4 {
+  animation-delay: 4s;
+}
+.VideoTable-seat--5 {
+  animation-delay: 5s;
+}
+.VideoTable-seat--6 {
+  animation-delay: 6s;
+}
+.VideoTable-seat--7 {
+  animation-delay: 7s;
+}
+.VideoTable-seat--8 {
+  animation-delay: 8s;
+}
+.VideoTable-seat--9 {
+  animation-delay: 9s;
+}
+
 .VideoTable-menuButton {
   position: absolute;
   bottom: 0px;
@@ -108,4 +146,78 @@
   align-items: end;
   grid-template-rows: repeat(2, minmax(0, 40%));
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@keyframes LightingEffects {
+  0%{
+    background-color: purple;
+    opacity: 0.8;
+  }
+  20% {
+    opacity: 0;
+  }
+  21% {
+    background-color: orange;
+    opacity: 0.8;
+  }
+  40% {
+    opacity: 0;
+  }
+  41% {
+    background-color: green;
+    opacity: 0.8;
+  }
+  60% {
+    opacity: 0;
+  }
+  61% {
+    background-color: palevioletred;
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0;
+  }
+  81% {
+    background-color: darkslateblue;
+    opacity: 0.8
+  }
+  100%{
+    opacity: 0;
+  }
+}
+
+@keyframes seatAnimation {
+  0% {
+    background-color: #000;
+  }
+  10% {
+    background-color: rgba(0, 0, 255, 0.6);
+  }
+  20% {
+    background-color: #000;
+  }
+  30% {
+    background-color: rgba(174, 0, 255, 0.6);
+  }
+  40% {
+    background-color: #000;
+  }
+  50% {
+    background-color: rgba(0, 255, 0, 0.6);
+  }
+  60% {
+    background-color: #000;
+  }
+  70% {
+    background-color: rgba(255, 187, 0, 0.6);
+  }
+  80% {
+    background-color: #000;
+  }
+  90% {
+    background-color: rgba(255, 0, 0, 0.6);
+  }
+  100% {
+    background-color: #000;
+  }
 }

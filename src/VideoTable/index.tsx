@@ -24,6 +24,8 @@ type PropTypes = {
   rtc: RTC,
   remoteUsers: Array<VideoUserType>,
   ws: WebSocket|undefined,
+  useBlinkingBackground?: boolean,
+  useBlinkingTile?: boolean,
 };
 
 function VideoTable({
@@ -32,6 +34,8 @@ function VideoTable({
   rtc,
   remoteUsers,
   ws,
+  useBlinkingBackground,
+  useBlinkingTile = true,
 }: PropTypes) {
   const storefront = useSelector(selectStorefront);
   const dispatch = useDispatch();
@@ -68,6 +72,7 @@ function VideoTable({
       style={styleVar}
       className={cx('VideoTableContainer', {'VideoTableContainer--clubMode':storefront === 'CLUB'})}
     >
+      {useBlinkingBackground && <div className="VideoTable-lightingEffects" />}
       {table.shape !== 'DANCE_FLOOR' && (
         <>
           <div className={`VideoTable VideoTable--${table.shape}`}>
@@ -85,7 +90,7 @@ function VideoTable({
       </div>
       {seats.map(seat => (
         <div
-          className="VideoTable-seat"
+          className={`VideoTable-seat ${useBlinkingTile &&  table.shape === 'DANCE_FLOOR' ? 'VideoTable-seat--blinking' :''} VideoTable-seat--${Math.floor(Math.random()*9)}`}
           key={seat.seatNumber}
           onClick={()=>handlePickSeat(seat.seatNumber)}
           role="button"
