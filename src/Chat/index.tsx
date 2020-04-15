@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createChatMessage } from '../redux/chatActions';
-import { BASE_WS_URL } from '../config';
-import { ChatMessageRequest, ChatMessage } from './types';
+// import { BASE_WS_URL } from '../config';
+import {
+  // ChatMessageRequest, 
+  ChatMessage
+} from './types';
 import { transformChatMessage } from './transforms';
 import MessageInput from './MessageInput';
 
@@ -24,12 +27,12 @@ class Chat extends Component<PropTypes, StateTypes> {
     showRetry: false,
   };
 
-  ws = new WebSocket(`${BASE_WS_URL}`);
+  // ws = new WebSocket(`${BASE_WS_URL}`);
 
   async componentDidMount() {
-    this.ws.onopen = this.handleOpenConnection;
-    this.ws.onmessage = this.handleReceiveMessage;
-    this.ws.onclose = this.handleCloseConnection;
+    // this.ws.onopen = this.handleOpenConnection;
+    // this.ws.onmessage = this.handleReceiveMessage;
+    // this.ws.onclose = this.handleCloseConnection;
   }
 
   handleOpenConnection = () => {
@@ -49,13 +52,13 @@ class Chat extends Component<PropTypes, StateTypes> {
   }
 
   handleSendMessage = (message: string) => {
-    const chatMessage: ChatMessageRequest = {
-      action: 'chat_message',
-      user_id: this.props.userId,
-      message,
-    }
+    // const chatMessage: ChatMessageRequest = {
+    //   action: 'chat_message',
+    //   user_id: this.props.userId,
+    //   message,
+    // }
     try {
-      this.ws.send(JSON.stringify(chatMessage));
+      // this.ws.send(JSON.stringify(chatMessage));
     } catch {
       return false;
     }

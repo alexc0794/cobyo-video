@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { BASE_API_URL } from '../config';
-import { transformUser } from './transforms';
 import { UserType } from '../types';
 
-type UserTokenResponse = {
+type CreateUserResponse = {
   user: UserType,
   token: string,
 };
+
+type GetUserResponse = CreateUserResponse;
 
 export function createUser(
   email: string|null,
@@ -14,18 +15,17 @@ export function createUser(
   lastName: string|null = null,
   facebookUserId: string|null = null,
   profilePictureUrl: string|null = null,
-): Promise<UserTokenResponse> {
+): Promise<GetUserResponse> {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await axios.post(`${BASE_API_URL}/user/create`, {
+      const response: CreateUserResponse = (await axios.post(`${BASE_API_URL}/user`, {
         email,
-        first_name: firstName,
-        last_name: lastName,
-        facebook_user_id: facebookUserId,
-        profile_picture_url: profilePictureUrl,
-      });
-      const user: UserType = transformUser(response.data.user);
-      return resolve({ user, token: response.data.token });
+        firstName,
+        lastName,
+        facebookUserId,
+        profilePictureUrl,
+      })).data;
+      return resolve(response);
     } catch (e) {
       console.error(e);
       return reject("Something went wrong");
@@ -33,12 +33,11 @@ export function createUser(
   });
 }
 
-export function loginGuestUser(userId: string): Promise<UserTokenResponse> {
+export function loginGuestUser(userId: string): Promise<GetUserResponse> {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await axios.get(`${BASE_API_URL}/user/guest/${userId}`);
-      const user: UserType = transformUser(response.data.user);
-      return resolve({ user, token: response.data.token });
+      const response: GetUserResponse = (await axios.get(`${BASE_API_URL}/user/${userId}`)).data;
+      return resolve(response);
     } catch (e) {
       console.error(e);
       return reject("Something went wrong");
@@ -46,16 +45,20 @@ export function loginGuestUser(userId: string): Promise<UserTokenResponse> {
   });
 }
 
+// type GetActiveUsersResponse = {
+//   activeUsers: Array<ActiveUser>,
+//   users: Array<User>,
+// };
+
+// TODO: Fix this!
 export function fetchActiveUsers(token: string): Promise<Array<UserType>> {
   return new Promise(async (resolve, reject) => {
     try {
       const authorization = `Bearer ${token}`;
       const response = await axios.get(`${BASE_API_URL}/active-users`, {
-        headers: {
-          'Authorization': authorization,
-        }
+        headers: { Authorization: authorization }
       });
-      const users = response.data.map((user: any) => transformUser(user));
+      const users = response.data;
       return resolve(users);
     } catch (e) {
       if (e && e.response && e.response.status) {
