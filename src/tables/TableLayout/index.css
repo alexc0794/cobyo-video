@@ -1,4 +1,4 @@
-.ChannelContainer {
+.TableContainer {
   --columns: 6; /* default columns */
   --rows: 3; /* default rows */
 
@@ -11,7 +11,7 @@
   grid-gap: 12px;
   padding: 12px;
 }
-.Channel-table {
+.Table-table {
   width: 100%;
   align-self: stretch;
   grid-area: 1/2/var(--rows)/var(--columns); /* row start/column start/row end/column end */
@@ -20,19 +20,19 @@
   border-radius: 8px;
   box-shadow: 0px 0px 10px 3px rgb(184, 184, 184);
 }
-.ChannelContainer--clubMode .Channel-table {
+.TableContainer--clubMode .Table-table {
   background-color: rgb(251, 204, 255);
   box-shadow: 0px 0px 10px 3px rgb(255, 137, 239);
   border: 1px solid rgb(252, 125, 235);
 }
-.Channel-table-commonArea {
+.Table-table-commonArea {
   width: 100%;
   align-self: stretch;
   grid-area: 1/2/var(--rows)/var(--columns); /* row start/column start/row end/column end */
 }
-.Channel-table--U_DOWN  {
+.Table-table--U_DOWN  {
   grid-area: 2/2/calc(var(--rows) + 1)/var(--columns); /* row start/column start/row end/column end */
 }
-.Channel-table--RECTANGULAR {
+.Table-table--RECTANGULAR {
   grid-area: 2/1/var(--rows)/calc(var(--columns) + 1);
 }

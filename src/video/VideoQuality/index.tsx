@@ -1,9 +1,9 @@
 import React, { useEffect, useState, memo } from 'react';
 import { useDispatch } from 'react-redux';
-import { leaveAndUpdateTable } from 'redux/tablesActions';
-import { RTC } from 'AgoraRTC';
+import { leaveAndUpdateTable } from 'tables/actions';
+import { RTC } from 'agora';
 import { NetworkQuality } from 'agora-rtc-sdk-ng';
-import { joinCall, leaveCall, playRemoteUsers } from 'AgoraRTC';
+import { joinCall, leaveCall, playRemoteUsers } from 'agora';
 import Toast from 'react-bootstrap/Toast';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';

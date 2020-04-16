@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createChatMessage } from 'redux/chatActions';
+import { createChatMessage } from 'chat/actions';
 // import { BASE_WS_URL } from 'config';
 import {
   // ChatMessageRequest,
   ChatMessage
-} from './types';
-import { transformChatMessage } from './transforms';
-import MessageInput from './MessageInput';
+} from 'chat/types';
+import { transformChatMessage } from 'chat/transforms';
+import MessageInput from 'chat/MessageInput';
 
 type PropTypes = {
   userId: string,

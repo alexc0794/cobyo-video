@@ -1,4 +1,4 @@
-import { ChatMessage } from 'Chat/types';
+import { ChatMessage } from 'chat/types';
 
 export const createChatMessage = (chatMessage: ChatMessage) => ({
   type: "CREATE_CHAT_MESSAGE",

@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { selectTableById } from 'redux/tablesSelectors';
+import { selectTableById } from 'tables/selectors';
 
 export const selectStorefront = (state: any) => state.storefront.storefront;
 

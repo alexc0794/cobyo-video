@@ -1,10 +1,9 @@
 import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
-import { selectUserRecentChatMessage } from 'redux/chatSelectors';
+import { selectUserRecentChatMessage } from 'chat/selectors';
 import { UserType } from 'types';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-
 
 type ActiveUserPropTypes = {
   user: UserType

@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserInSeatType } from 'types';
-import Seat from 'Table/Seat';
+import Seat from 'tables/Seat';
 import cx from 'classnames';
 import './index.css';
 
@@ -15,7 +15,7 @@ type PropTypes = {
 
 const DEFAULT_ROW = 3;
 
-function Layout({
+function TableLayout({
   tableId,
   userId,
   shape,
@@ -31,9 +31,9 @@ function Layout({
   return (
     <div
       style={styleVar}
-      className={cx('ChannelContainer', {'ChannelContainer--clubMode':storefront === 'CLUB'})}
+      className={cx('TableContainer', {'TableContainer--clubMode':storefront === 'CLUB'})}
     >
-      <div className={`Channel-table Channel-table--${shape}`} />
+      <div className={`Table-table Table-table--${shape}`} />
       {seats.map((seat, i) => (
         <Seat
           key={seat.seatNumber}
@@ -48,4 +48,4 @@ function Layout({
   );
 }
 
-export default Layout;
+export default TableLayout;

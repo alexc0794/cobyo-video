@@ -11,15 +11,15 @@ import {
 } from 'react-redux';
 // import { fetchAndUpdateActiveUsers } from 'redux/usersActions';
 import { selectUserId } from 'redux/appSelectors';
-import { selectStorefront } from 'redux/storefrontSelectors';
+import { selectStorefront } from 'storefront/selectors';
 import { selectActiveUsers } from 'users/selectors';
 // import { REFRESH_ACTIVE_USERS_INTERVAL_MS } from 'config';
 import { UserType } from 'types';
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import ActiveUser from './ActiveUser';
-import Chat from 'Chat';
+import ActiveUser from 'users/ActiveUsers/ActiveUser';
+import Chat from 'chat/Chat';
 import cx from 'classnames';
 import './index.css';
 

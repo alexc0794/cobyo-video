@@ -1,4 +1,4 @@
-import { ChatMessageResponse, ChatMessage } from 'Chat/types';
+import { ChatMessageResponse, ChatMessage } from 'chat/types';
 
 export function transformChatMessage(response: ChatMessageResponse): ChatMessage {
   return {

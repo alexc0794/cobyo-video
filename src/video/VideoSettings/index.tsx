@@ -1,11 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { leaveAndUpdateTable } from 'redux/tablesActions';
-import { selectStorefront } from 'redux/storefrontSelectors';
+import { leaveAndUpdateTable } from 'tables/actions';
+import { selectStorefront } from 'storefront/selectors';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
-import { RTC } from 'AgoraRTC';
+import { RTC } from 'agora';
 import { getSpeechRecognition } from 'speechRecognition';
 import { sendAudioTranscript } from 'services';
 import { useInterval } from 'hooks';

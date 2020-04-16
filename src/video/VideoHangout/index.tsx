@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IAgoraRTCRemoteUser } from 'agora-rtc-sdk-ng';
-import { fetchAndUpdateTable, joinAndUpdateTable } from 'redux/tablesActions';
-import { selectJoinedTableSeat } from 'redux/tablesSelectors';
+import { fetchAndUpdateTable, joinAndUpdateTable } from 'tables/actions';
+import { selectJoinedTableSeat } from 'tables/selectors';
 import { useInterval } from 'hooks';
 import { RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS } from 'config';
 import { VideoUserType } from './types';
-import { RTC } from 'AgoraRTC';
+import { RTC } from 'agora';
 import VideoTable from 'video/VideoTable';
 import VideoSettings from 'video/VideoSettings';
 import VideoQuality from 'video/VideoQuality';
@@ -48,7 +48,6 @@ export default function VideoHangout({
       if (!audioTrack) {
         alert(`User ${publishedUserId} did not allow audio. ${JSON.stringify(user)}`);
       }
-
       dispatch(fetchAndUpdateTable(tableId));
 
       setRemoteUsers(currentRemoteUsers => ([...currentRemoteUsers, {

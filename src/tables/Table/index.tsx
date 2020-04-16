@@ -1,11 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectStorefront } from 'redux/storefrontSelectors';
-import { joinAndUpdateTable } from 'redux/tablesActions';
-import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from 'redux/tablesSelectors';
+import { selectStorefront } from 'storefront/selectors';
+import { joinAndUpdateTable } from 'tables/actions';
+import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from 'tables/selectors';
 import { selectUsersByIds } from 'users/selectors';
-import DanceFloor from 'Table/DanceFloor';
-import TableLayout from 'Table/ChannelLayout';
+import DanceFloor from 'tables/DanceFloor';
+import TableLayout from 'tables/TableLayout';
 import { SeatType, UserInSeatType } from 'types';
 import './index.css';
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { RTC, joinCall, leaveCall, playRemoteUsers } from 'AgoraRTC';
+import { RTC, joinCall, leaveCall, playRemoteUsers } from 'agora';
 import Video from 'video/Video';
 import Modal from 'react-bootstrap/Modal';
 
