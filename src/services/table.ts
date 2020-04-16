@@ -109,7 +109,7 @@ export function sendAudioTranscript(
     try {
       const response = await axios.post(`${BASE_API_URL}/transcript`, {
         body,
-        table_id: tableId,
+        channelId: tableId,
       });
       return resolve(response && !!response.data);
     } catch (e) {
