@@ -1,1 +1,1 @@
-export const selectUserMenuItemsById = (userId:string) => (state:any) => state.userMenuItems.byId[userId];
+export const selectUserMenuItemsById = (userId: string) => (state: any) => state.userMenuItems.byId[userId];

@@ -13,5 +13,5 @@ export type ChatMessageResponse = {
 };
 
 export type ChatMessageRequest = {
-  
+
 };

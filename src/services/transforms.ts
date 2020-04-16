@@ -12,11 +12,11 @@ type TableResponseType = { // Maps to backend
   lastUpdatedAt: string,
   videoConnection: string,
   tableShape: string,
-  seats: Array<SeatResponseType|null>,
+  seats: Array<SeatResponseType | null>,
 };
 
 export function transformTable(response: TableResponseType): TableType {
-  const seats: Array<SeatType> = response.seats.map((seatResponseData: SeatResponseType|null, i: number) => {
+  const seats: Array<SeatType> = response.seats.map((seatResponseData: SeatResponseType | null, i: number) => {
     if (seatResponseData) {
       return seatResponseData;
     }

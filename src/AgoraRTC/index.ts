@@ -20,10 +20,10 @@ const DEV_DEBUG_LEVEL = 1;
 const PROD_DEBUG_LEVEL = 2;
 
 export type RTC = {
- client: IAgoraRTCClient,
- localAudioTrack: IMicrophoneAudioTrack | null,
- localVideoTrack: ICameraVideoTrack | null,
- passesSystemRequirements: boolean,
+  client: IAgoraRTCClient,
+  localAudioTrack: IMicrophoneAudioTrack | null,
+  localVideoTrack: ICameraVideoTrack | null,
+  passesSystemRequirements: boolean,
 };
 
 export function getRTC(): RTC {

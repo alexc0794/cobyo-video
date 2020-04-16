@@ -1,7 +1,7 @@
 export type VideoUserType = {
   userId: string,
   videoTrack: any,
-  audioTrack: any|null,
+  audioTrack: any | null,
   audioMuted: boolean,
 };
 

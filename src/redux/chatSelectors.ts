@@ -2,7 +2,7 @@ import { ChatMessage } from 'Chat/types';
 
 const selectChatMessageById = (state: any, messageId: string) => state.chat.byId[messageId];
 
-export const selectUserRecentChatMessage = (state: any, userId: string): ChatMessage|null => {
+export const selectUserRecentChatMessage = (state: any, userId: string): ChatMessage | null => {
   const messageIds = state.chat.usersMessageIds[userId];
   if (!messageIds || !messageIds.length) { return null; }
 

@@ -1,9 +1,9 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import { MenuItemType } from 'types';
 
 // Assume this is a byId of menu items, not menus.
-function byId(state = {}, action:any) {
-  switch(action.type) {
+function byId(state = {}, action: any) {
+  switch (action.type) {
     case 'UPDATE_MENU': {
       const items: Array<MenuItemType> = action.payload.menu.items;
       return items.reduce((acc: any, item: MenuItemType) => ({
@@ -16,8 +16,8 @@ function byId(state = {}, action:any) {
   }
 }
 
-function allIds(state = [], action:any): Array<string> {
-  switch(action.type) {
+function allIds(state = [], action: any): Array<string> {
+  switch (action.type) {
     case 'UPDATE_MENU': {
       const items: Array<MenuItemType> = action.payload.menu.items;
       return items.map((item: MenuItemType) => item.itemId);
@@ -27,4 +27,4 @@ function allIds(state = [], action:any): Array<string> {
   }
 }
 
-export default combineReducers({byId, allIds});
+export default combineReducers({ byId, allIds });

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-function storefront(state = null, action: any): string|null {
+function storefront(state = null, action: any): string | null {
   switch (action.type) {
     case 'UPDATE_STOREFRONT': {
       return action.payload.storefront;

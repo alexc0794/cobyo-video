@@ -1,7 +1,7 @@
 import { TableType, SeatType } from 'types';
 import { U_SHAPE_TABLE_END_SEAT_LENGTH } from 'Table';
 
-export function getTableGrid(table: TableType): Array<Array<SeatType|null>> {
+export function getTableGrid(table: TableType): Array<Array<SeatType | null>> {
   switch (table.shape) {
     case 'U_UP':
     case 'U_DOWN': {
@@ -15,9 +15,9 @@ export function getTableGrid(table: TableType): Array<Array<SeatType|null>> {
   }
 }
 
-function getCouchTableGrid(table: TableType, tableEndSeatLength: number): Array<Array<SeatType|null>> {
+function getCouchTableGrid(table: TableType, tableEndSeatLength: number): Array<Array<SeatType | null>> {
   const mainRow = table.seats.slice(tableEndSeatLength, table.seats.length - tableEndSeatLength);
-  const grid: Array<Array<SeatType|null>> = [];
+  const grid: Array<Array<SeatType | null>> = [];
   if (table.shape === 'U_UP') {
     for (let i = 0; i < tableEndSeatLength; i++) {
       const firstEndSeat = table.seats[i];
@@ -39,13 +39,13 @@ function getCouchTableGrid(table: TableType, tableEndSeatLength: number): Array<
   return grid;
 }
 
-function getRectangularTableGrid(table: TableType): Array<Array<SeatType|null>> {
+function getRectangularTableGrid(table: TableType): Array<Array<SeatType | null>> {
   const totalLength = table.seats.length;
   const mid = totalLength / 2;
   return [table.seats.slice(0, mid), table.seats.slice(mid, totalLength)];
 }
 
-function getDanceFloorGrid(table: TableType): Array<Array<SeatType|null>> {
+function getDanceFloorGrid(table: TableType): Array<Array<SeatType | null>> {
   const factors: Array<number> = (
     (number: number) => Array
       .from(Array(number + 1), (_, i) => i)

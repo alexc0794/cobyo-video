@@ -31,11 +31,11 @@ export function fetchAndUpdateActiveUsers() {
 }
 
 export function createAndUpdateUser(
-  email: string|null,
+  email: string | null,
   firstName: string,
-  lastName: string|null = null,
-  facebookUserId: string|null = null,
-  profilePictureUrl: string|null = null,
+  lastName: string | null = null,
+  facebookUserId: string | null = null,
+  profilePictureUrl: string | null = null,
 ): any {
   return async function(dispatch: any) {
     const { user, token } = await createUser(email, firstName, lastName, facebookUserId, profilePictureUrl);

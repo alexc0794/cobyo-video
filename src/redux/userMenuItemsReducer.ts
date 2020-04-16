@@ -1,12 +1,12 @@
-import {combineReducers} from 'redux';
-import {UserMenuItemType} from 'types';
+import { combineReducers } from 'redux';
+import { UserMenuItemType } from 'types';
 
 type ById = {
   [key: string]: Array<UserMenuItemType>,
 };
 
-function byId(state: ById = {}, action:any) {
-  switch(action.type) {
+function byId(state: ById = {}, action: any) {
+  switch (action.type) {
     case "purchasedMenuItem": {
       const { userId, itemId, fromUserId } = action.payload;
       const previousUserMenuItems = userId in state ? state[userId] : [];
@@ -15,7 +15,7 @@ function byId(state: ById = {}, action:any) {
       };
       return {
         ...state,
-        [userId]: [ ...previousUserMenuItems, userMenuItem ]
+        [userId]: [...previousUserMenuItems, userMenuItem]
       };
     }
     default:
@@ -23,4 +23,4 @@ function byId(state: ById = {}, action:any) {
   }
 }
 
-export default combineReducers({byId});
+export default combineReducers({ byId });

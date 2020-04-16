@@ -15,7 +15,7 @@ function byId(state = {}, action: any) {
       const { users } = action.payload;
       return users.reduce((acc: any, user: UserType) => {
         return { ...acc, [user.userId]: user };
-      }, {...state});
+      }, { ...state });
     }
     default:
       return state;
