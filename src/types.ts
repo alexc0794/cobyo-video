@@ -1,3 +1,5 @@
+export * from 'users/types';
+
 export type SeatType = {
   userId: string | null,
   satDownAt: string | null,
@@ -11,16 +13,6 @@ export type TableType = {
   lastUpdatedAt: string,
   connection: string,
   shape: string,
-};
-
-export type UserType = {
-  userId: string,
-  facebookUserId: string | null,
-  email: string | null,
-  firstName: string,
-  lastName: string | null,
-  profilePictureUrl: string | null,
-  lastActiveAt: string | null,
 };
 
 export type MenuType = {
