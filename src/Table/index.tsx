@@ -1,12 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectStorefront } from '../redux/storefrontSelectors';
-import { joinAndUpdateTable } from '../redux/tablesActions';
-import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from '../redux/tablesSelectors';
-import { selectUsersByIds } from '../redux/usersSelectors';
-import DanceFloor from './DanceFloor';
-import TableLayout from './ChannelLayout';
-import { SeatType, UserInSeatType } from '../types';
+import { selectStorefront } from 'redux/storefrontSelectors';
+import { joinAndUpdateTable } from 'redux/tablesActions';
+import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from 'redux/tablesSelectors';
+import { selectUsersByIds } from 'redux/usersSelectors';
+import DanceFloor from 'Table/DanceFloor';
+import TableLayout from 'Table/ChannelLayout';
+import { SeatType, UserInSeatType } from 'types';
 import './index.css';
 
 export const U_SHAPE_TABLE_END_SEAT_LENGTH = 2;

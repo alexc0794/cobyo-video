@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux';
-import {UserMenuItemType} from '../types';
+import {UserMenuItemType} from 'types';
 
 type ById = {
   [key: string]: Array<UserMenuItemType>,

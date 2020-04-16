@@ -1,17 +1,17 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAndUpdateStorefront } from './redux/storefrontActions';
-import { selectJoinedTable } from './redux/tablesSelectors';
-import HomeNavbar from './HomeNavbar';
-import DeviceErrorModal from './DeviceErrorModal';
-import WelcomeModal from './WelcomeModal';
-import Storefront from './Storefront';
-import VideoHangout from './VideoHangout';
-import ActiveUsers from './ActiveUsers';
-import { getRTC, RTC } from './AgoraRTC';
-import { TableType, UserType } from './types';
-import { useInterval } from './hooks';
-import { REFRESH_STOREFRONT_INTERVAL_MS } from './config';
+import { fetchAndUpdateStorefront } from 'redux/storefrontActions';
+import { selectJoinedTable } from 'redux/tablesSelectors';
+import HomeNavbar from 'HomeNavbar';
+import DeviceErrorModal from 'DeviceErrorModal';
+import WelcomeModal from 'WelcomeModal';
+import Storefront from 'Storefront';
+import VideoHangout from 'VideoHangout';
+import ActiveUsers from 'ActiveUsers';
+import { getRTC, RTC } from 'AgoraRTC';
+import { TableType, UserType } from 'types';
+import { useInterval } from 'hooks';
+import { REFRESH_STOREFRONT_INTERVAL_MS } from 'config';
 
 const rtc: RTC = getRTC();
 

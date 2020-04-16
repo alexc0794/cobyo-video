@@ -4,9 +4,9 @@ import AgoraRTC, {
   ICameraVideoTrack,
   IAgoraRTCRemoteUser,
 } from 'agora-rtc-sdk-ng';
-import { IS_DEV } from '../config';
-import { fetchToken } from '../services';
-import { getDebugMode } from '../helpers';
+import { IS_DEV } from 'config';
+import { fetchToken } from 'services';
+import { getDebugMode } from 'helpers';
 
 const AGORA_APP_ID = process.env.REACT_APP_AGORA_APP_ID || '';
 /**

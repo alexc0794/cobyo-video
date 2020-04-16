@@ -1,6 +1,6 @@
 import React from 'react';
-import { UserInSeatType } from '../../types';
-import Seat from '../Seat'
+import { UserInSeatType } from 'types';
+import Seat from 'Table/Seat';
 import cx from 'classnames';
 import './index.css';
 

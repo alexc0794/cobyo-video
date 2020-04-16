@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { BASE_API_URL } from '../config';
-import { TableType, SeatType, UserType } from '../types';
-import { transformTable } from './transforms';
+import { BASE_API_URL } from 'config';
+import { TableType, SeatType, UserType } from 'types';
+import { transformTable } from 'services/transforms';
 
 export function fetchTable(tableId: string): Promise<any> {
   return new Promise(async (resolve, reject) => {

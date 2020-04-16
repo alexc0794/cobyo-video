@@ -4,22 +4,22 @@ import React, {
   // useCallback,
   memo,
 } from 'react';
-// import { useInterval } from '../hooks';
+// import { useInterval } from 'hooks';
 import {
-  // useDispatch, 
+  // useDispatch,
   useSelector
 } from 'react-redux';
-// import { fetchAndUpdateActiveUsers } from '../redux/usersActions';
-import { selectUserId } from '../redux/appSelectors';
-import { selectStorefront } from '../redux/storefrontSelectors';
-import { selectActiveUsers } from '../redux/usersSelectors';
-// import { REFRESH_ACTIVE_USERS_INTERVAL_MS } from '../config';
-import { UserType } from '../types';
+// import { fetchAndUpdateActiveUsers } from 'redux/usersActions';
+import { selectUserId } from 'redux/appSelectors';
+import { selectStorefront } from 'redux/storefrontSelectors';
+import { selectActiveUsers } from 'redux/usersSelectors';
+// import { REFRESH_ACTIVE_USERS_INTERVAL_MS } from 'config';
+import { UserType } from 'types';
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import ActiveUser from './ActiveUser';
-import Chat from '../Chat';
+import Chat from 'Chat';
 import cx from 'classnames';
 import './index.css';
 

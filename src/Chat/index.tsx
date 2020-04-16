@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createChatMessage } from '../redux/chatActions';
-// import { BASE_WS_URL } from '../config';
+import { createChatMessage } from 'redux/chatActions';
+// import { BASE_WS_URL } from 'config';
 import {
-  // ChatMessageRequest, 
+  // ChatMessageRequest,
   ChatMessage
 } from './types';
 import { transformChatMessage } from './transforms';

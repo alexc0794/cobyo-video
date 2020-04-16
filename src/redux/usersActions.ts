@@ -1,6 +1,6 @@
-import { UserType } from '../types';
-import { fetchActiveUsers, createUser, loginGuestUser } from '../services';
-import { selectToken } from './appSelectors';
+import { UserType } from 'types';
+import { fetchActiveUsers, createUser, loginGuestUser } from 'services';
+import { selectToken } from 'redux/appSelectors';
 
 export const updateUsers = (users: Array<UserType>) => ({
   type: "UPDATE_USERS",
