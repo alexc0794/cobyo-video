@@ -7,9 +7,9 @@ import { useInterval } from 'hooks';
 import { RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS } from 'config';
 import { VideoUserType } from './types';
 import { RTC } from 'AgoraRTC';
-import VideoTable from 'VideoTable';
-import VideoSettings from 'VideoSettings';
-import VideoQuality from 'VideoQuality';
+import VideoTable from 'video/VideoTable';
+import VideoSettings from 'video/VideoSettings';
+import VideoQuality from 'video/VideoQuality';
 import { useWebSocket } from 'hooks';
 
 type PropTypes = {

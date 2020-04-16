@@ -6,7 +6,7 @@ import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
 import { RTC } from 'AgoraRTC';
-import { getSpeechRecognition } from 'SpeechRecognition';
+import { getSpeechRecognition } from 'speechRecognition';
 import { sendAudioTranscript } from 'services';
 import { useInterval } from 'hooks';
 import { SEND_TRANSCRIPT_INTERVAL_MS } from 'config';

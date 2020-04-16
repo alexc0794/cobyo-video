@@ -12,7 +12,7 @@ import {
 // import { fetchAndUpdateActiveUsers } from 'redux/usersActions';
 import { selectUserId } from 'redux/appSelectors';
 import { selectStorefront } from 'redux/storefrontSelectors';
-import { selectActiveUsers } from 'redux/usersSelectors';
+import { selectActiveUsers } from 'users/selectors';
 // import { REFRESH_ACTIVE_USERS_INTERVAL_MS } from 'config';
 import { UserType } from 'types';
 import Alert from 'react-bootstrap/Alert';

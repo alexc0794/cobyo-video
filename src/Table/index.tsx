@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectStorefront } from 'redux/storefrontSelectors';
 import { joinAndUpdateTable } from 'redux/tablesActions';
 import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from 'redux/tablesSelectors';
-import { selectUsersByIds } from 'redux/usersSelectors';
+import { selectUsersByIds } from 'users/selectors';
 import DanceFloor from 'Table/DanceFloor';
 import TableLayout from 'Table/ChannelLayout';
 import { SeatType, UserInSeatType } from 'types';

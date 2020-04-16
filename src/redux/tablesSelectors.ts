@@ -1,5 +1,5 @@
 import { TableType, SeatType, UserType } from 'types';
-import { selectUserById } from 'redux/usersSelectors';
+import { selectUserById } from 'users/selectors';
 
 export const selectTableById = (tableId: string) => (state: any): TableType => state.tables.byId[tableId];
 

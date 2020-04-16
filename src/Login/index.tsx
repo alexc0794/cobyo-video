@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { createAndUpdateUser, loginAndUpdateGuestUser } from 'redux/usersActions';
+import { createAndUpdateUser, loginAndUpdateGuestUser } from 'users/actions';
 import { UserType } from 'types';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
