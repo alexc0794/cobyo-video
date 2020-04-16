@@ -1,4 +1,4 @@
-import { SeatType, TableType } from '../types';
+import { SeatType, TableType } from 'types';
 
 type SeatResponseType = { // Maps to backend
   seatNumber: number,

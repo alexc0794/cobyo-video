@@ -1,15 +1,15 @@
 import React, { useEffect, useState, memo } from 'react';
 import { useDispatch } from 'react-redux';
-import { leaveAndUpdateTable } from '../redux/tablesActions';
-import { RTC } from '../AgoraRTC';
+import { leaveAndUpdateTable } from 'redux/tablesActions';
+import { RTC } from 'AgoraRTC';
 import { NetworkQuality } from 'agora-rtc-sdk-ng';
-import { joinCall, leaveCall, playRemoteUsers } from '../AgoraRTC';
+import { joinCall, leaveCall, playRemoteUsers } from 'AgoraRTC';
 import Toast from 'react-bootstrap/Toast';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo } from '@fortawesome/free-solid-svg-icons';
-import { getDebugMode } from '../helpers';
+import { getDebugMode } from 'helpers';
 import './index.css';
 
 type PropTypes = {

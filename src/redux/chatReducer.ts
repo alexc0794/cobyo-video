@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { ChatMessage } from '../Chat/types';
+import { ChatMessage } from 'Chat/types';
 
 function allIds(state = [], action: any): Array<ChatMessage> {
   switch (action.type) {

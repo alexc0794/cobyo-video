@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { BASE_API_URL } from '../config';
-import { ChatMessageResponse, ChatMessage } from './types';
-import { transformChatMessage } from './transforms';
+import { BASE_API_URL } from 'config';
+import { ChatMessageResponse, ChatMessage } from 'Chat/types';
+import { transformChatMessage } from 'Chat/transforms';
 
 export function fetchChatMessages(previousMessageId: string|null = null, limit: number = 20): Promise<Array<ChatMessage>> {
   return new Promise(async (resolve, reject) => {

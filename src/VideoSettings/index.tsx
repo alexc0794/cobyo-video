@@ -1,17 +1,17 @@
 import React, { memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { leaveAndUpdateTable } from '../redux/tablesActions';
-import { selectStorefront } from '../redux/storefrontSelectors';
+import { leaveAndUpdateTable } from 'redux/tablesActions';
+import { selectStorefront } from 'redux/storefrontSelectors';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
+import { RTC } from 'AgoraRTC';
+import { getSpeechRecognition } from 'SpeechRecognition';
+import { sendAudioTranscript } from 'services';
+import { useInterval } from 'hooks';
+import { SEND_TRANSCRIPT_INTERVAL_MS } from 'config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash, faSignOutAlt, faUserFriends, faPortrait } from '@fortawesome/free-solid-svg-icons';
-import { RTC } from '../AgoraRTC';
-import { getSpeechRecognition } from '../SpeechRecognition';
-import { sendAudioTranscript } from '../services';
-import { useInterval } from '../hooks';
-import { SEND_TRANSCRIPT_INTERVAL_MS } from '../config';
 import cx from 'classnames';
 import './index.css';
 

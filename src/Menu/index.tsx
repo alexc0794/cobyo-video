@@ -1,8 +1,8 @@
 import React, { useState, memo } from 'react';
 import { useSelector } from 'react-redux';
-import { selectMenuItems } from '../redux/menuSelectors';
-import { purchaseMenuItem } from '../services';
-import { MenuItemType } from '../types';
+import { selectMenuItems } from 'redux/menuSelectors';
+import { purchaseMenuItem } from 'services';
+import { MenuItemType } from 'types';
 import Button from 'react-bootstrap/Button';
 import UserSelection from './UserSelection';
 import './index.css';

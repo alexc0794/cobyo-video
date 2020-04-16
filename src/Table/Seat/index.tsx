@@ -3,8 +3,8 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChair, faUser, faCouch } from '@fortawesome/free-solid-svg-icons';
-import { UserInSeatType } from '../../types';
-import { timeSince } from '../../helpers';
+import { UserInSeatType } from 'types';
+import { timeSince } from 'helpers';
 import './index.css';
 
 type PropTypes = {
