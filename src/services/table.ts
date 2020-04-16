@@ -1,17 +1,17 @@
 import axios from 'axios';
 import { BASE_API_URL } from '../config';
-import { TableType, SeatType } from '../types';
-import { transformTable, transformUser } from './transforms';
+import { TableType, SeatType, UserType } from '../types';
+import { transformTable } from './transforms';
 
 export function fetchTable(tableId: string): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.get(
-        `${BASE_API_URL}/table/${tableId}`
+        `${BASE_API_URL}/channel/${tableId}`
       );
       return resolve({
         table: transformTable(response.data.table),
-        users: response.data.users.map((user: any) => transformUser(user)),
+        users: response.data.users,
       });
     } catch (e) {
       console.error(e)
@@ -20,14 +20,19 @@ export function fetchTable(tableId: string): Promise<any> {
   });
 }
 
-export function fetchTables(tableIds: Array<string>, token: string|null = null): Promise<any> {
+type FetchTablesResponse = {
+  tables: Array<TableType>,
+  users: Array<UserType>,
+};
+
+export function fetchTables(tableIds: Array<string>, token: string|null = null): Promise<FetchTablesResponse> {
   return new Promise(async (resolve, reject) => {
     const headers = token ? { 'Authorization': `Bearer ${token}`} : {};
     try {
-      const response = await axios.get(`${BASE_API_URL}/tables?table_ids=${tableIds.join(',')}`, { headers });
+      const response = await axios.get(`${BASE_API_URL}/channels?channelIds=${tableIds.join(',')}`, { headers });
       return resolve({
-        tables: response.data.tables.map((table: any) => transformTable(table)),
-        users: response.data.users.map((user: any) => transformUser(user))
+        tables: response.data.channels.map((table: any) => transformTable(table)),
+        users: response.data.users
       });
     } catch (e) {
       console.error(e);
@@ -39,11 +44,11 @@ export function fetchTables(tableIds: Array<string>, token: string|null = null):
 export function joinTable(tableId: string, seatNumber: number|null, userId: string): Promise<TableType> {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await axios.post(`${BASE_API_URL}/table/${tableId}/join`, {
-        user_id: userId,
-        seat_number: seatNumber,
-      });
-      const table: TableType = transformTable(response.data);
+      const response = await axios.post(
+        `${BASE_API_URL}/channel/join`,
+        { channelId: tableId, userId, seatNumber }
+      );
+      const table: TableType = transformTable(response.data.channel);
       return resolve(table);
     } catch (e) {
       console.error(e);
@@ -55,26 +60,9 @@ export function joinTable(tableId: string, seatNumber: number|null, userId: stri
 export function leaveTable(tableId: string, userId: string): Promise<TableType> {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await axios.post(`${BASE_API_URL}/table/${tableId}/leave`, {
-        user_id: userId,
-      });
-      const table: TableType = transformTable(response.data);
-      return resolve(table);
-    } catch (e) {
-      console.error(e);
-      return reject("Something went wrong");
-    }
-  });
-}
-
-export async function updateTableWithUserIdsFromRtc(
-  tableId: string,
-  userIds: Array<string>,
-): Promise<TableType> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await axios.post(`${BASE_API_URL}/table/${tableId}/user_ids`, {
-        user_ids: userIds
+      const response = await axios.post(`${BASE_API_URL}/channel/leave`, {
+        channelId: tableId,
+        userId,
       });
       const table: TableType = transformTable(response.data);
       return resolve(table);
