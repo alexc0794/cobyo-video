@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { TableType } from '../types';
+import { TableType } from 'types';
 
 function byId(state = {}, action: any) {
   switch (action.type) {
@@ -18,7 +18,7 @@ function byId(state = {}, action: any) {
       const { tables } = action.payload;
       return tables.reduce((acc: any, table: TableType) => {
         return { ...acc, [table.tableId]: table };
-      }, {...state});
+      }, { ...state });
     }
     default:
       return state;
@@ -26,7 +26,7 @@ function byId(state = {}, action: any) {
 }
 
 function activeTableId(state = null, action: any) {
-  switch(action.type) {
+  switch (action.type) {
     case 'JOINED_TABLE': {
       const { table: { tableId } } = action.payload;
       return tableId;

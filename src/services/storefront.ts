@@ -4,7 +4,7 @@ import { BASE_API_URL } from 'config';
 type GetStorefrontResponse = {
   storefront: string,
   status: string,
-  tableIdGrid: Array<Array<string|null>>,
+  tableIdGrid: Array<Array<string | null>>,
 };
 
 export function fetchStorefront(): Promise<any> {

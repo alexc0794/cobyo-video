@@ -10,11 +10,11 @@ type CreateUserResponse = {
 type GetUserResponse = CreateUserResponse;
 
 export function createUser(
-  email: string|null,
+  email: string | null,
   firstName: string,
-  lastName: string|null = null,
-  facebookUserId: string|null = null,
-  profilePictureUrl: string|null = null,
+  lastName: string | null = null,
+  facebookUserId: string | null = null,
+  profilePictureUrl: string | null = null,
 ): Promise<GetUserResponse> {
   return new Promise(async (resolve, reject) => {
     try {

@@ -1,6 +1,6 @@
 export type SeatType = {
-  userId: string|null,
-  satDownAt: string|null,
+  userId: string | null,
+  satDownAt: string | null,
   seatNumber: number,
 };
 
@@ -15,12 +15,12 @@ export type TableType = {
 
 export type UserType = {
   userId: string,
-  facebookUserId: string|null,
-  email: string|null,
+  facebookUserId: string | null,
+  email: string | null,
   firstName: string,
-  lastName: string|null,
-  profilePictureUrl: string|null,
-  lastActiveAt: string|null,
+  lastName: string | null,
+  profilePictureUrl: string | null,
+  lastActiveAt: string | null,
 };
 
 export type MenuType = {
@@ -39,7 +39,7 @@ export type MenuItemType = {
 export type UserMenuItemType = {
   itemId: string,
   fromUserId: string,
-  expireOn: string|null,
+  expireOn: string | null,
 };
 
 export type UserInSeatType = UserType & SeatType;

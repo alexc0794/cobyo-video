@@ -64,5 +64,5 @@ export function timeSinceShort(inputDate: Date): string {
     return 'now';
   }
 
-  return `${value}${interval.slice(0,1)}`;
+  return `${value}${interval.slice(0, 1)}`;
 }

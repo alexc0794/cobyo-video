@@ -36,4 +36,3 @@
 .Channel-table--RECTANGULAR {
   grid-area: 2/1/var(--rows)/calc(var(--columns) + 1);
 }
-

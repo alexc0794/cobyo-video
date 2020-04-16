@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-function userId(state = null, action: any): string|null {
+function userId(state = null, action: any): string | null {
   switch (action.type) {
     case 'CREATE_USER_SUCCESS': {
       const { user } = action.payload;
@@ -11,7 +11,7 @@ function userId(state = null, action: any): string|null {
   }
 }
 
-function token(state = null, action: any): string|null {
+function token(state = null, action: any): string | null {
   switch (action.type) {
     case 'CREATE_USER_SUCCESS': {
       const { token } = action.payload;

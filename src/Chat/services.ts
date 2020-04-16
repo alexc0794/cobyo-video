@@ -3,7 +3,7 @@ import { BASE_API_URL } from 'config';
 import { ChatMessageResponse, ChatMessage } from 'Chat/types';
 import { transformChatMessage } from 'Chat/transforms';
 
-export function fetchChatMessages(previousMessageId: string|null = null, limit: number = 20): Promise<Array<ChatMessage>> {
+export function fetchChatMessages(previousMessageId: string | null = null, limit: number = 20): Promise<Array<ChatMessage>> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.get(

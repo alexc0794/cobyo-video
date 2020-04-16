@@ -5,7 +5,7 @@ export const selectTableById = (tableId: string) => (state: any): TableType => s
 
 export const selectJoinedTable = (state: any): TableType => state.tables.byId[state.tables.activeTableId];
 
-export const selectJoinedTableId = (state: any): string|null => {
+export const selectJoinedTableId = (state: any): string | null => {
   const joinedTable = selectJoinedTable(state);
   return joinedTable ? joinedTable.tableId : null;
 }
@@ -19,10 +19,10 @@ export const selectJoinedTableSeat = (userId: string) => (state: any): number =>
 
 export const selectTableUsers = (tableId: string) => (state: any): Array<UserType> => {
   const table: TableType = selectTableById(tableId)(state);
-  const userIds: Array<string|null> = table.seats.map((seat: SeatType) => seat.userId);
-  const users: Array<UserType> = userIds.reduce((acc: Array<UserType>, userId: string|null) => {
+  const userIds: Array<string | null> = table.seats.map((seat: SeatType) => seat.userId);
+  const users: Array<UserType> = userIds.reduce((acc: Array<UserType>, userId: string | null) => {
     if (userId) {
-      const user: UserType|null = selectUserById(userId)(state);
+      const user: UserType | null = selectUserById(userId)(state);
       if (user) {
         return [...acc, user];
       }

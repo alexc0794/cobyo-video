@@ -25,9 +25,9 @@ type FetchTablesResponse = {
   users: Array<UserType>,
 };
 
-export function fetchTables(tableIds: Array<string>, token: string|null = null): Promise<FetchTablesResponse> {
+export function fetchTables(tableIds: Array<string>, token: string | null = null): Promise<FetchTablesResponse> {
   return new Promise(async (resolve, reject) => {
-    const headers = token ? { 'Authorization': `Bearer ${token}`} : {};
+    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
     try {
       const response = await axios.get(`${BASE_API_URL}/channels?channelIds=${tableIds.join(',')}`, { headers });
       return resolve({
@@ -41,7 +41,7 @@ export function fetchTables(tableIds: Array<string>, token: string|null = null):
   })
 }
 
-export function joinTable(tableId: string, seatNumber: number|null, userId: string): Promise<TableType> {
+export function joinTable(tableId: string, seatNumber: number | null, userId: string): Promise<TableType> {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(
