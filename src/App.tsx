@@ -1,11 +1,11 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectJoinedTable } from 'tables/selectors';
-import { fetchAndUpdateStorefront } from 'storefront/actions';
+import { fetchAndUpdateStorefront } from 'stores/actions';
 import HomeNavbar from 'HomeNavbar';
 import DeviceErrorModal from 'modals/DeviceErrorModal';
 import WelcomeModal from 'modals/WelcomeModal';
-import StorefrontLayout from 'storefront/StorefrontLayout';
+import StorefrontLayout from 'stores/StorefrontLayout';
 import VideoHangout from 'video/VideoHangout';
 import ActiveUsers from 'users/ActiveUsers';
 import { getRTC, RTC } from 'agora';

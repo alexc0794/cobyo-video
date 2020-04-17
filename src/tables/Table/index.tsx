@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectStorefront } from 'storefront/selectors';
+import { selectStorefront } from 'stores/selectors';
 import { joinAndUpdateTable } from 'tables/actions';
 import { selectTableById, selectJoinedTableId, selectJoinedTableSeat } from 'tables/selectors';
 import { selectUsersByIds } from 'users/selectors';

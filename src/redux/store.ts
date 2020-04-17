@@ -4,7 +4,7 @@ import app from './appReducer';
 import tables from 'tables/reducers';
 import chat from 'chat/reducers';
 import users from 'users/reducers';
-import storefront from 'storefront/reducers';
+import storefront from 'stores/reducers';
 import menu from 'menu/reducers';
 import userMenuItems from 'users/userMenuItemsReducer';
 
