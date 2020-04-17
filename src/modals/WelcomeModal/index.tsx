@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectStorefront, selectStatus } from 'stores/selectors';
+import { selectStorefront, selectStatus } from '_storefront/selectors';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import Login from 'login/Login';
+import Login from '_login/Login';
 import { UserType } from 'types';
 import './index.css';
 
