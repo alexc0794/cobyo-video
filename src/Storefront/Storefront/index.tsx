@@ -1,12 +1,12 @@
 import React, { memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectStorefrontTableIds } from 'storefront/selectors';
-import { fetchAndUpdateTables } from 'tables/actions';
-import { fetchAndUpdateMenu } from 'menu/actions';
-import { useInterval } from 'hooks';
-import { REFRESH_TABLES_INTERVAL_MS } from 'config';
-import Club from 'storefront/Club';
-import Cafeteria from 'storefront/Cafeteria';
+import { selectStorefrontTableIds } from 'src/storefront/selectors';
+import { fetchAndUpdateTables } from 'src/tables/actions';
+import { fetchAndUpdateMenu } from 'src/menu/actions';
+import { useInterval } from 'src/hooks';
+import { REFRESH_TABLES_INTERVAL_MS } from 'src/config';
+import Club from 'src/storefront/Club';
+import Cafeteria from 'src/storefront/Cafeteria';
 import './index.css';
 
 type PropTypes = {

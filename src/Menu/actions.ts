@@ -1,5 +1,5 @@
-import { MenuType } from 'types';
-import { fetchMenu } from 'menu/services';
+import { MenuType } from 'src/types';
+import { fetchMenu } from 'src/menu/services';
 
 export const updateMenu = (menu: MenuType) => ({
   type: 'UPDATE_MENU',

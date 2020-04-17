@@ -1,4 +1,4 @@
-import { UserType } from 'users/types';
+import { UserType } from 'src/users/types';
 
 export type SeatType = {
   userId: string | null,

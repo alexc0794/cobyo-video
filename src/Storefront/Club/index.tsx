@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Table from 'tables/Table';  // Converting to absolute is causing name collision with a node module
+import Table from 'src/tables/Table';  // Converting to absolute is causing name collision with a node module
 
 type PropTypes = {
   userId: string|null,

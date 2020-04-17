@@ -1,7 +1,7 @@
 import React, {memo} from 'react';
 import { useSelector } from 'react-redux';
-import { selectMenuItemById } from 'menu/selectors';
-import { MenuItemType } from 'types';
+import { selectMenuItemById } from 'src/menu/selectors';
+import { MenuItemType } from 'src/types';
 import './userItem.css'
 
 type PropType = {

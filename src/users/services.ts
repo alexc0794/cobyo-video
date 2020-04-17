@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { BASE_API_URL } from 'config';
-import { UserType } from 'types';
+import { BASE_API_URL } from 'src/config';
+import { UserType } from 'src/types';
 
 type CreateUserResponse = {
   user: UserType,
