@@ -78,6 +78,10 @@ export async function joinCall(rtc: RTC, userId: string, channelId: string) {
   try {
     await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
   } catch (e) {
+    rtc.localVideoTrack.stop();
+    rtc.localVideoTrack.close();
+    rtc.localAudioTrack.stop();
+    rtc.localAudioTrack.close();
     console.error(e);
     await rtc.client.leave();
     throw new Error('Failed to publish audio and video to others.');
