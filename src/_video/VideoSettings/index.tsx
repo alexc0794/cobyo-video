@@ -12,6 +12,7 @@ import { useInterval } from 'hooks';
 import { SEND_TRANSCRIPT_INTERVAL_MS } from 'config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash, faSignOutAlt, faUserFriends, faPortrait } from '@fortawesome/free-solid-svg-icons';
+import Player from 'music/Player';
 import cx from 'classnames';
 import './index.css';
 
@@ -131,6 +132,7 @@ function VideoSettings({
     <div className={cx('video-settings', {
       'club-mode-lighter': storefront === 'CLUB',
     })}>
+      <Player />
       <ButtonToolbar className={cx('video-settings-toolbar', {
         'club-mode': storefront === 'CLUB'
       })}>
