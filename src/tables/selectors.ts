@@ -1,5 +1,5 @@
-import { TableType, SeatType, UserType } from 'types';
-import { selectUserById } from 'users/selectors';
+import { TableType, SeatType, UserType } from 'src/types';
+import { selectUserById } from 'src/users/selectors';
 
 export const selectTableById = (tableId: string) => (state: any): TableType => state.tables.byId[tableId];
 

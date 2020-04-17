@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
-import { selectUserRecentChatMessage } from 'chat/selectors';
-import { UserType } from 'types';
+import { selectUserRecentChatMessage } from 'src/chat/selectors';
+import { UserType } from 'src/types';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 

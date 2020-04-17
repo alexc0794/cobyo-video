@@ -1,4 +1,4 @@
-import { ChatMessage } from 'chat/types';
+import { ChatMessage } from 'src/chat/types';
 
 const selectChatMessageById = (state: any, messageId: string) => state.chat.byId[messageId];
 

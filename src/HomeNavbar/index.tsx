@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar';
-import virtualClubLogo from 'images/virtualclublogo.png';
-import { UserType } from 'types';
+import virtualClubLogo from 'src/images/virtualclublogo.png';
+import { UserType } from 'src/types';
 import './index.css';
 
 type PropTypes = {

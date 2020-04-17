@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { BASE_WS_URL } from 'config';
+import { BASE_WS_URL } from 'src/config';
 
 export function useInterval(callback: () => any, delay: number | null) {
   const savedCallback: any = useRef();

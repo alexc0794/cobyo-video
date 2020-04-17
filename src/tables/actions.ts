@@ -1,7 +1,7 @@
-import { TableType } from 'types';
-import { selectToken } from 'redux/appSelectors';
-import { updateUsers } from 'users/actions';
-import { fetchTable, fetchTables, joinTable, leaveTable } from 'services';
+import { TableType } from 'src/types';
+import { selectToken } from 'src/redux/appSelectors';
+import { updateUsers } from 'src/users/actions';
+import { fetchTable, fetchTables, joinTable, leaveTable } from 'src/services';
 
 export const updateTable = (table: TableType) => ({
   type: "UPDATE_TABLE",

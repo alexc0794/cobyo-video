@@ -1,4 +1,4 @@
-import { fetchStorefront } from 'storefront/services';
+import { fetchStorefront } from 'src/storefront/services';
 
 const updateStorefront = (storefront: string, status: string, tableIdGrid: Array<Array<string>>) => ({
   type: "UPDATE_STOREFRONT",
