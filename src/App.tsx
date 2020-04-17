@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAndUpdateStorefront } from 'storefront/actions';
 import { selectJoinedTable } from 'tables/selectors';
+import { fetchAndUpdateStorefront } from 'storefront/actions';
 import HomeNavbar from 'HomeNavbar';
 import DeviceErrorModal from 'modals/DeviceErrorModal';
 import WelcomeModal from 'modals/WelcomeModal';
