@@ -16,7 +16,7 @@ type PropTypes = {
   tableIdGrid: Array<Array<string>>,
 }
 
-function Storefront({ userId, storefront, tableIdGrid }: PropTypes) {
+function StorefrontLayout({ userId, storefront, tableIdGrid }: PropTypes) {
   const tableIds = useSelector(selectStorefrontTableIds);
   const dispatch = useDispatch();
 
@@ -46,4 +46,4 @@ function Storefront({ userId, storefront, tableIdGrid }: PropTypes) {
   }
 }
 
-export default memo(Storefront);
+export default memo(StorefrontLayout);

@@ -1,11 +1,11 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAndUpdateStorefront } from 'storefront/actions';
 import { selectJoinedTable } from 'tables/selectors';
+import { fetchAndUpdateStorefront } from 'storefront/actions';
 import HomeNavbar from 'HomeNavbar';
 import DeviceErrorModal from 'modals/DeviceErrorModal';
 import WelcomeModal from 'modals/WelcomeModal';
-import Storefront from 'storefront/Storefront';
+import StorefrontLayout from 'storefront/StorefrontLayout';
 import VideoHangout from 'video/VideoHangout';
 import ActiveUsers from 'users/ActiveUsers';
 import { getRTC, RTC } from 'agora';
@@ -65,7 +65,7 @@ function App() {
       {!joinedTable && <HomeNavbar user={user} storefront={storefront} status={status} />}
       {!joinedTable && (
         <div className="content">
-          <Storefront
+          <StorefrontLayout
             userId={user ? user.userId : null}
             storefront={storefront}
             status={status}
