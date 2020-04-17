@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectStorefront, selectStatus } from 'storefront/selectors';
+import { selectStorefront, selectStatus } from 'stores/selectors';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';

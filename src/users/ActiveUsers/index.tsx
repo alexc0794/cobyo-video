@@ -11,7 +11,7 @@ import {
 } from 'react-redux';
 // import { fetchAndUpdateActiveUsers } from 'redux/usersActions';
 import { selectUserId } from 'redux/appSelectors';
-import { selectStorefront } from 'storefront/selectors';
+import { selectStorefront } from 'stores/selectors';
 import { selectActiveUsers } from 'users/selectors';
 // import { REFRESH_ACTIVE_USERS_INTERVAL_MS } from 'config';
 import { UserType } from 'types';

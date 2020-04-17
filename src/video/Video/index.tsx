@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
-import { selectStorefront } from 'storefront/selectors';
+import { selectStorefront } from 'stores/selectors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophoneSlash, faChair, faCouch } from '@fortawesome/free-solid-svg-icons';
 import cx from 'classnames';

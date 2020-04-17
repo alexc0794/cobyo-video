@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectStorefront } from 'storefront/selectors';
+import { selectStorefront } from 'stores/selectors';
 import { selectTableById } from 'tables/selectors';
 import { selectMenuItems } from 'menu/selectors';
 import { VideoUserType } from 'video/VideoHangout/types';
