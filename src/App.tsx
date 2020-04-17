@@ -28,7 +28,6 @@ function App() {
   const [{
     storefront,
     status,
-    tableIdGrid,
   }, setStorefront] = useState<any>({ storefront: null, status: 'OPEN', tableIdGrid: [] });
 
   const dispatch = useDispatch();
