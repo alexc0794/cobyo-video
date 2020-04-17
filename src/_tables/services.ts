@@ -8,7 +8,7 @@ export function fetchTable(tableId: string): Promise<any> {
     try {
       const response = await axios.get(`${BASE_API_URL}/channel/${tableId}`);
       return resolve({
-        table: transformTable(response.data.table),
+        table: transformTable(response.data.channel),
         users: response.data.users,
       });
     } catch (e) {
