@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { MenuItemType } from 'src/types';
+import { MenuItemType } from 'types';
 
 // Assume this is a byId of menu items, not menus.
 function byId(state = {}, action: any) {

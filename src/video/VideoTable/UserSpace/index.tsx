@@ -1,8 +1,8 @@
 import React, {memo} from 'react';
 import { useSelector } from 'react-redux';
-import { selectUserMenuItemsById } from 'src/users/userMenuItemsSelectors';
-import { UserMenuItemType } from 'src/types';
-import UserItem from 'src/video/VideoTable/UserSpace/userItem';
+import { selectUserMenuItemsById } from 'users/userMenuItemsSelectors';
+import { UserMenuItemType } from 'types';
+import UserItem from 'video/VideoTable/UserSpace/userItem';
 
 type PropTypes = {
   userId: string

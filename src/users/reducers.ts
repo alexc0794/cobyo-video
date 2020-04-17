@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { UserType } from 'src/types';
+import { UserType } from 'types';
 
 function byId(state = {}, action: any) {
   switch (action.type) {

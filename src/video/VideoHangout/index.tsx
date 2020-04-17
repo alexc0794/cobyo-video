@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IAgoraRTCRemoteUser } from 'agora-rtc-sdk-ng';
-import { fetchAndUpdateTable, joinAndUpdateTable } from 'src/tables/actions';
-import { selectJoinedTableSeat } from 'src/tables/selectors';
-import { useInterval } from 'src/hooks';
-import { RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS } from 'src/config';
+import { fetchAndUpdateTable, joinAndUpdateTable } from 'tables/actions';
+import { selectJoinedTableSeat } from 'tables/selectors';
+import { useInterval } from 'hooks';
+import { RECLAIM_SEAT_WHILE_IN_VIDEO_CHAT_INTERVAL_MS } from 'config';
 import { VideoUserType } from './types';
-import { RTC } from 'src/agora';
-import VideoTable from 'src/video/VideoTable';
-import VideoSettings from 'src/video/VideoSettings';
-import VideoQuality from 'src/video/VideoQuality';
-import { useWebSocket } from 'src/hooks';
+import { RTC } from 'agora';
+import VideoTable from 'video/VideoTable';
+import VideoSettings from 'video/VideoSettings';
+import VideoQuality from 'video/VideoQuality';
+import { useWebSocket } from 'hooks';
 
 type PropTypes = {
   tableId: string,

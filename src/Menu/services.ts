@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_API_URL } from 'src/config';
+import { BASE_API_URL } from 'config';
 
 export function fetchMenu(storefront: string): Promise<any> {
   return new Promise(async (resolve, reject) => {

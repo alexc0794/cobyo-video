@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectStorefront, selectStatus } from 'src/storefront/selectors';
+import { selectStorefront, selectStatus } from 'storefront/selectors';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import Login from 'src/login/Login';
-import { UserType } from 'src/types';
+import Login from 'login/Login';
+import { UserType } from 'types';
 import './index.css';
 
 type PropTypes = {

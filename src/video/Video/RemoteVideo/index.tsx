@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { VideoUserType } from 'src/video/VideoHangout/types';
-import Video from 'src/video/Video';
+import { VideoUserType } from 'video/VideoHangout/types';
+import Video from 'video/Video';
 
 export type RemoteVideoPropTypes = VideoUserType;
 

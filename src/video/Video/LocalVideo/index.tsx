@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { RTC, joinCall, leaveCall, playRemoteUsers } from 'src/agora';
-import Video from 'src/video/Video';
+import { RTC, joinCall, leaveCall, playRemoteUsers } from 'agora';
+import Video from 'video/Video';
 import Modal from 'react-bootstrap/Modal';
 
 type LocalVideoPropTypes = {

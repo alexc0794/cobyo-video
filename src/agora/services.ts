@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_API_URL } from 'src/config';
+import { BASE_API_URL } from 'config';
 
 export function fetchToken(uid: string, tableId: string): Promise<string> {
   return new Promise(async (resolve, _) => {

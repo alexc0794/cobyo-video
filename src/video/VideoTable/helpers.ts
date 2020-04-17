@@ -1,5 +1,5 @@
-import { TableType, SeatType } from 'src/types';
-import { U_SHAPE_TABLE_END_SEAT_LENGTH } from 'src/tables/Table';
+import { TableType, SeatType } from 'types';
+import { U_SHAPE_TABLE_END_SEAT_LENGTH } from 'tables/Table';
 
 export function getTableGrid(table: TableType): Array<Array<SeatType | null>> {
   switch (table.shape) {

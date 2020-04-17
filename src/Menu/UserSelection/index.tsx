@@ -1,8 +1,8 @@
 import React, {memo} from 'react';
 import { useSelector } from 'react-redux';
-import { selectTableUsers } from 'src/tables/selectors';
-import UserProfile from 'src/users/UserProfile';
-import { UserType } from 'src/types';
+import { selectTableUsers } from 'tables/selectors';
+import UserProfile from 'users/UserProfile';
+import { UserType } from 'types';
 import cx from 'classnames';
 import './index.css';
 

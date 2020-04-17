@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_API_URL } from 'src/config';
+import { BASE_API_URL } from 'config';
 
 type GetStorefrontResponse = {
   storefront: string,

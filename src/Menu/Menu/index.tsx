@@ -1,10 +1,10 @@
 import React, { useState, memo } from 'react';
 import { useSelector } from 'react-redux';
-import { selectMenuItems } from 'src/menu/selectors';
-import { purchaseMenuItem } from 'src/menu/services';
-import { MenuItemType } from 'src/types';
+import { selectMenuItems } from 'menu/selectors';
+import { purchaseMenuItem } from 'menu/services';
+import { MenuItemType } from 'types';
 import Button from 'react-bootstrap/Button';
-import UserSelection from 'src/menu/UserSelection';
+import UserSelection from 'menu/UserSelection';
 import './index.css';
 
 type PropTypes = {

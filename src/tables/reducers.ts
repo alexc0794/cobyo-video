@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { TableType } from 'src/types';
+import { TableType } from 'types';
 
 function byId(state = {}, action: any) {
   switch (action.type) {
