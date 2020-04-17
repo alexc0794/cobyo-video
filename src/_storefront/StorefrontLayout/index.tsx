@@ -6,7 +6,7 @@ import { fetchAndUpdateMenu } from '_menu/actions';
 import { useInterval } from 'hooks';
 import { REFRESH_TABLES_INTERVAL_MS } from 'config';
 import {TableType} from 'types';
-import Table from '_tables/Table';  // Converting to absolute is causing name collision with a node moduleimport './index.css';
+import Table from '_tables/Table';
 import './index.css';
 
 type PropTypes = {
