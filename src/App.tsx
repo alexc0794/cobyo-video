@@ -28,7 +28,6 @@ function App() {
   const [{
     storefront,
     status,
-    tableIdGrid,
   }, setStorefront] = useState<any>({ storefront: null, status: 'OPEN', tableIdGrid: [] });
 
   const dispatch = useDispatch();
@@ -69,7 +68,6 @@ function App() {
             userId={user ? user.userId : null}
             storefront={storefront}
             status={status}
-            tableIdGrid={status === 'CLOSED' ? [] : tableIdGrid}
           />
             {!!user && <ActiveUsers />}
         </div>
