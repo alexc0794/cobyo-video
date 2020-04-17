@@ -69,7 +69,6 @@ function App() {
             userId={user ? user.userId : null}
             storefront={storefront}
             status={status}
-            tableIdGrid={status === 'CLOSED' ? [] : tableIdGrid}
           />
             {!!user && <ActiveUsers />}
         </div>

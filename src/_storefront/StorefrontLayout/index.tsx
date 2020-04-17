@@ -5,18 +5,17 @@ import { fetchAndUpdateTables } from '_tables/actions';
 import { fetchAndUpdateMenu } from '_menu/actions';
 import { useInterval } from 'hooks';
 import { REFRESH_TABLES_INTERVAL_MS } from 'config';
-import Club from '_storefront/Club';
-import Cafeteria from '_storefront/Cafeteria';
+import {TableType} from 'types';
+import Table from '_tables/Table';  // Converting to absolute is causing name collision with a node moduleimport './index.css';
 import './index.css';
 
 type PropTypes = {
   userId: string|null,
   storefront: string,
   status: string,
-  tableIdGrid: Array<Array<string>>,
 }
 
-function StorefrontLayout({ userId, storefront, tableIdGrid }: PropTypes) {
+function StorefrontLayout({ userId, storefront }: PropTypes) {
   const tableIds = useSelector(selectStorefrontTableIds);
   const tables = useSelector(selectStorefrontTables);
   const dispatch = useDispatch();
@@ -33,18 +32,32 @@ function StorefrontLayout({ userId, storefront, tableIdGrid }: PropTypes) {
     dispatch(fetchAndUpdateTables(tableIds));
   }, REFRESH_TABLES_INTERVAL_MS);
 
-  switch (storefront) {
-    case 'CLUB': {
-      return (
-        <Club userId={userId} tables={tables} />
-      );
+  const getTableVariation = (table:TableType) => {
+    if (table.shape === 'DANCE_FLOOR') {
+      return 'danceFloor';
     }
-    default: {
-      return (
-        <Cafeteria userId={userId} tableIdGrid={tableIdGrid} />
-      );
+    if (table.seats.length >= 10) {
+      return 'large';
+    } else if (table.seats.length <= 6) {
+      return 'small';
+    } else {
+      return 'medium';
     }
   }
+
+  return (
+    <div className={`StorefrontLayout StorefrontLayout--${storefront}`}>
+      {tables.map((table:TableType|undefined) => {
+        return (
+          table && (
+            <div className={`StorefrontLayout-table StorefrontLayout-table--${getTableVariation(table)}`} key={table.tableId}>
+              <Table tableId={table.tableId} userId={userId} />
+            </div>
+          )
+        )
+      })}
+    </div>
+  );
 }
 
 export default memo(StorefrontLayout);
