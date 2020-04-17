@@ -1,12 +1,12 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import app from './appReducer';
-import tables from 'tables/reducers';
-import chat from 'chat/reducers';
-import users from 'users/reducers';
-import storefront from 'stores/reducers';
-import menu from 'menu/reducers';
-import userMenuItems from 'users/userMenuItemsReducer';
+import tables from '_tables/reducers';
+import chat from '_chat/reducers';
+import users from '_users/reducers';
+import storefront from '_storefront/reducers';
+import menu from '_menu/reducers';
+import userMenuItems from '_users/userMenuItemsReducer';
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
