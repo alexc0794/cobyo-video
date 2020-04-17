@@ -1,13 +1,13 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectJoinedTable } from 'tables/selectors';
-import { fetchAndUpdateStorefront } from 'stores/actions';
+import { selectJoinedTable } from '_tables/selectors';
+import { fetchAndUpdateStorefront } from '_storefront/actions';
 import HomeNavbar from 'HomeNavbar';
 import DeviceErrorModal from 'modals/DeviceErrorModal';
 import WelcomeModal from 'modals/WelcomeModal';
-import StorefrontLayout from 'stores/StorefrontLayout';
-import VideoHangout from 'video/VideoHangout';
-import ActiveUsers from 'users/ActiveUsers';
+import StorefrontLayout from '_storefront/StorefrontLayout';
+import VideoHangout from '_video/VideoHangout';
+import ActiveUsers from '_users/ActiveUsers';
 import { getRTC, RTC } from 'agora';
 import { TableType, UserType } from 'types';
 import { useInterval } from 'hooks';
