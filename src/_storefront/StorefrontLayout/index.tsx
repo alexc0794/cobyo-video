@@ -1,6 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectStorefrontTableIds } from '_storefront/selectors';
+import { selectStorefrontTableIds, selectStorefrontTables } from '_storefront/selectors';
 import { fetchAndUpdateTables } from '_tables/actions';
 import { fetchAndUpdateMenu } from '_menu/actions';
 import { useInterval } from 'hooks';
@@ -18,6 +18,7 @@ type PropTypes = {
 
 function StorefrontLayout({ userId, storefront, tableIdGrid }: PropTypes) {
   const tableIds = useSelector(selectStorefrontTableIds);
+  const tables = useSelector(selectStorefrontTables);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -35,7 +36,7 @@ function StorefrontLayout({ userId, storefront, tableIdGrid }: PropTypes) {
   switch (storefront) {
     case 'CLUB': {
       return (
-        <Club userId={userId} tableIdGrid={tableIdGrid} />
+        <Club userId={userId} tables={tables} />
       );
     }
     default: {

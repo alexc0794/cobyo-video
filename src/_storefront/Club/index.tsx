@@ -2,50 +2,43 @@ import React, { memo } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import {TableType, SeatType} from 'types';
 import Table from '_tables/Table';  // Converting to absolute is causing name collision with a node module
 
 type PropTypes = {
   userId: string|null,
-  tableIdGrid: Array<Array<string>>,
+  tables: Array<TableType>,
 }
 
 function Club({
   userId,
-  tableIdGrid,
+  tables
 }: PropTypes) {
-  const firstRow = tableIdGrid[0] || [];
-  const secondRow = tableIdGrid[1] || [];
-  const thirdRow = tableIdGrid[2] || [];
+  const getTableVariaiton = (seats:Array<SeatType>) => {
+    if (seats.length >=24 ) {
+      return 'danceFloor';
+    }
+    if (seats.length >= 10) {
+      return 'large';
+    } else if (seats.length <= 6) {
+      return 'small';
+    } else {
+      return 'medium';
+    }
+  }
 
   return (
-    <Container fluid className="storefront club">
-      <Row>
-        {firstRow.map((tableId: string) => (
-          <Col key={tableId}><Table tableId={tableId} userId={userId} /></Col>
-        ))}
-      </Row>
-      <Row />
-      <Row>
-        {secondRow.length > 0 && (
-          <>
-            <Col lg={1} />
-            <Col lg={4}>
-              <Table tableId={secondRow[0]} userId={userId}/>
-            </Col>
-            <Col lg={1} />
-          </>
-        )}
-        {secondRow.slice(1).map((tableId: string) => (
-          <Col key={tableId} lg={3}><Table tableId={tableId} userId={userId} /></Col>
-        ))}
-      </Row>
-      <Row />
-      <Row>
-        {thirdRow.map((tableId: string) => (
-          <Col key={tableId}><Table tableId={tableId} userId={userId} /></Col>
-        ))}
-      </Row>
-    </Container>
+    <div className="StorefrontLayout StorefrontLayout--club">
+      {tables.map((table:TableType) => {
+        return (
+          table && (
+            <div className={`StorefrontLayout-table StorefrontLayout-table--${getTableVariaiton(table.seats)}`}>
+              <Table tableId={table.tableId} userId={userId} />
+            </div>
+          )
+        )
+      })}
+    </div>
   );
 }
 
