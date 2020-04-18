@@ -99,10 +99,21 @@ class Player extends Component<PropTypes, StateTypes> {
   }
 
   componentDidUpdate(previousProps: PropTypes) {
+    if (this.props.isDJ) { return; }
+
     const previouslyPlaying = previousProps.currentlyPlaying;
     const currentlyPlaying = this.props.currentlyPlaying;
     if (previouslyPlaying.trackId !== currentlyPlaying.trackId) {
       playTrack(this.state.deviceId, this.state.spotifyAccessToken, currentlyPlaying.trackUri);
+    }
+
+    const previouslyPaused = previousProps.currentlyPlaying.paused;
+    const currentlyPaused = this.props.currentlyPlaying.paused;
+    const didPause = !previouslyPaused && currentlyPaused;
+    const didResume = previouslyPaused && !currentlyPaused;
+    if (this.player) {
+      didPause && this.player.pause();
+      didResume && this.player.resume();
     }
   }
 
