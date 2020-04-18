@@ -15,6 +15,7 @@ const initialCurrentlyPlaying: CurrentlyPlaying = {
 
 function currentlyPlaying(state = initialCurrentlyPlaying, action: any) {
   switch (action.type) {
+    case 'UPDATE_CURRENTLY_PLAYING':
     case 'CHANGE_SONG': {
       return action.payload;
     }

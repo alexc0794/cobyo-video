@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { selectToken } from 'redux/appSelectors';
 import { selectCurrentlyPlaying } from 'music/selectors';
+import { fetchAndUpdateCurrentlyPlaying } from 'music/actions';
 import Button from 'react-bootstrap/Button';
 import { fetchSpotifyToken, transferUserPlayback, playTrack } from 'services';
 import { SpotifyToken, CurrentlyPlaying } from 'types';
@@ -21,6 +22,7 @@ type PropTypes = {
   // From redux
   token: string|null,
   currentlyPlaying: CurrentlyPlaying,
+  fetchAndUpdateCurrentlyPlaying: (channelId: string) => void
 };
 
 type StateTypes = {
@@ -74,7 +76,6 @@ class Player extends Component<PropTypes, StateTypes> {
     type ReadyParamType = { device_id: string };
     // Ready
     this.player.addListener('ready', async ({ device_id: deviceId }: ReadyParamType) => {
-      console.log('Device ready', deviceId);
       this.setState({ deviceId });
       if (this.props.isDJ) {
         try {
@@ -83,11 +84,12 @@ class Player extends Component<PropTypes, StateTypes> {
           // Prompt the user to actively select a playback device
           alert(`To start playing music, look for a device named "Virtual Club Dance Floor 🔥" to connect to in the Spotify app.`)
         }
+      } else {
+        this.props.fetchAndUpdateCurrentlyPlaying(this.props.tableId);
       }
     });
     // Not Ready
     this.player.addListener('not_ready', ({ device_id }: ReadyParamType) => {
-      console.log('Device not ready');
       this.setState({ deviceId: '' });
     });
   }
@@ -98,13 +100,13 @@ class Player extends Component<PropTypes, StateTypes> {
     }
   }
 
-  componentDidUpdate(previousProps: PropTypes) {
+  async componentDidUpdate(previousProps: PropTypes) {
     if (this.props.isDJ) { return; }
 
     const previouslyPlaying = previousProps.currentlyPlaying;
     const currentlyPlaying = this.props.currentlyPlaying;
     if (previouslyPlaying.trackId !== currentlyPlaying.trackId) {
-      playTrack(this.state.deviceId, this.state.spotifyAccessToken, currentlyPlaying.trackUri);
+      await playTrack(this.state.deviceId, this.state.spotifyAccessToken, currentlyPlaying.trackUri, currentlyPlaying.position);
     }
 
     const previouslyPaused = previousProps.currentlyPlaying.paused;
@@ -228,6 +230,11 @@ const mapStateToProps = (state: any) => ({
   currentlyPlaying: selectCurrentlyPlaying(state),
 });
 
+const mapDispatchToProps = {
+  fetchAndUpdateCurrentlyPlaying
+};
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps,
 )(Player);
