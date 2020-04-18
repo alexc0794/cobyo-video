@@ -4,6 +4,7 @@ import { selectToken } from 'redux/appSelectors';
 import Button from 'react-bootstrap/Button';
 import { fetchSpotifyToken } from 'services';
 import { SpotifyToken } from 'types';
+import { BASE_API_URL } from 'config';
 import cx from 'classnames';
 import './index.css';
 
@@ -128,7 +129,7 @@ class Player extends Component<PropTypes, StateTypes> {
 
   handleSpotifyAuthorization = () => {
     window.open(
-      `https://localhost:8080/spotify/authorize?userId=${this.props.userId}`,
+      `${BASE_API_URL}/spotify/authorize?userId=${this.props.userId}`,
       '_blank',
       'width=600,height=400'
     );

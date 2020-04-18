@@ -22,8 +22,8 @@
 
 .Player-disc {
   border-radius: 50%;
-  height: 5vw;
-  width: 5vw;
+  height: 6vh;
+  width: 6vh;
   background-color: black;
   opacity: .8;
   border: 2px solid white;
@@ -46,7 +46,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-align: left;
-  /* animation: marquee 1s linear infinite; */
+  font-size: 11pt;
 }
 
 .Player-content > button {
@@ -60,9 +60,4 @@
   border-radius: 5vh;
   width: 100%;
   height: 5px;
-}
-
-@keyframes marquee {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(-100%, 0); }
 }
