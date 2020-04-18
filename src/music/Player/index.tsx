@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { selectToken } from 'redux/appSelectors';
 import Button from 'react-bootstrap/Button';
-import { fetchSpotifyToken } from 'services';
+import { fetchSpotifyToken, transferUserPlayback } from 'services';
 import { SpotifyToken } from 'types';
 import { BASE_API_URL } from 'config';
 import cx from 'classnames';
 import './index.css';
+
+const DEFAULT_NAME = 'Virtual Club Dance Floor 🔥';
 
 type SpotifyPlayer = any;
 
@@ -29,7 +31,7 @@ type StateTypes = {
   authorizeAttempted: boolean,
   currentlyPlaying: CurrentlyPlaying,
   deviceId: string|null,
-  spotifyToken: SpotifyToken|null,
+  spotifyAccessToken: string,
 };
 
 class Player extends Component<PropTypes, StateTypes> {
@@ -44,7 +46,7 @@ class Player extends Component<PropTypes, StateTypes> {
       paused: true,
     },
     deviceId: null,
-    spotifyToken: null,
+    spotifyAccessToken: '',
   }
 
   player: SpotifyPlayer;
@@ -52,11 +54,10 @@ class Player extends Component<PropTypes, StateTypes> {
   async componentDidMount() {
     const { Player }: SpotifyPlayer = await this.waitForSpotifyWebPlaybackSDKToLoad()
     this.player = new Player({
-      name: 'Virtual Club Dance Floor 🔥',
+      name: DEFAULT_NAME,
       volume: .2,
       getOAuthToken: (callback: any) => {
-        const token: any = this.state.spotifyToken; // Stupid typescript error idk how to fix
-        callback(token.accessToken);
+        callback(this.state.spotifyAccessToken);
       }
     });
 
@@ -77,6 +78,7 @@ class Player extends Component<PropTypes, StateTypes> {
 
     // Playback status updates
     this.player.addListener('player_state_changed', (state: any) => {
+      if (!state) { return; }
       const track = state.track_window.current_track;
       this.setState({
         currentlyPlaying: {
@@ -99,8 +101,14 @@ class Player extends Component<PropTypes, StateTypes> {
 
     type ReadyParamType = { device_id: string };
     // Ready
-    this.player.addListener('ready', ({ device_id }: ReadyParamType) => {
-      this.setState({ deviceId: device_id });
+    this.player.addListener('ready', async ({ device_id: deviceId }: ReadyParamType) => {
+      this.setState({ deviceId });
+      try {
+        await transferUserPlayback(deviceId, this.state.spotifyAccessToken);
+      } catch {
+        // Prompt the user to actively select a playback device
+        alert(`To start playing music, look for a device named "Virtual Club Dance Floor 🔥" to connect to in the Spotify app.`)
+      }
     });
     // Not Ready
     this.player.addListener('not_ready', ({ device_id }: ReadyParamType) => {
@@ -139,7 +147,7 @@ class Player extends Component<PropTypes, StateTypes> {
   handleSpotifyConnect = async () => {
     const spotifyToken: SpotifyToken = await fetchSpotifyToken(this.props.token || '');
     await new Promise((resolve, reject) => {
-      this.setState({ spotifyToken }, () => {
+      this.setState({ spotifyAccessToken: spotifyToken.accessToken }, () => {
         return resolve();
       });
     });
