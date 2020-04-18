@@ -34,3 +34,19 @@ export function transferUserPlayback(deviceId: string, accessToken: string): Pro
     }
   });
 }
+
+export function playTrack(deviceId: string, accessToken: string, trackUri: string): Promise<void> {
+  return new Promise(async (resolve, reject) => {
+    const authorization = `Bearer ${accessToken}`;
+    try {
+      await axios.put(
+        `${BASE_SPOTIFY_API_URL}/v1/me/player/play?device_id=${deviceId}`,
+        { uris: [trackUri] },
+        { headers: { Authorization: authorization } },
+      );
+      return resolve();
+    } catch {
+      reject();
+    }
+  });
+}
