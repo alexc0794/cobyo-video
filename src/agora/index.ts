@@ -71,7 +71,7 @@ export async function joinCall(rtc: RTC, userId: string, channelId: string) {
     });
   } catch (e) {
     console.error(e);
-    await rtc.client.leave();
+    await leaveCall(rtc);
     throw new Error('Access to your microphone and camera must be granted for this to work!');
   }
 
@@ -79,7 +79,7 @@ export async function joinCall(rtc: RTC, userId: string, channelId: string) {
     await rtc.client.publish([rtc.localAudioTrack, rtc.localVideoTrack]);
   } catch (e) {
     console.error(e);
-    await rtc.client.leave();
+    await leaveCall(rtc);
     throw new Error('Failed to publish audio and video to others.');
   }
 
@@ -87,7 +87,7 @@ export async function joinCall(rtc: RTC, userId: string, channelId: string) {
     rtc.localVideoTrack.play(`video-${userId}`);
   } catch (e) {
     console.error(e);
-    await rtc.client.leave();
+    await leaveCall(rtc);
     throw new Error('Unable to play local video.');
   }
 
