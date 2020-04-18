@@ -74,6 +74,7 @@ class Player extends Component<PropTypes, StateTypes> {
     type ReadyParamType = { device_id: string };
     // Ready
     this.player.addListener('ready', async ({ device_id: deviceId }: ReadyParamType) => {
+      console.log('Device ready', deviceId);
       this.setState({ deviceId });
       if (this.props.isDJ) {
         try {
@@ -86,6 +87,7 @@ class Player extends Component<PropTypes, StateTypes> {
     });
     // Not Ready
     this.player.addListener('not_ready', ({ device_id }: ReadyParamType) => {
+      console.log('Device not ready');
       this.setState({ deviceId: '' });
     });
   }
@@ -156,7 +158,10 @@ class Player extends Component<PropTypes, StateTypes> {
       });
     });
     // Connect to the player!
-    await this.player.connect();
+    const connected = await this.player.connect();
+    if (!connected) {
+      alert('Failed to connect Spotify Player to device');
+    }
   }
 
   render() {
