@@ -158,7 +158,15 @@ function VideoSettings({
             </Button>
           )}
         </ButtonGroup>
-        {showPlayer && ws && <Player tableId={tableId} userId={userId} ws={ws} />}
+        {showPlayer && ws && (
+          <Player
+            tableId={tableId}
+            tableName={'Virtual Club Dance Floor 🔥'} // TODO: Replace with actual table name
+            userId={userId}
+            ws={ws}
+            isDJ={userId === '4196925809' || userId === '3339544354'}
+          />
+        )}
         <ButtonGroup>
           {unmuted ? (
             <Button variant="secondary" onClick={handleMute}>
