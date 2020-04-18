@@ -3,7 +3,7 @@ import { CurrentlyPlaying } from 'types';
 
 const updateCurrentlyPlaying = (currentlyPlaying: CurrentlyPlaying) => ({
   type: "UPDATE_CURRENTLY_PLAYING",
-  payload: { currentlyPlaying }
+  payload: currentlyPlaying
 });
 
 
