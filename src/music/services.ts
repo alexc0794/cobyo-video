@@ -1,8 +1,20 @@
 import axios from 'axios';
 import { BASE_API_URL } from 'config';
-import { SpotifyToken } from 'types';
+import { SpotifyToken, CurrentlyPlaying } from 'types';
 
 const BASE_SPOTIFY_API_URL = 'https://api.spotify.com';
+
+export function fetchCurrentlyPlaying(channelId: string): Promise<CurrentlyPlaying> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get(`${BASE_API_URL}/channel/${channelId}/currently-playing`);
+      return resolve(response.data.currentlyPlaying);
+    } catch (e) {
+      console.error(e);
+      return reject('Failed to fetch currently playing track');
+    }
+  });
+}
 
 export function fetchSpotifyToken(accessToken: string): Promise<SpotifyToken> {
   return new Promise(async (resolve, reject) => {
@@ -35,13 +47,13 @@ export function transferUserPlayback(deviceId: string, accessToken: string): Pro
   });
 }
 
-export function playTrack(deviceId: string, accessToken: string, trackUri: string): Promise<void> {
+export function playTrack(deviceId: string, accessToken: string, trackUri: string, position_ms: number = 0): Promise<void> {
   return new Promise(async (resolve, reject) => {
     const authorization = `Bearer ${accessToken}`;
     try {
       await axios.put(
         `${BASE_SPOTIFY_API_URL}/v1/me/player/play?device_id=${deviceId}`,
-        { uris: [trackUri] },
+        { uris: [trackUri], position_ms },
         { headers: { Authorization: authorization } },
       );
       return resolve();
