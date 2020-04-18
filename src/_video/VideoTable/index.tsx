@@ -86,11 +86,19 @@ function VideoTable({
         </>
       )}
       <div className="VideoTable-menu">
-        {isMenuOpen && ws && <Menu tableId={tableId} storefront={storefront} userId={userId} onRequestClose={()=>{toggleMenuOpen(false)}} ws={ws} />}
+        {isMenuOpen && ws && (
+          <Menu
+            tableId={tableId}
+            storefront={storefront}
+            userId={userId}
+            onRequestClose={()=>{toggleMenuOpen(false)}}
+            ws={ws}
+          />
+        )}
       </div>
       {seats.map(seat => (
         <div
-          className={`VideoTable-seat ${useBlinkingTile &&  table.shape === 'DANCE_FLOOR' ? 'VideoTable-seat--blinking' :''} VideoTable-seat--${Math.floor(Math.random()*9)}`}
+          className={`VideoTable-seat ${useBlinkingTile && table.shape === 'DANCE_FLOOR' ? 'VideoTable-seat--blinking' :''} VideoTable-seat--${Math.floor(Math.random()*9)}`}
           key={seat.seatNumber}
           onClick={()=>handlePickSeat(seat.seatNumber)}
           role="button"

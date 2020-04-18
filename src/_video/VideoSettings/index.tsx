@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { leaveAndUpdateTable } from '_tables/actions';
+import { selectTableById } from '_tables/selectors';
 import { selectStorefront } from '_storefront/selectors';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -8,10 +9,12 @@ import Button from 'react-bootstrap/Button';
 import { RTC } from 'agora';
 import { getSpeechRecognition } from '_speechRecognition';
 import { sendAudioTranscript } from 'services';
+import { TableType } from 'types';
 import { useInterval } from 'hooks';
 import { SEND_TRANSCRIPT_INTERVAL_MS } from 'config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash, faSignOutAlt, faUserFriends, faPortrait } from '@fortawesome/free-solid-svg-icons';
+import Player from 'music/Player';
 import cx from 'classnames';
 import './index.css';
 
@@ -19,6 +22,7 @@ type PropTypes = {
   tableId: string,
   userId: string,
   rtc: RTC,
+  ws: WebSocket|undefined,
 };
 
 let speechRecognition: SpeechRecognition;
@@ -28,6 +32,7 @@ function VideoSettings({
   tableId,
   userId,
   rtc,
+  ws,
 }: PropTypes) {
   const [numUsers, setNumUsers] = useState<number>(rtc.client.remoteUsers.length + 1);
   const [recentlyJoinedUser, setRecentlyJoinedUser] = useState<any>(null);
@@ -127,6 +132,8 @@ function VideoSettings({
     setBeautyEffectOn(!beautyEffectOn);
   }
 
+  const table: TableType = useSelector(selectTableById(tableId));
+  const showPlayer = table.shape === 'DANCE_FLOOR';
   return (
     <div className={cx('video-settings', {
       'club-mode-lighter': storefront === 'CLUB',
@@ -151,6 +158,7 @@ function VideoSettings({
             </Button>
           )}
         </ButtonGroup>
+        {showPlayer && ws && <Player tableId={tableId} userId={userId} ws={ws} />}
         <ButtonGroup>
           {unmuted ? (
             <Button variant="secondary" onClick={handleMute}>

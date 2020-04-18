@@ -15,6 +15,12 @@
     <noscript>
       <h1>Enable JavaScript ya fool</h1>
     </noscript>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script>
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        console.log('Spotify player is ready');
+      };
+  </script>
     <script type="text/javascript" src="//connect.facebook.net/en_US/all.js#xfbml=1&appId=1946151882268761" id="facebook-jssdk"></script>
     <div id="root"></div>
   </body>
