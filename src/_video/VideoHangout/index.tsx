@@ -86,7 +86,7 @@ export default function VideoHangout({
   return (
     <>
       <VideoTable tableId={tableId} userId={userId} rtc={rtc} remoteUsers={remoteUsers} ws={ws} />
-      <VideoSettings tableId={tableId} userId={userId} rtc={rtc} />
+      <VideoSettings tableId={tableId} userId={userId} rtc={rtc} ws={ws} />
       <VideoQuality tableId={tableId} userId={userId} rtc={rtc} />
     </>
   );

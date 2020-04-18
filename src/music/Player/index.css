@@ -1,0 +1,68 @@
+.Player {
+  display: flex;
+}
+
+.Player-discHolder {
+  background-color: rgba(162, 237, 219, .8);
+  width: 60px;
+  height: 70px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Player-discHolder--playing {
+  animation: seatAnimation 12s infinite;
+}
+
+.Player-discHolder--playing > .Player-disc {
+  animation: seatAnimation 6s infinite;
+}
+
+.Player-disc {
+  border-radius: 50%;
+  height: 5vw;
+  width: 5vw;
+  background-color: black;
+  opacity: .8;
+  border: 2px solid white;
+}
+
+.Player-content {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 5px;
+  /* width: 200px; */
+  text-align: center;
+}
+
+.Player-content > p {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: left;
+  /* animation: marquee 1s linear infinite; */
+}
+
+.Player-content > button {
+  font-size: 10pt;
+  color: black;
+}
+
+.Player-progressBar {
+  margin-top: 5px;
+  background-color: green;
+  border-radius: 5vh;
+  width: 100%;
+  height: 5px;
+}
+
+@keyframes marquee {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
