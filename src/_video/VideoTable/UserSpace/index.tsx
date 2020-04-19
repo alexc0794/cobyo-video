@@ -1,7 +1,7 @@
 import React, {memo} from 'react';
 import { useSelector } from 'react-redux';
-import { selectUserMenuItemsById } from '_users/userMenuItemsSelectors';
-import { UserMenuItemType } from 'types';
+import { selectUserInventory } from '_users/selectors';
+import { InventoryItemType } from 'types';
 import UserItem from '_video/VideoTable/UserSpace/userItem';
 
 type PropTypes = {
@@ -9,12 +9,12 @@ type PropTypes = {
 };
 
 function UserSpace({userId}:PropTypes) {
-  const userItems = useSelector(selectUserMenuItemsById(userId));
+  const userItems = useSelector(selectUserInventory(userId));
   return (
     <>
       {userItems && userItems.length > 0 ? (
-        userItems.map((item: UserMenuItemType) => (
-          <UserItem itemId={item.itemId} key={item.itemId} />
+        userItems.map((item: InventoryItemType) => (
+          <UserItem itemId={item.itemId} key={item.itemIdPurchasedAt} />
         ))
       ) : null}
     </>

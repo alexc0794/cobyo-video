@@ -7,3 +7,12 @@ export type UserType = {
   profilePictureUrl: string | null,
   lastActiveAt: string | null,
 };
+
+export type InventoryItemType = {
+  itemId: string,
+  userId: string,
+  fromUserId: string,
+  purchasedAt: string,
+  itemIdPurchasedAt: string,
+  expiringAtSeconds: number | null,
+};

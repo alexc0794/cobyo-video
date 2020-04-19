@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BASE_API_URL } from 'config';
-import { UserType } from 'types';
+import { UserType, InventoryItemType } from 'types';
 
 type CreateUserResponse = {
   user: UserType,
@@ -60,6 +60,21 @@ export function fetchActiveUsers(token: string): Promise<Array<UserType>> {
       });
       const users = response.data;
       return resolve(users);
+    } catch (e) {
+      if (e && e.response && e.response.status) {
+        return reject(e.response.status);
+      }
+      return reject(500);
+    }
+  });
+}
+
+export function fetchUserInventory(userId: string): Promise<Array<InventoryItemType>> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get(`${BASE_API_URL}/users/${userId}/inventory`);
+      const inventoryItems: Array<InventoryItemType> = response.data.inventoryItems;
+      return resolve(inventoryItems);
     } catch (e) {
       if (e && e.response && e.response.status) {
         return reject(e.response.status);
