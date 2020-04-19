@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectStorefront } from '_storefront/selectors';
 import { selectTableById } from '_tables/selectors';
@@ -13,6 +13,9 @@ import { joinAndUpdateTable } from '_tables/actions';
 import Menu from '_menu/Menu';
 import UserSpace from '_video/VideoTable/UserSpace';
 import cx from 'classnames';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+import PopoverContent from '_video/VideoTable/Popover'
 import './index.css';
 
 const DEFAULT_ROW = 3;
@@ -27,6 +30,11 @@ type PropTypes = {
   useBlinkingBackground?: boolean,
   useBlinkingTile?: boolean,
 };
+
+type SelectedUserType = {
+  [userId: string]: boolean,
+};
+
 
 function VideoTable({
   tableId,
@@ -57,6 +65,38 @@ function VideoTable({
   const rows = (table.shape ==='RECTANGULAR' || table.shape === 'DANCE_FLOOR') ? DEFAULT_ROW + 1 : DEFAULT_ROW;
   const styleVar = {'--columns': columns,'--rows': rows} as React.CSSProperties;
   const [isMenuOpen, toggleMenuOpen] = useState<boolean>(false);
+  const [selectedUsers, toggleSelectUser] = useState<SelectedUserType>({[userId]: true});
+
+  const handleSelectUser = (userId: string) => {
+    if (selectedUsers[userId]) {
+      toggleSelectUser({
+        ...selectedUsers,
+        [userId]: !selectedUsers[userId]
+      })
+    } else {
+      toggleSelectUser({
+        ...selectedUsers,
+        [userId]: true
+      })
+    }
+  };
+
+  const handleBuyForUser = (toUserId:string|null) => {
+    if (!toUserId) {
+      return;
+    }
+    toggleSelectUser({
+      [toUserId]: true
+    });
+    toggleMenuOpen(true);
+  }
+
+  const handleCloseMenu = () => {
+    toggleMenuOpen(false);
+    toggleSelectUser({
+      [userId]: true
+    })
+  }
 
   async function handlePickSeat(pickedSeatNumber: number|null) {
     if (!userId) { return; }
@@ -91,7 +131,9 @@ function VideoTable({
             tableId={tableId}
             storefront={storefront}
             userId={userId}
-            onRequestClose={()=>{toggleMenuOpen(false)}}
+            selectedUsers={selectedUsers}
+            onSelectUser={handleSelectUser}
+            onRequestClose={handleCloseMenu}
             ws={ws}
           />
         )}
@@ -122,7 +164,21 @@ function VideoTable({
             }
             const remoteUser = remoteUsers.find(user => user.userId === seat.userId) || null;
             if (remoteUser) {
-              return <RemoteVideo {...remoteUser} />;
+              const popover = (
+                <Popover id="VideoTable-popover">
+                  <PopoverContent
+                    userId={seat.userId}
+                    onClickBuy={handleBuyForUser}
+                  />
+                </Popover>
+              );
+              return (
+                <OverlayTrigger trigger="click" placement="bottom" overlay={popover} rootClose >
+                  <div className="VideoTable-seat-overlayWrapper">
+                    <RemoteVideo {...remoteUser} />
+                  </div>
+                </OverlayTrigger>
+              );
             }
 
             return table.shape === 'DANCE_FLOOR' ? null : <VideoPlaceholder />;

@@ -11,11 +11,13 @@ type PropTypes = {
   tableId: string,
   storefront: string,
   userId: string,
+  selectedUsers: SelectedUserType,
+  onSelectUser: (userId:string) => void,
   onRequestClose: () => void,
   ws: WebSocket,
 };
 
-type SelectedUserType = {
+type SelectedUserType =  {
   [userId: string]: boolean,
 };
 
@@ -23,31 +25,17 @@ const formatPrice = (cents:number) => {
   return (cents/100).toFixed(2);
 };
 
-function Menu({ tableId, storefront, userId, onRequestClose, ws }: PropTypes) {
+function Menu({ tableId, storefront, userId, selectedUsers, onSelectUser, onRequestClose, ws }: PropTypes) {
   const menuItems = useSelector(selectMenuItems);
   const [showSelectUsers, toggleShowSelectUsers] = useState<boolean>(false);
   const [selectedItemId, setSelectedItemId] = useState<string>('');
-  const [selectedUser, toggleSelectUser] = useState<SelectedUserType>({});
 
   const handleSelectItem = (itemId: string) => {
     setSelectedItemId(itemId);
     toggleShowSelectUsers(true);
   };
-  const handleSelectUser = (userId: string) => {
-    if (selectedUser[userId]) {
-      toggleSelectUser({
-        ...selectedUser,
-        [userId]: !selectedUser[userId]
-      })
-    } else {
-      toggleSelectUser({
-        ...selectedUser,
-        [userId]: true
-      })
-    }
-  };
   const handleBuyItem = async () => {
-    let toUserIds: Array<string> = Object.keys(selectedUser).filter(x => selectedUser[x] === true);
+    let toUserIds: Array<string> = Object.keys(selectedUsers).filter((userId:string) => selectedUsers[userId] === true);
     // TODO: Request to purchase on our server before sending out with websockets.
     toUserIds = await purchaseMenuItem(selectedItemId, userId, toUserIds);
     toUserIds.forEach(toUserId => {
@@ -68,7 +56,7 @@ function Menu({ tableId, storefront, userId, onRequestClose, ws }: PropTypes) {
         <>
           <p>Who do you want to buy this for?</p>
           {/* <label className="Menu-userSelect"><input type="checkbox" checked={selectedUser[userId]} onChange={() => handleSelectUser(userId)} /> Myself</label> */}
-          <UserSelection tableId={tableId} userId={userId} onSelectUser={handleSelectUser} selectedUser={selectedUser} />
+          <UserSelection tableId={tableId} userId={userId} onSelectUser={onSelectUser} selectedUser={selectedUsers} />
           <Button size="sm" onClick={handleBuyItem} >Submit</Button>{' '}
           <Button size="sm" onClick={()=>toggleShowSelectUsers(false)} variant="outline-primary">Cancel</Button>
         </>

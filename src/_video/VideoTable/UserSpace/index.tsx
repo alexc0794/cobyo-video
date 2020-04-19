@@ -13,8 +13,8 @@ function UserSpace({userId}:PropTypes) {
   return (
     <>
       {userItems && userItems.length > 0 ? (
-        userItems.map((item: UserMenuItemType) => (
-          <UserItem itemId={item.itemId} key={item.itemId} />
+        userItems.map((item: UserMenuItemType, index: number) => (
+          <UserItem itemId={item.itemId} key={index} />
         ))
       ) : null}
     </>

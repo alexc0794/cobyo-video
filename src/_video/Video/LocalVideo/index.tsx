@@ -44,9 +44,9 @@ class LocalVideo extends Component<LocalVideoPropTypes> {
                 An error has occurred <span role="img" aria-label="Sweat">😓</span>.
               </Modal.Title>
             </Modal.Header>
-            <Modal.Footer>
+            <Modal.Body>
               {error}
-            </Modal.Footer>
+            </Modal.Body>
           </Modal>
         )}
       </>

@@ -1,0 +1,7 @@
+.PopoverContent-button {
+  display: block;
+  border: 0;
+  padding: 10px;
+  width: 100%;
+  border-bottom: 1px solid #CCC;
+}
