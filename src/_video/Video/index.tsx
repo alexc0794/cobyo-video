@@ -1,5 +1,6 @@
-import React, { memo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, memo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAndUpdateUserInventory } from '_users/actions';
 import { selectStorefront } from '_storefront/selectors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophoneSlash, faChair, faCouch } from '@fortawesome/free-solid-svg-icons';
@@ -16,6 +17,11 @@ function Video({
   audioMuted,
 }: VideoPropTypes) {
   const storefront = useSelector(selectStorefront);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchAndUpdateUserInventory(userId));
+  }, [dispatch, userId])
+
   return (
     <div id={`video-${userId}`} className={cx("video", {
       'club-mode': storefront === 'CLUB'
