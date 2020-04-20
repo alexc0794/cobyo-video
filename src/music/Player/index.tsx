@@ -4,7 +4,12 @@ import { selectToken } from 'redux/appSelectors';
 import { selectCurrentlyPlaying } from 'music/selectors';
 import { fetchAndUpdateCurrentlyPlaying } from 'music/actions';
 import Button from 'react-bootstrap/Button';
-import { fetchSpotifyToken, transferUserPlayback, playTrack } from 'services';
+import {
+  fetchSpotifyToken,
+  connectSpotify,
+  transferUserPlayback,
+  playTrack,
+} from 'services';
 import { SpotifyToken, CurrentlyPlaying } from 'types';
 import { BASE_API_URL } from 'config';
 import cx from 'classnames';
@@ -101,8 +106,7 @@ class Player extends Component<PropTypes, StateTypes> {
   }
 
   async componentDidUpdate(previousProps: PropTypes) {
-    if (this.props.isDJ) { return; }
-
+    // if (this.props.isDJ) { return; }  // Commenting this out so DJ plays song in-sync with other users who have the added latency of websockets.
     const previouslyPlaying = previousProps.currentlyPlaying;
     const currentlyPlaying = this.props.currentlyPlaying;
     if (previouslyPlaying.trackId !== currentlyPlaying.trackId) {
@@ -119,9 +123,10 @@ class Player extends Component<PropTypes, StateTypes> {
     }
   }
 
-  // This should only be a function that the DJ fires
   handleSongChange = (state: any) => {
+    if (!this.props.isDJ) { return; } // Only the DJ should be firing change song requests
     if (!state) { return; }
+
     const track = state.track_window.current_track;
     const payload: CurrentlyPlaying = {
       fromUserId: this.props.userId,
@@ -175,6 +180,7 @@ class Player extends Component<PropTypes, StateTypes> {
     if (!connected) {
       alert('Failed to connect Spotify Player to device');
     }
+    await connectSpotify(this.props.tableId, this.props.token || '');
   }
 
   render() {

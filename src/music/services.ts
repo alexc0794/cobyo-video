@@ -16,9 +16,9 @@ export function fetchCurrentlyPlaying(channelId: string): Promise<CurrentlyPlayi
   });
 }
 
-export function fetchSpotifyToken(accessToken: string): Promise<SpotifyToken> {
+export function fetchSpotifyToken(token: string): Promise<SpotifyToken> {
   return new Promise(async (resolve, reject) => {
-    const authorization = `Bearer ${accessToken}`;
+    const authorization = `Bearer ${token}`;
     try {
       const response = await axios.get(`${BASE_API_URL}/spotify/token`, {
         headers: { Authorization: authorization }
@@ -27,6 +27,23 @@ export function fetchSpotifyToken(accessToken: string): Promise<SpotifyToken> {
     } catch (e) {
       console.error(e);
       return reject("Failed to fetch token");
+    }
+  });
+}
+
+export function connectSpotify(channelId: string, token: string): Promise<number> {
+  return new Promise(async (resolve, reject) => {
+    const authorization = `Bearer ${token}`;
+    try {
+      const response = await axios.put(
+        `${BASE_API_URL}/spotify/connect`,
+        { channelId },
+        { headers: { Authorization: authorization } },
+      );
+      return resolve(response.data);
+    } catch (e) {
+      console.error(e);
+      return resolve(0);
     }
   })
 }
