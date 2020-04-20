@@ -31,11 +31,6 @@ type PropTypes = {
   useBlinkingTile?: boolean,
 };
 
-type SelectedUserType = {
-  [userId: string]: boolean,
-};
-
-
 function VideoTable({
   tableId,
   userId,
@@ -65,37 +60,19 @@ function VideoTable({
   const rows = (table.shape ==='RECTANGULAR' || table.shape === 'DANCE_FLOOR') ? DEFAULT_ROW + 1 : DEFAULT_ROW;
   const styleVar = {'--columns': columns,'--rows': rows} as React.CSSProperties;
   const [isMenuOpen, toggleMenuOpen] = useState<boolean>(false);
-  const [selectedUsers, toggleSelectUser] = useState<SelectedUserType>({[userId]: true});
-
-  const handleSelectUser = (userId: string) => {
-    if (selectedUsers[userId]) {
-      toggleSelectUser({
-        ...selectedUsers,
-        [userId]: !selectedUsers[userId]
-      })
-    } else {
-      toggleSelectUser({
-        ...selectedUsers,
-        [userId]: true
-      })
-    }
-  };
+  const [selectedUserId, setSelectedUserId] = useState<string|null>(null);
 
   const handleBuyForUser = (toUserId:string|null) => {
     if (!toUserId) {
       return;
     }
-    toggleSelectUser({
-      [toUserId]: true
-    });
+    setSelectedUserId(toUserId);
     toggleMenuOpen(true);
   }
 
   const handleCloseMenu = () => {
     toggleMenuOpen(false);
-    toggleSelectUser({
-      [userId]: true
-    })
+    setSelectedUserId(null);
   }
 
   async function handlePickSeat(pickedSeatNumber: number|null) {
@@ -131,8 +108,7 @@ function VideoTable({
             tableId={tableId}
             storefront={storefront}
             userId={userId}
-            selectedUsers={selectedUsers}
-            onSelectUser={handleSelectUser}
+            initiallySelectedUsers={selectedUserId ? { [`${selectedUserId}`]: true } : {}}
             onRequestClose={handleCloseMenu}
             ws={ws}
           />
