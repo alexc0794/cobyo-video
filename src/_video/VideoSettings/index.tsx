@@ -164,7 +164,7 @@ function VideoSettings({
             tableName={'Virtual Club Dance Floor 🔥'} // TODO: Replace with actual table name
             userId={userId}
             ws={ws}
-            isDJ={userId === '4196925809' || userId === '3339544354'}
+            isDJ={userId === '4196925809' || userId === '3339544354' || userId === '2997029709'}
           />
         )}
         <ButtonGroup>
