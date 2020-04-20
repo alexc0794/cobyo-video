@@ -18,6 +18,7 @@
 
 .Player-discHolder--playing > .Player-disc {
   animation: seatAnimation 6s infinite;
+  animation: pulse 0.5s infinite alternate;
 }
 
 .Player-disc {

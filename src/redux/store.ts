@@ -6,7 +6,7 @@ import chat from '_chat/reducers';
 import users from '_users/reducers';
 import storefront from '_storefront/reducers';
 import menu from '_menu/reducers';
-import userMenuItems from '_users/userMenuItemsReducer';
+import music from 'music/reducers';
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -22,7 +22,7 @@ export default createStore(
     storefront,
     chat,
     menu,
-    userMenuItems,
+    music,
   }),
   enhancer
 );

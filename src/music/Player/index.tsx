@@ -1,36 +1,38 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { selectToken } from 'redux/appSelectors';
+import { selectCurrentlyPlaying } from 'music/selectors';
+import { fetchAndUpdateCurrentlyPlaying } from 'music/actions';
 import Button from 'react-bootstrap/Button';
-import { fetchSpotifyToken, transferUserPlayback } from 'services';
-import { SpotifyToken } from 'types';
+import {
+  fetchSpotifyToken,
+  connectSpotify,
+  transferUserPlayback,
+  playTrack,
+} from 'services';
+import { SpotifyToken, CurrentlyPlaying } from 'types';
 import { BASE_API_URL } from 'config';
 import cx from 'classnames';
+import { debounce } from 'debounce';
 import './index.css';
 
-const DEFAULT_NAME = 'Virtual Club Dance Floor 🔥';
-
 type SpotifyPlayer = any;
-
-type CurrentlyPlaying = {
-  trackName: string|null,
-  position: number,
-  duration: number,
-  artistName: string|null,
-  paused: boolean,
-};
 
 type PropTypes = {
   userId: string,
   tableId: string,
+  tableName: string,
   ws: WebSocket,
+  // From redux
   token: string|null,
+  currentlyPlaying: CurrentlyPlaying,
+  fetchAndUpdateCurrentlyPlaying: (channelId: string) => void
 };
 
 type StateTypes = {
   authorizeAttempted: boolean,
-  currentlyPlaying: CurrentlyPlaying,
-  deviceId: string|null,
+  isDJ: boolean,
+  deviceId: string,
   spotifyAccessToken: string,
 };
 
@@ -38,23 +40,18 @@ class Player extends Component<PropTypes, StateTypes> {
 
   state = {
     authorizeAttempted: false,
-    currentlyPlaying: {
-      trackName: null,
-      position: 0,
-      duration: 0,
-      artistName: null,
-      paused: true,
-    },
-    deviceId: null,
+    isDJ: false,
+    deviceId: '',
     spotifyAccessToken: '',
   }
 
   player: SpotifyPlayer;
+  authorizeWindow: any;
 
   async componentDidMount() {
     const { Player }: SpotifyPlayer = await this.waitForSpotifyWebPlaybackSDKToLoad()
     this.player = new Player({
-      name: DEFAULT_NAME,
+      name: this.props.tableName,
       volume: .2,
       getOAuthToken: (callback: any) => {
         callback(this.state.spotifyAccessToken);
@@ -77,42 +74,29 @@ class Player extends Component<PropTypes, StateTypes> {
     });
 
     // Playback status updates
-    this.player.addListener('player_state_changed', (state: any) => {
-      if (!state) { return; }
-      const track = state.track_window.current_track;
-      this.setState({
-        currentlyPlaying: {
-          trackName: track.name,
-          artistName: track.artists[0].name,
-          position: state.position,
-          duration: state.duration,
-          paused: state.paused,
-        }
-      });
-      this.props.ws.send(JSON.stringify({
-        action: 'CHANGE_SONG',
-        userId: this.props.userId,
-        channelId: this.props.tableId,
-        trackId: track.id,
-        trackUri: track.uri,
-        trackName: track.name,
-      }));
-    });
+    this.player.addListener(
+      'player_state_changed',
+      debounce(this.handleSongChange, 500), // Spotify does this weird thing where it blasts 3 near-identical events when song changes, so only trigger one
+    );
 
     type ReadyParamType = { device_id: string };
     // Ready
     this.player.addListener('ready', async ({ device_id: deviceId }: ReadyParamType) => {
       this.setState({ deviceId });
-      try {
-        await transferUserPlayback(deviceId, this.state.spotifyAccessToken);
-      } catch {
-        // Prompt the user to actively select a playback device
-        alert(`To start playing music, look for a device named "Virtual Club Dance Floor 🔥" to connect to in the Spotify app.`)
+      if (this.state.isDJ) {
+        try {
+          await transferUserPlayback(deviceId, this.state.spotifyAccessToken);
+        } catch {
+          // Prompt the user to actively select a playback device
+          alert(`To start playing music, look for a device named "Virtual Club Dance Floor 🔥" to connect to in the Spotify app.`)
+        }
+      } else {
+        this.props.fetchAndUpdateCurrentlyPlaying(this.props.tableId);
       }
     });
     // Not Ready
     this.player.addListener('not_ready', ({ device_id }: ReadyParamType) => {
-      this.setState({ deviceId: null });
+      this.setState({ deviceId: '' });
     });
   }
 
@@ -121,6 +105,46 @@ class Player extends Component<PropTypes, StateTypes> {
       this.player.disconnect();
     }
   }
+
+  async componentDidUpdate(previousProps: PropTypes) {
+    // if (this.state.isDJ) { return; }  // Commenting this out so DJ plays song in-sync with other users who have the added latency of websockets.
+    const previouslyPlaying = previousProps.currentlyPlaying;
+    const currentlyPlaying = this.props.currentlyPlaying;
+    if (previouslyPlaying.trackId !== currentlyPlaying.trackId) {
+      await playTrack(this.state.deviceId, this.state.spotifyAccessToken, currentlyPlaying.trackUri, currentlyPlaying.position);
+    }
+
+    const previouslyPaused = previousProps.currentlyPlaying.paused;
+    const currentlyPaused = this.props.currentlyPlaying.paused;
+    const didPause = !previouslyPaused && currentlyPaused;
+    const didResume = previouslyPaused && !currentlyPaused;
+    if (this.player) {
+      didPause && this.player.pause();
+      didResume && this.player.resume();
+    }
+  }
+
+  handleSongChange = (state: any) => {
+    if (!this.state.isDJ) { return; } // Only the DJ should be firing change song requests
+    if (!state) { return; }
+
+    const track = state.track_window.current_track;
+    const payload: CurrentlyPlaying = {
+      fromUserId: this.props.userId,
+      trackId: track.id,
+      trackUri: track.uri,
+      trackName: track.name,
+      artistName: track.artists[0].name,
+      position: state.position,
+      duration: state.duration,
+      paused: state.paused,
+    };
+    this.props.ws.send(JSON.stringify({
+      action: 'CHANGE_SONG',
+      channelId: this.props.tableId,
+      ...payload
+    }));
+  };
 
   async waitForSpotifyWebPlaybackSDKToLoad() {
     return new Promise(resolve => {
@@ -136,7 +160,7 @@ class Player extends Component<PropTypes, StateTypes> {
   }
 
   handleSpotifyAuthorization = () => {
-    window.open(
+    this.authorizeWindow = window.open(
       `${BASE_API_URL}/spotify/authorize?userId=${this.props.userId}`,
       '_blank',
       'width=600,height=400'
@@ -145,6 +169,7 @@ class Player extends Component<PropTypes, StateTypes> {
   };
 
   handleSpotifyConnect = async () => {
+    this.authorizeWindow && this.authorizeWindow.close(); // Close the authorize window for the user when they connect
     const spotifyToken: SpotifyToken = await fetchSpotifyToken(this.props.token || '');
     await new Promise((resolve, reject) => {
       this.setState({ spotifyAccessToken: spotifyToken.accessToken }, () => {
@@ -152,11 +177,19 @@ class Player extends Component<PropTypes, StateTypes> {
       });
     });
     // Connect to the player!
-    await this.player.connect();
+    const connected = await this.player.connect();
+    if (!connected) {
+      alert('Failed to connect Spotify Player to device');
+    }
+    const userIdsConnectedToSpotify = await connectSpotify(this.props.tableId, this.props.token || '');
+    if (userIdsConnectedToSpotify.length > 0 && this.props.userId === userIdsConnectedToSpotify[0]) {
+      this.setState({ isDJ: true });
+    }
   }
 
   render() {
-    const { authorizeAttempted, currentlyPlaying, deviceId } = this.state;
+    const { currentlyPlaying } = this.props;
+    const { authorizeAttempted, deviceId, isDJ } = this.state;
     const { trackName, artistName, paused } = currentlyPlaying;
     return (
       <div className="Player">
@@ -169,7 +202,7 @@ class Player extends Component<PropTypes, StateTypes> {
           {(() => {
             if (deviceId) {
               if (!trackName) {
-                return <p>Waiting for DJ</p>;
+                return <p>Waiting for {isDJ ? 'your music' : 'DJ'}</p>;
               } else {
                 return (
                   <>
@@ -203,9 +236,15 @@ class Player extends Component<PropTypes, StateTypes> {
 }
 
 const mapStateToProps = (state: any) => ({
-  token: selectToken(state)
+  token: selectToken(state),
+  currentlyPlaying: selectCurrentlyPlaying(state),
 });
 
+const mapDispatchToProps = {
+  fetchAndUpdateCurrentlyPlaying
+};
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps,
 )(Player);

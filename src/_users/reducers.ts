@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { UserType } from 'types';
+import { UserType, InventoryItemType } from 'types';
 
 function byId(state = {}, action: any) {
   switch (action.type) {
@@ -34,7 +34,41 @@ function activeUserIds(state = [], action: any) {
   }
 }
 
+const initialInventoryItems: any = {};
+function inventoryItems(state = initialInventoryItems, action: any) {
+  switch (action.type) {
+    case 'purchasedMenuItem': {
+      const { userId, itemId, fromUserId } = action.payload;
+      const previousInventory = userId in state ? state[userId] : [];
+      const purchasedAt = (new Date()).toISOString();
+      const inventoryItem: InventoryItemType = {
+        userId,
+        itemId,
+        fromUserId,
+        purchasedAt,
+        itemIdPurchasedAt: `${itemId}_${purchasedAt}`,
+        expiringAtSeconds: null,
+      };
+      return {
+        ...state,
+        [userId]: [...previousInventory, inventoryItem]
+      };
+    }
+    case 'UPDATE_USER_INVENTORY': {
+      const inventoryItems: Array<InventoryItemType> = action.payload.inventoryItems;
+      const userId: string = action.payload.userId;
+      return {
+        ...state,
+        [userId]: inventoryItems,
+      };
+    }
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   byId,
   activeUserIds,
+  inventoryItems,
 });

@@ -1,4 +1,4 @@
-import React, { memo, useState, useRef } from 'react';
+import React, { memo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectStorefront } from '_storefront/selectors';
 import { selectTableById } from '_tables/selectors';
@@ -15,7 +15,7 @@ import UserSpace from '_video/VideoTable/UserSpace';
 import cx from 'classnames';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import PopoverContent from '_video/VideoTable/Popover'
+import UserActionPopover from '_video/VideoTable/UserActionPopover'
 import './index.css';
 
 const DEFAULT_ROW = 3;
@@ -166,7 +166,7 @@ function VideoTable({
             if (remoteUser) {
               const popover = (
                 <Popover id="VideoTable-popover">
-                  <PopoverContent
+                  <UserActionPopover
                     userId={seat.userId}
                     onClickBuy={handleBuyForUser}
                   />
