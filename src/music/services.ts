@@ -31,7 +31,7 @@ export function fetchSpotifyToken(token: string): Promise<SpotifyToken> {
   });
 }
 
-export function connectSpotify(channelId: string, token: string): Promise<number> {
+export function connectSpotify(channelId: string, token: string): Promise<Array<string>> {
   return new Promise(async (resolve, reject) => {
     const authorization = `Bearer ${token}`;
     try {
@@ -40,12 +40,24 @@ export function connectSpotify(channelId: string, token: string): Promise<number
         { channelId },
         { headers: { Authorization: authorization } },
       );
-      return resolve(response.data);
+      return resolve(response.data.userIds);
     } catch (e) {
       console.error(e);
-      return resolve(0);
+      return resolve([]);
     }
   })
+}
+
+export function getDJQueue(channelId: string): Promise<Array<string>> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get(`${BASE_API_URL}/dj/queue?channelId=${channelId}`);
+      return resolve(response.data.userIds);
+    } catch {
+      console.error('Failed to get DJ queue');
+      return reject();
+    }
+  });
 }
 
 export function transferUserPlayback(deviceId: string, accessToken: string): Promise<void> {
@@ -59,7 +71,7 @@ export function transferUserPlayback(deviceId: string, accessToken: string): Pro
       );
       return resolve();
     } catch {
-      reject();
+      return reject();
     }
   });
 }
@@ -75,7 +87,7 @@ export function playTrack(deviceId: string, accessToken: string, trackUri: strin
       );
       return resolve();
     } catch {
-      reject();
+      return reject();
     }
   });
 }

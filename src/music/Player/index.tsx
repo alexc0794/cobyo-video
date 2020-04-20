@@ -21,7 +21,6 @@ type SpotifyPlayer = any;
 type PropTypes = {
   userId: string,
   tableId: string,
-  isDJ: boolean,
   tableName: string,
   ws: WebSocket,
   // From redux
@@ -32,6 +31,7 @@ type PropTypes = {
 
 type StateTypes = {
   authorizeAttempted: boolean,
+  isDJ: boolean,
   deviceId: string,
   spotifyAccessToken: string,
 };
@@ -40,6 +40,7 @@ class Player extends Component<PropTypes, StateTypes> {
 
   state = {
     authorizeAttempted: false,
+    isDJ: false,
     deviceId: '',
     spotifyAccessToken: '',
   }
@@ -82,7 +83,7 @@ class Player extends Component<PropTypes, StateTypes> {
     // Ready
     this.player.addListener('ready', async ({ device_id: deviceId }: ReadyParamType) => {
       this.setState({ deviceId });
-      if (this.props.isDJ) {
+      if (this.state.isDJ) {
         try {
           await transferUserPlayback(deviceId, this.state.spotifyAccessToken);
         } catch {
@@ -106,7 +107,7 @@ class Player extends Component<PropTypes, StateTypes> {
   }
 
   async componentDidUpdate(previousProps: PropTypes) {
-    // if (this.props.isDJ) { return; }  // Commenting this out so DJ plays song in-sync with other users who have the added latency of websockets.
+    // if (this.state.isDJ) { return; }  // Commenting this out so DJ plays song in-sync with other users who have the added latency of websockets.
     const previouslyPlaying = previousProps.currentlyPlaying;
     const currentlyPlaying = this.props.currentlyPlaying;
     if (previouslyPlaying.trackId !== currentlyPlaying.trackId) {
@@ -124,7 +125,7 @@ class Player extends Component<PropTypes, StateTypes> {
   }
 
   handleSongChange = (state: any) => {
-    if (!this.props.isDJ) { return; } // Only the DJ should be firing change song requests
+    if (!this.state.isDJ) { return; } // Only the DJ should be firing change song requests
     if (!state) { return; }
 
     const track = state.track_window.current_track;
@@ -180,12 +181,15 @@ class Player extends Component<PropTypes, StateTypes> {
     if (!connected) {
       alert('Failed to connect Spotify Player to device');
     }
-    await connectSpotify(this.props.tableId, this.props.token || '');
+    const userIdsConnectedToSpotify = await connectSpotify(this.props.tableId, this.props.token || '');
+    if (userIdsConnectedToSpotify.length > 0 && this.props.userId === userIdsConnectedToSpotify[0]) {
+      this.setState({ isDJ: true });
+    }
   }
 
   render() {
-    const { currentlyPlaying, isDJ } = this.props;
-    const { authorizeAttempted, deviceId } = this.state;
+    const { currentlyPlaying } = this.props;
+    const { authorizeAttempted, deviceId, isDJ } = this.state;
     const { trackName, artistName, paused } = currentlyPlaying;
     return (
       <div className="Player">
