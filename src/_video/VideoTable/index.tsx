@@ -13,6 +13,9 @@ import { joinAndUpdateTable } from '_tables/actions';
 import Menu from '_menu/Menu';
 import UserSpace from '_video/VideoTable/UserSpace';
 import cx from 'classnames';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+import UserActionPopover from '_video/VideoTable/UserActionPopover'
 import './index.css';
 
 const DEFAULT_ROW = 3;
@@ -57,6 +60,20 @@ function VideoTable({
   const rows = (table.shape ==='RECTANGULAR' || table.shape === 'DANCE_FLOOR') ? DEFAULT_ROW + 1 : DEFAULT_ROW;
   const styleVar = {'--columns': columns,'--rows': rows} as React.CSSProperties;
   const [isMenuOpen, toggleMenuOpen] = useState<boolean>(false);
+  const [selectedUserId, setSelectedUserId] = useState<string|null>(null);
+
+  const handleBuyForUser = (toUserId:string|null) => {
+    if (!toUserId) {
+      return;
+    }
+    setSelectedUserId(toUserId);
+    toggleMenuOpen(true);
+  }
+
+  const handleCloseMenu = () => {
+    toggleMenuOpen(false);
+    setSelectedUserId(null);
+  }
 
   async function handlePickSeat(pickedSeatNumber: number|null) {
     if (!userId) { return; }
@@ -91,7 +108,8 @@ function VideoTable({
             tableId={tableId}
             storefront={storefront}
             userId={userId}
-            onRequestClose={()=>{toggleMenuOpen(false)}}
+            initiallySelectedUsers={selectedUserId ? { [`${selectedUserId}`]: true } : {}}
+            onRequestClose={handleCloseMenu}
             ws={ws}
           />
         )}
@@ -122,7 +140,21 @@ function VideoTable({
             }
             const remoteUser = remoteUsers.find(user => user.userId === seat.userId) || null;
             if (remoteUser) {
-              return <RemoteVideo {...remoteUser} />;
+              const popover = (
+                <Popover id="VideoTable-popover">
+                  <UserActionPopover
+                    userId={seat.userId}
+                    onClickBuy={handleBuyForUser}
+                  />
+                </Popover>
+              );
+              return (
+                <OverlayTrigger trigger="click" placement="bottom" overlay={popover} rootClose >
+                  <div className="VideoTable-seat-overlayWrapper">
+                    <RemoteVideo {...remoteUser} />
+                  </div>
+                </OverlayTrigger>
+              );
             }
 
             return table.shape === 'DANCE_FLOOR' ? null : <VideoPlaceholder />;
