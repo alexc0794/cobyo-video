@@ -16,3 +16,7 @@ export type UserMenuItemType = {
   fromUserId: string,
   expireOn: string | null,
 };
+
+export type SelectedUserType = {
+  [userId: string]: boolean,
+};
