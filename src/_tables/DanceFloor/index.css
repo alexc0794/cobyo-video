@@ -18,6 +18,7 @@
   height: 30vh;
   grid-gap: 12px;
   padding: 12px;
+  cursor: pointer;
 }
 
 .DanceFloor:hover {
